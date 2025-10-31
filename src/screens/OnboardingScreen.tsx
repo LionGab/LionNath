@@ -104,6 +104,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete, route }
 
         // Salvar dados localmente
         await AsyncStorage.setItem('onboarded', 'true');
+        await AsyncStorage.setItem('userId', user.id);
         await AsyncStorage.setItem('userProfile', JSON.stringify(profile));
 
         if (onComplete) {

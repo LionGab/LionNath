@@ -30,7 +30,7 @@ export const SUPABASE_CONFIG = {
 };
 
 // Função helper para validar chaves críticas quando necessário
-export function validateRequiredKeys() {
+export function validateRequiredKeys(): void {
   const required = {
     SUPABASE_URL: SUPABASE_CONFIG.URL,
     SUPABASE_ANON_KEY: SUPABASE_CONFIG.ANON_KEY,
@@ -41,11 +41,15 @@ export function validateRequiredKeys() {
     .map(([key]) => key);
 
   if (missing.length > 0) {
-    console.warn(`⚠️ Variáveis de ambiente faltando: ${missing.join(', ')}`);
-    return false;
+    throw new Error(
+      `🚨 CONFIGURAÇÃO CRÍTICA FALTANDO: ${missing.join(', ')}\n\n` +
+      `Por favor, configure estas variáveis no arquivo .env.local:\n` +
+      `- EXPO_PUBLIC_SUPABASE_URL\n` +
+      `- EXPO_PUBLIC_SUPABASE_ANON_KEY\n\n` +
+      `Copie .env.example para .env.local e preencha com suas credenciais.\n` +
+      `Veja o README.md para instruções detalhadas.`
+    );
   }
-
-  return true;
 }
 
 export const API_URLS = {

@@ -1,17 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SUPABASE_CONFIG } from '../config/api';
+import { SUPABASE_CONFIG, validateRequiredKeys } from '../config/api';
 
 // ⚠️ CONFIGURE SUAS CREDENCIAIS DO SUPABASE
 // Substitua pelos valores do seu projeto Supabase no arquivo .env.local
 
-const supabaseUrl = SUPABASE_CONFIG.URL || '';
-const supabaseAnonKey = SUPABASE_CONFIG.ANON_KEY || '';
+// Validação obrigatória: lança erro se faltar configuração
+validateRequiredKeys();
 
-// Validação básica para evitar erros silenciosos
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('⚠️ Supabase não configurado. Configure EXPO_PUBLIC_SUPABASE_URL e EXPO_PUBLIC_SUPABASE_ANON_KEY no arquivo .env.local');
-}
+const supabaseUrl = SUPABASE_CONFIG.URL;
+const supabaseAnonKey = SUPABASE_CONFIG.ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {

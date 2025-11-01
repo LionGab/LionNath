@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { API_CONFIG, API_URLS } from '../config/api';
+// 🔒 SEGURANÇA: Chamadas de IA agora usam Edge Functions do Supabase
+// API keys ficam protegidas no servidor, impossível extrair do bundle
 
 const SYSTEM_PROMPT = `Você é a assistente virtual "Nossa Maternidade", inspirada na personalidade de uma influenciadora brasileira jovem e empática. Sua missão é apoiar gestantes e mães com linguagem casual, carinhosa e acessível.
 
@@ -58,120 +58,87 @@ export const chatWithNATIA = async (
 };
 
 /**
- * Chat com IA (Fallback para Claude se Edge Function falhar)
- * @deprecated Use chatWithNATIA para produção
+ * Chat com Claude via Edge Function (SEGURO - API key no servidor)
+ * @deprecated Use chatWithNATIA para produção (Gemini é mais rápido)
  */
 export const chatWithAI = async (
   message: string,
   context: ChatContext,
-  history: any[] = []
+  history: any[] = [],
+  userId: string
 ): Promise<string> => {
   try {
-    const contextString = context.type
-      ? `Perfil: ${context.type}, Semana: ${context.pregnancy_week || 'N/A'}, Bebê: ${context.baby_name || 'Aguardando...'}`
-      : 'Perfil em configuração';
+    const { supabase } = await import('./supabase');
 
-    const systemPromptWithContext = SYSTEM_PROMPT.replace('{{CONTEXT}}', contextString);
-
-    const response = await axios.post(
-      API_URLS.CLAUDE,
-      {
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 1024,
-        temperature: 0.4,
-        system: systemPromptWithContext,
-        messages: [
-          ...history,
-          {
-            role: 'user',
-            content: message,
-          },
-        ],
+    const { data, error } = await supabase.functions.invoke('claude-chat', {
+      body: {
+        userId,
+        message,
+        context,
+        history,
       },
-      {
-        headers: {
-          'x-api-key': API_CONFIG.CLAUDE_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    });
 
-    return response.data.content[0].text;
+    if (error) {
+      throw new Error(`Edge Function error: ${error.message}`);
+    }
+
+    if (!data?.response) {
+      throw new Error('Resposta vazia da Edge Function');
+    }
+
+    return data.response;
   } catch (error: any) {
     // Re-throw para ser tratado pelo retry system
-    throw new Error(`Claude API error: ${error.response?.data?.error?.message || error.message}`);
+    throw new Error(`Claude API error: ${error.message}`);
   }
 };
 
-export const validateWithGPT = async (message: string): Promise<boolean> => {
+/**
+ * Valida resposta de IA com GPT via Edge Function (SEGURO - API key no servidor)
+ */
+export const validateWithGPT = async (message: string, userId: string): Promise<boolean> => {
   try {
-    const response = await axios.post(
-      `${API_URLS.OPENAI}/chat/completions`,
-      {
-        model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: 'Valide se esta resposta de IA sobre maternidade é segura e não contém diagnósticos médicos.',
-          },
-          {
-            role: 'user',
-            content: `Valide: ${message}`,
-          },
-        ],
-        max_tokens: 100,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${API_CONFIG.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const { supabase } = await import('./supabase');
 
-    const validation = response.data.choices[0].message.content.toLowerCase();
-    return !validation.includes('inseguro') && !validation.includes('diagnóstico');
+    const { data, error } = await supabase.functions.invoke('openai-validate', {
+      body: {
+        userId,
+        message,
+      },
+    });
+
+    if (error) {
+      console.error('Erro na validação GPT:', error);
+      return true; // Permite resposta em caso de erro
+    }
+
+    return data?.isValid ?? true;
   } catch (error) {
     console.error('Erro na validação GPT:', error);
     return true; // Permite resposta em caso de erro
   }
 };
 
-export const generateDailyPlan = async (context: ChatContext): Promise<any> => {
+/**
+ * Gera plano diário com GPT via Edge Function (SEGURO - API key no servidor)
+ */
+export const generateDailyPlan = async (context: ChatContext, userId: string): Promise<any> => {
   try {
-    const response = await axios.post(
-      `${API_URLS.OPENAI}/chat/completions`,
-      {
-        model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: 'Você é um assistente de maternidade. Crie um plano diário personalizado para gestantes/mães em PT-BR casual.',
-          },
-          {
-            role: 'user',
-            content: `Crie plano diário para: ${context.type}, ${context.pregnancy_week} semanas. Inclua: 3 prioridades, 1 dica do dia, 1 receita econômica.`,
-          },
-        ],
-        temperature: 0.7,
+    const { supabase } = await import('./supabase');
+
+    const { data, error } = await supabase.functions.invoke('openai-daily-plan', {
+      body: {
+        userId,
+        context,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${API_CONFIG.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    });
 
-    const content = response.data.choices[0].message.content;
+    if (error) {
+      throw error;
+    }
 
-    // Parse simples do conteúdo
-    const priorities = content.match(/(?<=Prioridades:)(.*?)(?=Dica)/s)?.[0]?.split('\n').filter(Boolean) || [];
-    const tip = content.match(/(?<=Dica do Dia:)(.*?)(?=Receita)/s)?.[0]?.trim() || '';
-    const recipe = content.match(/(?<=Receita:)(.*?)$/s)?.[0]?.trim() || '';
-
-    return { priorities, tip, recipe };
+    return data;
   } catch (error) {
     console.error('Erro ao gerar plano diário:', error);
     return {
@@ -182,25 +149,25 @@ export const generateDailyPlan = async (context: ChatContext): Promise<any> => {
   }
 };
 
-export const generateImage = async (prompt: string): Promise<string> => {
+/**
+ * Gera imagem com DALL-E via Edge Function (SEGURO - API key no servidor)
+ */
+export const generateImage = async (prompt: string, userId: string): Promise<string> => {
   try {
-    const response = await axios.post(
-      `${API_URLS.OPENAI}/images/generations`,
-      {
-        model: 'dall-e-3',
-        prompt: `Ilustração gentil e acolhedora: ${prompt}. Estilo cartoon brasileiro, cores suaves (rosa e azul), apropriado para gestantes e mães.`,
-        size: '1024x1024',
-        quality: 'standard',
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${API_CONFIG.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const { supabase } = await import('./supabase');
 
-    return response.data.data[0].url;
+    const { data, error } = await supabase.functions.invoke('openai-image-gen', {
+      body: {
+        userId,
+        prompt,
+      },
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return data?.imageUrl || '';
   } catch (error) {
     console.error('Erro ao gerar imagem:', error);
     return '';

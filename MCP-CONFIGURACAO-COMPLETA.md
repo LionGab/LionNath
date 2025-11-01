@@ -4,7 +4,7 @@ Este documento explica todos os MCP (Model Context Protocol) servers configurado
 
 ## 📋 Visão Geral
 
-O arquivo `.vscode/mcp.json` contém 9 servidores MCP configurados para auxiliar no desenvolvimento:
+O arquivo `.vscode/mcp.json` contém **15 servidores MCP** configurados para auxiliar no desenvolvimento:
 
 ## 🤖 Servidores MCP Configurados
 
@@ -175,7 +175,55 @@ O arquivo `.vscode/mcp.json` contém 9 servidores MCP configurados para auxiliar
 
 ---
 
-### 6. Puppeteer MCP Server ✅
+### 6. Sentry MCP Server ⚙️
+
+**Tipo**: Local (stdio)  
+**Status**: Opcional - requer configuração  
+**Configuração**: Adicionar tokens do Sentry
+
+```json
+"sentry": {
+  "type": "stdio",
+  "command": "npx",
+  "args": [
+    "-y",
+    "@modelcontextprotocol/server-sentry"
+  ],
+  "env": {
+    "SENTRY_AUTH_TOKEN": "",
+    "SENTRY_ORG": "",
+    "SENTRY_PROJECT": ""
+  }
+}
+```
+
+**Como configurar**:
+
+1. Obter Auth Token do Sentry:
+   - Acesse https://sentry.io/settings/account/api/auth-tokens/
+   - Crie um novo token com permissões: `org:read`, `project:read`
+   - Anote seu Organization slug e Project slug
+
+2. Editar `.vscode/mcp.json`:
+   ```json
+   "env": {
+     "SENTRY_AUTH_TOKEN": "sua-auth-token",
+     "SENTRY_ORG": "sua-org-slug",
+     "SENTRY_PROJECT": "seu-project-slug"
+   }
+   ```
+
+**Ferramentas disponíveis**:
+- Visualizar issues de erro
+- Analisar stack traces
+- Ver estatísticas de erros
+- Buscar eventos relacionados
+
+**Uso**: Permite ao Cursor acessar informações de erros e exceções do Sentry.
+
+---
+
+### 7. Puppeteer MCP Server ✅
 
 **Tipo**: Local (stdio)  
 **Status**: Funciona imediatamente  
@@ -203,7 +251,7 @@ O arquivo `.vscode/mcp.json` contém 9 servidores MCP configurados para auxiliar
 
 ---
 
-### 7. Fetch MCP Server ✅
+### 8. Fetch MCP Server ✅
 
 **Tipo**: Local (stdio)  
 **Status**: Funciona imediatamente  
@@ -231,7 +279,7 @@ O arquivo `.vscode/mcp.json` contém 9 servidores MCP configurados para auxiliar
 
 ---
 
-### 8. Git MCP Server ✅
+### 9. Git MCP Server ✅
 
 **Tipo**: Local (stdio)  
 **Status**: Funciona imediatamente  
@@ -259,7 +307,7 @@ O arquivo `.vscode/mcp.json` contém 9 servidores MCP configurados para auxiliar
 
 ---
 
-### 9. Memory MCP Server ✅
+### 10. Memory MCP Server ✅
 
 **Tipo**: Local (stdio)  
 **Status**: Funciona imediatamente  
@@ -283,6 +331,216 @@ O arquivo `.vscode/mcp.json` contém 9 servidores MCP configurados para auxiliar
 - Lembrar preferências e configurações
 
 **Uso**: Permite ao Cursor manter memória contextual entre diferentes interações.
+
+---
+
+### 11. Linear MCP Server ⚙️
+
+**Tipo**: Local (stdio)  
+**Status**: Opcional - requer API key  
+**Configuração**: Adicionar chave de API do Linear
+
+```json
+"linear": {
+  "type": "stdio",
+  "command": "npx",
+  "args": [
+    "-y",
+    "@modelcontextprotocol/server-linear"
+  ],
+  "env": {
+    "LINEAR_API_KEY": ""
+  }
+}
+```
+
+**Como configurar**:
+
+1. Obter API key do Linear:
+   - Acesse https://linear.app/settings/api
+   - Crie uma Personal API key
+   - Copie a chave
+
+2. Editar `.vscode/mcp.json`:
+   ```json
+   "env": {
+     "LINEAR_API_KEY": "sua-chave-api"
+   }
+   ```
+
+**Ferramentas disponíveis**:
+- Visualizar issues do Linear
+- Criar e atualizar issues
+- Buscar por projetos e times
+- Ver roadmap
+
+**Uso**: Permite ao Cursor integrar com o gerenciamento de tarefas Linear.
+
+---
+
+### 12. Slack MCP Server ⚙️
+
+**Tipo**: Local (stdio)  
+**Status**: Opcional - requer configuração  
+**Configuração**: Adicionar tokens do Slack
+
+```json
+"slack": {
+  "type": "stdio",
+  "command": "npx",
+  "args": [
+    "-y",
+    "@modelcontextprotocol/server-slack"
+  ],
+  "env": {
+    "SLACK_BOT_TOKEN": "",
+    "SLACK_TEAM_ID": ""
+  }
+}
+```
+
+**Como configurar**:
+
+1. Criar Slack App:
+   - Acesse https://api.slack.com/apps
+   - Crie um novo app
+   - Adicione scopes: `channels:read`, `chat:write`, `users:read`
+   - Instale o app no seu workspace
+   - Copie o Bot Token e Team ID
+
+2. Editar `.vscode/mcp.json`:
+   ```json
+   "env": {
+     "SLACK_BOT_TOKEN": "xoxb-seu-token",
+     "SLACK_TEAM_ID": "T1234567890"
+   }
+   ```
+
+**Ferramentas disponíveis**:
+- Enviar mensagens no Slack
+- Ler mensagens de canais
+- Buscar usuários e canais
+- Postar atualizações
+
+**Uso**: Permite ao Cursor enviar notificações e interagir com o Slack.
+
+---
+
+### 13. Notion MCP Server ⚙️
+
+**Tipo**: Local (stdio)  
+**Status**: Opcional - requer API key  
+**Configuração**: Adicionar chave de API do Notion
+
+```json
+"notion": {
+  "type": "stdio",
+  "command": "npx",
+  "args": [
+    "-y",
+    "@modelcontextprotocol/server-notion"
+  ],
+  "env": {
+    "NOTION_API_KEY": ""
+  }
+}
+```
+
+**Como configurar**:
+
+1. Obter API key do Notion:
+   - Acesse https://www.notion.so/my-integrations
+   - Crie uma nova integração
+   - Copie o Internal Integration Token
+   - Compartilhe páginas/databases com a integração
+
+2. Editar `.vscode/mcp.json`:
+   ```json
+   "env": {
+     "NOTION_API_KEY": "secret_seu-token"
+   }
+   ```
+
+**Ferramentas disponíveis**:
+- Ler páginas do Notion
+- Criar e atualizar páginas
+- Buscar em databases
+- Adicionar conteúdo
+
+**Uso**: Permite ao Cursor acessar e atualizar documentação no Notion.
+
+---
+
+### 14. Google Drive MCP Server ⚙️
+
+**Tipo**: Local (stdio)  
+**Status**: Opcional - requer configuração  
+**Configuração**: Adicionar credenciais OAuth
+
+```json
+"google-drive": {
+  "type": "stdio",
+  "command": "npx",
+  "args": [
+    "-y",
+    "@modelcontextprotocol/server-google-drive"
+  ],
+  "env": {
+    "GOOGLE_DRIVE_CREDENTIALS": ""
+  }
+}
+```
+
+**Como configurar**:
+
+1. Criar credenciais OAuth:
+   - Acesse https://console.cloud.google.com/
+   - Crie um projeto ou selecione existente
+   - Habilite Google Drive API
+   - Crie credenciais OAuth 2.0
+   - Baixe o arquivo JSON de credenciais
+
+2. Editar `.vscode/mcp.json`:
+   ```json
+   "env": {
+     "GOOGLE_DRIVE_CREDENTIALS": "{\"type\":\"service_account\",...}"
+   }
+   ```
+
+**Ferramentas disponíveis**:
+- Listar arquivos do Google Drive
+- Ler conteúdo de arquivos
+- Criar e atualizar arquivos
+- Buscar arquivos
+
+**Uso**: Permite ao Cursor acessar arquivos e documentos do Google Drive.
+
+---
+
+### 15. EverArt MCP Server ✅
+
+**Tipo**: Local (stdio)  
+**Status**: Funciona imediatamente  
+**Configuração**: Nenhuma necessária
+
+```json
+"everart": {
+  "type": "stdio",
+  "command": "npx",
+  "args": [
+    "-y",
+    "@modelcontextprotocol/server-everart"
+  ],
+  "env": {}
+}
+```
+
+**Ferramentas disponíveis**:
+- Gerar imagens com IA
+- Criar arte digital
+- Editar imagens
+
+**Uso**: Permite ao Cursor gerar imagens e arte com IA quando necessário.
 
 ---
 
@@ -315,25 +573,11 @@ Para melhor performance em desenvolvimento:
 "POSTGRES_CONNECTION_STRING": "postgresql://postgres.xxxxx:[PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
 ```
 
-### Opção 3: Variável de Ambiente
-
-Mais seguro - use variável de ambiente:
-
-1. Criar `.env.local`:
-   ```bash
-   POSTGRES_CONNECTION_STRING=postgresql://...
-   ```
-
-2. No script de setup, carregar variável:
-   ```bash
-   export POSTGRES_CONNECTION_STRING=$(grep POSTGRES .env.local | cut -d '=' -f2)
-   ```
-
 ---
 
 ## ✅ Checklist de Configuração
 
-### Servidores que Funcionam Imediatamente:
+### Servidores que Funcionam Imediatamente (7):
 - [x] GitHub MCP
 - [x] Filesystem MCP
 - [x] SQLite MCP
@@ -341,10 +585,16 @@ Mais seguro - use variável de ambiente:
 - [x] Fetch MCP
 - [x] Git MCP
 - [x] Memory MCP
+- [x] EverArt MCP
 
-### Servidores que Requerem Configuração:
+### Servidores que Requerem Configuração (7):
 - [ ] PostgreSQL MCP (adicionar connection string do Supabase)
 - [ ] Brave Search MCP (adicionar API key - opcional)
+- [ ] Sentry MCP (adicionar tokens - opcional)
+- [ ] Linear MCP (adicionar API key - opcional)
+- [ ] Slack MCP (adicionar tokens - opcional)
+- [ ] Notion MCP (adicionar API key - opcional)
+- [ ] Google Drive MCP (adicionar credenciais - opcional)
 
 ---
 
@@ -373,6 +623,11 @@ Qual é o status atual do Git?
 **PostgreSQL (se configurado):**
 ```
 Liste as tabelas do banco de dados Supabase
+```
+
+**Sentry (se configurado):**
+```
+Mostre os últimos erros do Sentry
 ```
 
 ---
@@ -421,9 +676,15 @@ Liste as tabelas do banco de dados Supabase
 
 ### Brave Search não funciona
 - Verifique se a API key está válida
-- Teste a API key manualmente: `curl "https://api.search.brave.com/res/v1/web/search?q=test" -H "X-Subscription-Token: YOUR_API_KEY"`
+- Teste a API key manualmente
+
+### Sentry não funciona
+- Verifique se os tokens estão corretos
+- Confirme que o Organization e Project slugs estão corretos
+- Verifique as permissões do token
 
 ---
 
 **Última atualização**: Janeiro 2025  
-**Versão**: 1.0.0
+**Versão**: 2.0.0  
+**Total de Servidores**: 15

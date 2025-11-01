@@ -99,6 +99,9 @@ nossa-maternidade/
 │   ├── prompts/             # Prompts reutilizáveis
 │   └── rules/               # Regras de código
 │
+├── .vscode/                 # Configurações VS Code/Cursor
+│   └── mcp.json             # Servidores MCP configurados
+│
 ├── App.tsx                  # Entry point da aplicação
 ├── package.json             # Dependências
 ├── tsconfig.json            # Configuração TypeScript
@@ -199,6 +202,58 @@ O projeto utiliza um design system próprio chamado **Bubblegum**:
 
 ---
 
+## 🤖 Servidores MCP Configurados
+
+O projeto inclui configuração de **Model Context Protocol (MCP)** servers no arquivo `.vscode/mcp.json`:
+
+### 1. **GitHub MCP Server** ✅
+- Tipo: HTTP (remoto)
+- Acesso read-only a repositórios, issues, PRs
+- Sem configuração adicional necessária
+
+### 2. **Filesystem MCP Server** ✅
+- Tipo: Local (stdio)
+- Operações seguras no sistema de arquivos
+- Ferramentas: read_file, list_directory, search_files
+
+### 3. **PostgreSQL MCP Server** ✅
+- Tipo: Local (stdio)
+- Conexão com bancos PostgreSQL (incluindo Supabase)
+- **Configuração**: Adicione `POSTGRES_CONNECTION_STRING` no env
+- Útil para: Consultas diretas ao banco Supabase
+
+### 4. **SQLite MCP Server** ✅
+- Tipo: Local (stdio)
+- Banco local para desenvolvimento
+- Ferramentas: Executar queries SQLite
+
+### 5. **Brave Search MCP Server** ✅
+- Tipo: Local (stdio)
+- Busca na web via Brave Search API
+- **Configuração**: Adicione `BRAVE_API_KEY` se necessário (opcional)
+
+### 6. **Puppeteer MCP Server** ✅
+- Tipo: Local (stdio)
+- Automação de browser para testes
+- Útil para: Web scraping, testes end-to-end
+
+### 7. **Fetch MCP Server** ✅
+- Tipo: Local (stdio)
+- Requisições HTTP simplificadas
+- Útil para: Testar APIs, webhooks
+
+### 8. **Git MCP Server** ✅
+- Tipo: Local (stdio)
+- Operações Git via MCP
+- Ferramentas: Status, commit, diff, etc.
+
+### 9. **Memory MCP Server** ✅
+- Tipo: Local (stdio)
+- Armazenamento de memória contextual
+- Útil para: Manter contexto entre sessões
+
+---
+
 ## 📊 Status Atual do Projeto
 
 ### ✅ O Que Está Completo (75%)
@@ -219,13 +274,18 @@ O projeto utiliza um design system próprio chamado **Bubblegum**:
    - Guias de configuração
    - Arquitetura documentada
 
+4. **Configuração MCP**: 100%
+   - 9 servidores MCP configurados
+   - Documentação completa
+
 ### ⏳ O Que Precisa ser Configurado (25%)
 
 1. **Projeto Supabase**: Criar projeto e obter credenciais
 2. **Arquivo .env**: Preencher variáveis de ambiente
 3. **Gemini API**: Configurar chave de API
 4. **Deploy Edge Functions**: Fazer deploy das funções no Supabase
-5. **Testes**: Rodar o app e testar funcionalidades
+5. **Configuração MCP**: Adicionar chaves de API opcionais (Postgres, Brave Search)
+6. **Testes**: Rodar o app e testar funcionalidades
 
 **Tempo estimado**: ~25 minutos
 
@@ -266,7 +326,12 @@ O projeto utiliza um design system próprio chamado **Bubblegum**:
    supabase functions deploy nathia-chat
    ```
 
-6. **Executar app**
+6. **Configurar MCP (Opcional)**
+   - Editar `.vscode/mcp.json`
+   - Adicionar `POSTGRES_CONNECTION_STRING` para conexão Supabase
+   - Adicionar `BRAVE_API_KEY` se quiser usar busca
+
+7. **Executar app**
    ```bash
    npm start
    # ou
@@ -322,6 +387,7 @@ O projeto segue padrões de código definidos em `.cursorrules`:
 - **STATUS-APP.md**: Status detalhado do projeto
 - **COMO-DEIXAR-APP-FUNCIONAL.md**: Guia passo a passo para configurar
 - **ARCHITECTURE.md**: Arquitetura detalhada do sistema
+- **MCP_SETUP.md**: Guia completo de configuração MCP
 
 ---
 

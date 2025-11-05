@@ -18,6 +18,7 @@ import { TabNavigator } from './TabNavigator';
 import OnboardingScreen from '@/screens/OnboardingScreen';
 import DailyPlanScreen from '@/screens/DailyPlanScreen';
 import ContentDetailScreen from '@/features/content/ContentDetailScreen';
+import { StatusScreen } from '@/components/StatusScreen';
 import { colors } from '@/theme/colors';
 import { linking } from './linking';
 
@@ -80,6 +81,16 @@ export function AppNavigator() {
                 options={{
                   headerShown: true,
                   title: 'Conteúdo',
+                  headerStyle: { backgroundColor: colors.background },
+                  headerTintColor: colors.foreground,
+                }}
+              />
+              <Stack.Screen
+                name="Status"
+                component={StatusScreen}
+                options={{
+                  headerShown: true,
+                  title: 'Status do Sistema',
                   headerStyle: { backgroundColor: colors.background },
                   headerTintColor: colors.foreground,
                 }}

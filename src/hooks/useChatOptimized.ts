@@ -135,11 +135,11 @@ export function useChatOptimized() {
             dispatch({ type: 'SET_MESSAGES', payload: formattedMessages });
           }
         } catch (error) {
-          console.log('Erro ao carregar histórico:', error);
+          logger.error('Erro ao carregar histórico', { error });
         }
       }
     } catch (error) {
-      console.error('Erro ao carregar perfil:', error);
+      logger.error('Erro ao carregar perfil', { error });
     } finally {
       setInitialLoading(false);
     }

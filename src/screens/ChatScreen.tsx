@@ -130,7 +130,7 @@ export default function ChatScreen() {
     try {
       await reloadHistory();
     } catch (error) {
-      console.error('Erro ao recarregar histórico:', error);
+      logger.error('Erro ao recarregar histórico', { error });
     } finally {
       setRefreshing(false);
     }

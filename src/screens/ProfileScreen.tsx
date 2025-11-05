@@ -1,24 +1,44 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { UserProfileLocal } from '@/types';
+import { UserRepository } from '@/repositories/UserRepository';
+import { logger } from '@/utils/logger';
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Logo } from '@/components/Logo';
 import { borderRadius, colors, shadows, spacing, typography } from '@/theme/colors';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<UserProfileLocal | null>(null);
 
   useEffect(() => {
     loadProfile();
   }, []);
 
-  const loadProfile = async () => {
-    const profileJson = await AsyncStorage.getItem('userProfile');
-    if (profileJson) {
-      setProfile(JSON.parse(profileJson));
+  const loadProfile = useCallback(async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) return;
+
+      const result = await UserRepository.getById(userId);
+      if (result.data) {
+        setProfile(result.data);
+      } else {
+        // Fallback: buscar do AsyncStorage
+        const profileJson = await AsyncStorage.getItem('userProfile');
+        if (profileJson) {
+          setProfile(JSON.parse(profileJson));
+        }
+      }
+    } catch (error) {
+      logger.error('Erro ao carregar perfil', { error });
+      // Fallback: buscar do AsyncStorage
+      const profileJson = await AsyncStorage.getItem('userProfile');
+      if (profileJson) {
+        setProfile(JSON.parse(profileJson));
+      }
     }
-  };
+  }, []);
 
   const handleLogout = () => {
     Alert.alert('Sair', 'Tem certeza que deseja sair?', [
@@ -32,8 +52,8 @@ export default function ProfileScreen() {
           await AsyncStorage.removeItem('userId');
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Onboarding' }],
-          } as any);
+            routes: [{ name: 'Onboarding' as never }],
+          });
         },
       },
     ]);

@@ -44,8 +44,8 @@ export const ThemeSelector: React.FC = () => {
               style={[
                 styles.themeCard,
                 {
-                  backgroundColor: isSelected ? colors.primary : colors.card,
-                  borderColor: isSelected ? colors.primary : colors.border,
+                  backgroundColor: (isSelected ? colors.primary : colors.card) as string,
+                  borderColor: (isSelected ? colors.primary : colors.border) as string,
                   borderWidth: isSelected ? 2 : 1,
                 },
               ]}

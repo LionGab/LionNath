@@ -127,9 +127,11 @@ export default function ContentDetailScreen() {
       // Web: usar Web Share API se disponível, senão copiar para clipboard
       if (Platform.OS === 'web') {
         // Verificar se navegador suporta Web Share API
-        if (typeof (window as any)?.navigator !== 'undefined' && (window as any).navigator.share) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const globalWindow = (globalThis as any).window || null;
+        if (globalWindow?.navigator?.share) {
           try {
-            await (window as any).navigator.share({
+            await globalWindow.navigator.share({
               title: content.title,
               text: shareText,
             });
@@ -140,9 +142,9 @@ export default function ContentDetailScreen() {
             }
             throw shareError;
           }
-        } else if (typeof (window as any)?.navigator !== 'undefined' && (window as any).navigator.clipboard) {
+        } else if (globalWindow?.navigator?.clipboard) {
           // Fallback: copiar para clipboard
-          await (window as any).navigator.clipboard.writeText(shareText);
+          await globalWindow.navigator.clipboard.writeText(shareText);
           Alert.alert('Copiado!', 'Conteúdo copiado para a área de transferência');
         } else {
           // Último fallback: mostrar texto para copiar manualmente

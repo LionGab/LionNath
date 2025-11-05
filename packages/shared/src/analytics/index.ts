@@ -26,17 +26,27 @@ export function initAnalytics(apiKey: string, userId?: string, options?: {
 
   try {
     // Dynamic import para evitar bundle no server
-    import('@amplitude/analytics-browser').then((Amplitude) => {
-      amplitudeClient = Amplitude.init(apiKey, userId, {
-        defaultTracking: {
-          pageViews: options?.defaultTracking?.pageViews ?? true,
-          sessions: options?.defaultTracking?.sessions ?? true,
-          formInteractions: options?.defaultTracking?.formInteractions ?? true,
-        },
-        ...options,
-      });
-      isInitialized = true;
-    });
+    // Usar type assertion para evitar erro de tipo quando módulo não está instalado
+    const loadAmplitude = async () => {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const Amplitude = await import('@amplitude/analytics-browser' as string);
+        if (Amplitude && typeof Amplitude.init === 'function') {
+          amplitudeClient = Amplitude.init(apiKey, userId, {
+            defaultTracking: {
+              pageViews: options?.defaultTracking?.pageViews ?? true,
+              sessions: options?.defaultTracking?.sessions ?? true,
+              formInteractions: options?.defaultTracking?.formInteractions ?? true,
+            },
+            ...options,
+          });
+          isInitialized = true;
+        }
+      } catch (err) {
+        console.warn('Amplitude not available:', err);
+      }
+    };
+    loadAmplitude();
   } catch (error) {
     console.error('Failed to initialize Amplitude:', error);
   }
@@ -158,4 +168,3 @@ export function setUserProperties(properties: Record<string, any>) {
     console.error('Failed to set user properties:', error);
   }
 }
-

@@ -17,4 +17,30 @@ export * from './risk-analyzer';
 export * from './context-manager';
 export * from './team-notifier';
 export * from './model-router';
-export * from './schemas';
+// Schemas exportados com nomes específicos para evitar conflitos
+export {
+  AIModelSchema,
+  TaskTypeSchema,
+  ModelRouterConfigSchema,
+  RoutingDecisionSchema,
+  ChatMessageSchema as NATChatMessageSchema,
+  ChatRequestSchema,
+  RiskLevelSchema,
+  RiskAnalysisSchema as NATRiskAnalysisSchema,
+  GuardrailResultSchema,
+  ContextChunkSchema,
+  ContextRequestSchema,
+  NotificationSchema,
+  type AIModel,
+  type TaskType,
+  type ModelRouterConfig,
+  type RoutingDecision,
+  type ChatMessage as NATChatMessage,
+  type ChatRequest,
+  type RiskLevel,
+  type RiskAnalysis as NATRiskAnalysis,
+  type GuardrailResult,
+  type ContextChunk,
+  type ContextRequest,
+  type Notification,
+} from './schemas';

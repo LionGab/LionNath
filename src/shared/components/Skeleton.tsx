@@ -74,17 +74,30 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   const widthValue = getWidth();
   const borderRadiusValue = getBorderRadius();
 
+  // Converter width para formato compatível com Animated.View
+  // Animated.View aceita string apenas para porcentagens no formato correto
+  const styleWidth: number | string | undefined = typeof widthValue === 'string' && widthValue.includes('%') 
+    ? widthValue 
+    : typeof widthValue === 'number' 
+      ? widthValue 
+      : undefined;
+
+  const animatedStyle: any = {
+    height,
+    borderRadius: borderRadiusValue,
+    opacity: opacity,
+    backgroundColor: colors.muted,
+  };
+
+  if (styleWidth !== undefined) {
+    animatedStyle.width = styleWidth;
+  }
+
   return (
     <Animated.View
       style={[
         styles.skeleton,
-        {
-          width: widthValue,
-          height,
-          borderRadius: borderRadiusValue,
-          opacity: opacity as any,
-          backgroundColor: colors.muted,
-        },
+        animatedStyle,
         style,
       ]}
       accessible={false}

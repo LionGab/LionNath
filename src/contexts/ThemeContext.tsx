@@ -180,7 +180,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     toggleTheme,
     setThemeMode,
     setThemeName,
-    theme,
+    theme: theme as any,
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

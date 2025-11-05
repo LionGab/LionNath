@@ -1,22 +1,30 @@
 # Cursor Rules - Nossa Maternidade
 # Regras de revisão e padrões de código
+# Mobile-First iOS/Android - React Native + Expo
 
-## Padrões de Código
+## Estilo de Código e Estrutura
 
 ### TypeScript
 - Sempre usar tipos explícitos (evitar `any` quando possível)
+- Preferir `interfaces` sobre `type` para definições de objetos
+- Evitar `enums`; usar objetos ou maps ao invés
+- Evitar `any` ou `unknown` a menos que absolutamente necessário
+- Buscar definições de tipos no codebase antes de criar novos
+- Evitar type assertions com `as` ou `!`
 - Interfaces exportadas quando usadas externamente
 - Props tipadas com interfaces
 - Usar `React.FC` ou tipagem explícita para componentes
 
-### Nomenclatura
-- Componentes: PascalCase (`Button.tsx`, `ChatScreen.tsx`)
-- Arquivos de hooks: camelCase com prefixo `use` (`useChatOptimized.ts`)
-- Arquivos de serviços: camelCase (`supabase.ts`, `notifications.ts`)
-- Constantes: UPPER_SNAKE_CASE (`GEMINI_API_KEY`)
-- Variáveis e funções: camelCase (`handlePress`, `loadData`)
+### Programação Funcional e Declarativa
+- Escrever código TypeScript conciso e técnico
+- Usar padrões funcionais e declarativos; evitar classes
+- Preferir iteração e modularização sobre duplicação de código
+- Usar nomes de variáveis descritivos com verbos auxiliares (ex: `isLoaded`, `hasError`, `shouldRetry`)
+- Usar a palavra-chave `function` para funções puras
+- Evitar chaves desnecessárias em condicionais; usar sintaxe concisa para declarações simples
 
 ### Estrutura de Arquivos
+- Estrutura: componente/screen exportado, helpers, conteúdo estático, tipos
 - Componentes em `src/components/`
 - Shared components em `src/shared/components/`
 - Features em `src/features/`
@@ -24,6 +32,15 @@
 - Services em `src/services/`
 - Hooks em `src/hooks/`
 - Types em `src/types/`
+- Utils em `src/utils/`
+
+### Nomenclatura
+- Favor named exports para componentes e utilities
+- Componentes: PascalCase (`Button.tsx`, `ChatScreen.tsx`)
+- Arquivos de hooks: camelCase com prefixo `use` (`useChatOptimized.ts`)
+- Arquivos de serviços: camelCase (`supabase.ts`, `notifications.ts`)
+- Constantes: UPPER_SNAKE_CASE (`GEMINI_API_KEY`)
+- Variáveis e funções: camelCase (`handlePress`, `loadData`)
 
 ### React/React Native
 - Sempre usar `React.memo` em componentes puros
@@ -31,25 +48,55 @@
 - Usar `useMemo` para computações pesadas
 - Lazy loading de screens no TabNavigator
 - FlatList otimizada com `windowSize={10}`, `maxToRenderPerBatch={10}`
+- Manter JSX minimal e legível
+- Usar declarative JSX
+
+### UI e Estilização Mobile-First
+- Usar `StyleSheet.create()` para estilos ao invés de objetos inline
+- Sempre usar `colors`, `spacing`, `typography`, `borderRadius` do tema (não cores hardcoded)
+- Dark Mode: usar `useTheme()` hook do ThemeContext
+- Usar SafeAreaView para respeitar áreas seguras do iOS/Android
+- Considerar diferentes tamanhos de tela (mobile-first, depois tablet)
+- Usar Flexbox para layouts responsivos
+- Usar `Platform.select()` para estilos específicos de plataforma quando necessário
+- Otimizar imagens usando `expo-image` ou `react-native-fast-image`
+- Usar `expo-linear-gradient` para gradientes ao invés de soluções customizadas
 
 ### Acessibilidade (WCAG 2.1 AA)
 - Sempre incluir `accessibilityLabel` descritivo
 - Usar `accessibilityRole` correto
 - Adicionar `accessibilityHint` quando necessário
-- Área de toque mínima: 44x44px
-- Contraste de cores: 4.5:1+
+- Área de toque mínima: 44x44px (iOS) / 48dp (Android)
+- Contraste de cores: 4.5:1+ para texto normal, 3:1+ para texto grande
+- Usar `accessibilityLiveRegion` para mudanças dinâmicas de conteúdo
+- Implementar suporte a screen readers (VoiceOver/TalkBack)
 
-### Performance
-- Memoizar componentes pesados
-- Lazy load screens
-- Otimizar FlatList com configurações adequadas
+### Performance Mobile
+- Memoizar componentes pesados com `React.memo`
+- Lazy load screens no TabNavigator com `React.lazy()` ou imports dinâmicos
+- Otimizar FlatList com configurações adequadas:
+  - `windowSize={10}` para reduzir memória
+  - `maxToRenderPerBatch={10}` para renderização inicial
+  - `updateCellsBatchingPeriod={50}` para atualizações suaves
+  - `removeClippedSubviews={true}` para performance
+  - `initialNumToRender={10}` para renderização inicial
 - Evitar re-renders desnecessários
 - Usar `useOptimizedFlatList` hook para listas
+- Usar `InteractionManager` para adiar tarefas não-críticas após animações
+- Debounce/throttle handlers de scroll e input
+- Otimizar imagens: usar tamanhos apropriados, formatos eficientes (WebP quando possível)
 
 ### Imports
-- Ordem: React → React Native → Bibliotecas externas → Internos
-- Agrupar imports por categoria
-- Usar path aliases quando possível
+- Ordem: React → React Native → Expo → Bibliotecas externas → Internos
+- Agrupar imports por categoria com linha em branco entre grupos
+- Usar path aliases quando possível (`@/components`, `@/hooks`, etc)
+
+### Sintaxe e Formatação
+- Usar a palavra-chave `function` para funções puras
+- Evitar chaves desnecessárias em condicionais simples
+- Usar sintaxe concisa quando apropriado (ex: `if (isLoading) return <Loading />`)
+- Manter JSX minimal e legível
+- Usar declarative JSX sempre que possível
 
 ### Comentários
 - JSDoc para componentes públicos
@@ -86,33 +133,71 @@
 - Falta de documentação
 - Testes faltantes
 
-### Padrões Específicos do Projeto
+### React Native/Expo Best Practices
+
+#### Navegação
+- Usar `@react-navigation/native` para navegação
+- Configurar deep linking em `app.json` e `src/navigation/linking.ts`
+- Usar `useNavigation` e `useRoute` hooks para acesso à navegação
+- Configurar tipos de navegação em `src/navigation/types.ts`
+- Usar `NavigationContainer` no nível raiz do app
+
+#### Estado e Dados
+- Usar `zustand` para gerenciamento de estado global
+- Usar hooks customizados para lógica de negócio reutilizável
+- Usar `AsyncStorage` para persistência local quando necessário
+- Sempre verificar autenticação antes de queries ao Supabase
+- Usar RLS (Row Level Security) no Supabase
+- Tratar erros de forma amigável com feedback visual
+
+#### Ambiente e Configuração
+- Usar variáveis de ambiente via `process.env.EXPO_PUBLIC_*` para valores públicos
+- Usar `expo-constants` para acessar `app.json` config
+- Configurar plugins necessários em `app.json`
+- Usar EAS Build para builds de produção
+
+#### Offline e Sincronização
+- Implementar cache offline quando aplicável
+- Usar `NetInfo` para detectar conectividade
+- Implementar retry logic para requisições falhadas
+- Usar `expo-updates` para OTA updates quando apropriado
+
+#### Notificações
+- Usar `expo-notifications` para push notifications
+- Solicitar permissões apropriadas antes de usar notificações
+- Implementar handlers para notificações em foreground e background
+
+#### Padrões Específicos do Projeto
 
 #### Tema
 - Sempre usar `colors` do tema (não cores hardcoded)
 - Usar `spacing`, `typography`, `borderRadius` do tema
 - Dark Mode: usar `useTheme()` hook
+- Suportar modo claro e escuro automaticamente
 
 #### Componentes
 - Sempre exportar tipos/interfaces quando necessário
 - Incluir JSDoc para props complexas
-- Acessibilidade obrigatória
+- Acessibilidade obrigatória em todos os componentes interativos
+- Usar componentes do sistema de design (`src/components/`)
 
 #### Supabase
 - Sempre verificar autenticação antes de queries
 - Usar RLS (Row Level Security)
 - Tratar erros de forma amigável
+- Usar `useUserProfile` hook para dados do usuário
 
 #### NAT-AI
 - Guardrails obrigatórios em todas as respostas
 - Context Manager para contexto longo
 - Risk Analyzer para detecção de crise
+- Usar sistema de prompt em `src/lib/nat-ai/`
 
 ## Exemplo de Código Bom
 
 ```typescript
 /**
- * Button Component - Sistema de Design
+ * Button Component - Sistema de Design Mobile-First
  *
  * @example
  * <Button variant="primary" onPress={handlePress}>
@@ -126,47 +211,176 @@ export interface ButtonProps {
   onPress: () => void;
   /** Texto do botão */
   children: React.ReactNode;
+  /** Desabilitar botão */
+  disabled?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   onPress,
-  children
+  children,
+  disabled = false
 }) => {
+  const theme = useTheme();
+  
   const handlePress = useCallback(() => {
+    if (disabled) return;
+    
     // Haptic feedback
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } catch {}
     onPress();
-  }, [onPress]);
+  }, [onPress, disabled]);
+
+  const buttonStyle = useMemo(
+    () => [
+      styles.button,
+      styles[variant],
+      disabled && styles.disabled,
+      {
+        backgroundColor: theme.colors.primary,
+        paddingVertical: theme.spacing.md,
+        paddingHorizontal: theme.spacing.lg,
+        borderRadius: theme.borderRadius.md,
+      }
+    ],
+    [variant, disabled, theme]
+  );
+
+  const textStyle = useMemo(
+    () => [
+      styles.text,
+      {
+        color: theme.colors.onPrimary,
+        fontSize: theme.typography.button.fontSize,
+        fontWeight: theme.typography.button.fontWeight,
+      }
+    ],
+    [theme]
+  );
 
   return (
     <TouchableOpacity
-      style={[styles.button, styles[variant]]}
+      style={buttonStyle}
       onPress={handlePress}
+      disabled={disabled}
       accessible={true}
       accessibilityRole="button"
       accessibilityLabel={typeof children === 'string' ? children : 'Botão'}
+      accessibilityState={{ disabled }}
     >
-      <Text style={styles.text}>{children}</Text>
+      <Text style={textStyle}>{children}</Text>
     </TouchableOpacity>
   );
 };
+
+// Estilos devem usar valores do tema dentro do componente
+// ou definir valores constantes no StyleSheet
+const styles = StyleSheet.create({
+  button: {
+    minHeight: 44, // iOS touch target mínimo
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  primary: {
+    // Estilos específicos
+  },
+  secondary: {
+    // Estilos específicos
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  text: {
+    // Tipografia aplicada dinamicamente via useMemo
+  },
+});
+```
+
+### Exemplo de Screen Mobile-First
+
+```typescript
+/**
+ * HomeScreen - Tela principal do app
+ * Mobile-first design com suporte a tablet
+ */
+export function HomeScreen(): JSX.Element {
+  const theme = useTheme();
+  const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<Data[]>([]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const result = await fetchData();
+      setData(result);
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  const listStyle = useMemo(
+    () => ({ padding: theme.spacing.md }),
+    [theme.spacing.md]
+  );
+
+  return (
+    <Screen>
+      <SafeAreaView style={styles.container}>
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+          contentContainerStyle={listStyle}
+          windowSize={10}
+          maxToRenderPerBatch={10}
+          removeClippedSubviews={true}
+        />
+      </SafeAreaView>
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 ```
 
 ## O Que Evitar
 
 - ❌ `any` desnecessário
 - ❌ Componentes sem memoização quando necessário
-- ❌ FlatList sem otimizações
+- ❌ FlatList sem otimizações de performance
 - ❌ Imports não organizados
-- ❌ Cores hardcoded
+- ❌ Cores hardcoded (sempre usar tema)
+- ❌ Estilos inline desnecessários (usar StyleSheet.create)
 - ❌ Falta de acessibilidade
 - ❌ Erros não tratados
 - ❌ Componentes sem documentação
 - ❌ Código duplicado
 - ❌ Funções muito complexas (>50 linhas)
+- ❌ Re-renders desnecessários
+- ❌ Classes ao invés de funções
+- ❌ Enums ao invés de objetos/maps
+- ❌ Type assertions desnecessárias (`as`, `!`)
+- ❌ Navegação sem tipos
+- ❌ Imagens não otimizadas
+- ❌ Áreas de toque menores que 44x44px
+- ❌ Falta de tratamento offline
 
 ## Auto-Aprovação e Revisão
 

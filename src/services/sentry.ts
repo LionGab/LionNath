@@ -4,6 +4,7 @@
  */
 
 import * as Sentry from '@sentry/react-native';
+import { logger } from '@/utils/logger';
 
 let isInitialized = false;
 
@@ -12,10 +13,10 @@ export function initSentry() {
     return;
   }
 
-  const dsn = process.env.EXPO_PUBLIC_SENTRY_DSN;
+  const dsn = process.env.SENTRY_DSN || process.env.EXPO_PUBLIC_SENTRY_DSN;
 
   if (!dsn) {
-    console.warn('Sentry DSN não configurado. Error tracking desabilitado.');
+    logger.warn('Sentry DSN não configurado. Error tracking desabilitado.');
     return;
   }
 
@@ -42,7 +43,7 @@ export function initSentry() {
   });
 
   isInitialized = true;
-  console.log('Sentry inicializado com sucesso');
+  logger.info('Sentry inicializado com sucesso');
 }
 
 export default Sentry;

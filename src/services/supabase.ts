@@ -20,10 +20,12 @@ const dummyKey =
 const supabaseUrl = rawUrl.trim() || dummyUrl;
 const supabaseAnonKey = rawKey.trim() || dummyKey;
 
+import { logger } from '@/utils/logger';
+
 // Avisar se usando valores dummy
 if (!rawUrl || !rawKey) {
-  console.warn('⚠️ Supabase não configurado. Configure EXPO_PUBLIC_SUPABASE_URL e EXPO_PUBLIC_SUPABASE_ANON_KEY');
-  console.warn('⚠️ Usando valores dummy para evitar erro. Configure as variáveis de ambiente no Netlify para produção');
+  logger.warn('⚠️ Supabase não configurado. Configure EXPO_PUBLIC_SUPABASE_URL e EXPO_PUBLIC_SUPABASE_ANON_KEY');
+  logger.warn('⚠️ Usando valores dummy para evitar erro. Configure as variáveis de ambiente no Netlify para produção');
 }
 
 // Criar cliente Supabase (sempre com valores válidos)
@@ -59,7 +61,7 @@ export interface ChatMessage {
   message: string;
   response: string;
   created_at: string;
-  context_data?: any;
+  context_data?: Record<string, unknown>;
 }
 
 export interface DailyPlan {

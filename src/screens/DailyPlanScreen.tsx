@@ -1,68 +1,35 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDailyPlan } from '@/hooks/useDailyPlan';
+import { logger } from '@/utils/logger';
 import { useNavigation } from '@react-navigation/native';
 import { format } from 'date-fns';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ChatContext, generateDailyPlan } from '@/services/ai';
-import { getDailyPlan, saveDailyPlan } from '@/services/supabase';
+import { useDailyPlan } from '@/hooks/useDailyPlan';
+import type { DailyPlanLocal } from '@/types';
+import { logger } from '@/utils/logger';
 import { borderRadius, colors, shadows, spacing, typography } from '@/theme/colors';
 
 export default function DailyPlanScreen() {
   const navigation = useNavigation();
-  const [dailyPlan, setDailyPlan] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
+  const { dailyPlan, loading, generating, generatePlan } = useDailyPlan();
 
-  useEffect(() => {
-    loadDailyPlan();
-  }, []);
-
-  const loadDailyPlan = async () => {
-    setLoading(true);
+  const handleGeneratePlan = async () => {
     try {
-      const userId = await AsyncStorage.getItem('userId');
-      const today = format(new Date(), 'yyyy-MM-dd');
-
-      if (userId) {
-        const plan = await getDailyPlan(userId, today);
-        setDailyPlan(plan);
-      }
+      await generatePlan();
+      Alert.alert('Sucesso!', 'Plano gerado com sucesso! 🎉');
     } catch (error) {
-      console.log('Erro ao carregar plano:', error);
-    } finally {
-      setLoading(false);
+      logger.error('Erro ao gerar plano', { error });
+      Alert.alert('Erro', 'Não foi possível gerar o plano');
     }
   };
 
   const handleGeneratePlan = async () => {
-    setGenerating(true);
     try {
-      const profileJson = await AsyncStorage.getItem('userProfile');
-      const context: ChatContext = profileJson ? JSON.parse(profileJson) : {};
-
-      const planData = await generateDailyPlan(context);
-      setDailyPlan(planData);
-
-      // Salvar no Supabase
-      const userId = await AsyncStorage.getItem('userId');
-      const today = format(new Date(), 'yyyy-MM-dd');
-
-      if (userId) {
-        await saveDailyPlan({
-          user_id: userId,
-          date: today,
-          priorities: planData.priorities,
-          tip: planData.tip,
-          recipe: planData.recipe,
-        });
-      }
-
+      await generatePlan();
       Alert.alert('Sucesso!', 'Plano gerado com sucesso! 🎉');
     } catch (error) {
-      console.error('Erro ao gerar plano:', error);
+      logger.error('Erro ao gerar plano', { error });
       Alert.alert('Erro', 'Não foi possível gerar o plano');
-    } finally {
-      setGenerating(false);
     }
   };
 
@@ -101,7 +68,7 @@ export default function DailyPlanScreen() {
             {/* Prioridades */}
             <View style={styles.sectionCard}>
               <Text style={styles.sectionTitle}>🎯 Prioridades de Hoje</Text>
-              {dailyPlan.priorities?.map((priority: string, index: number) => (
+              {dailyPlan?.priorities?.map((priority: string, index: number) => (
                 <View key={index} style={styles.priorityItem}>
                   <Text style={styles.priorityNumber}>{index + 1}</Text>
                   <Text style={styles.priorityText}>{priority}</Text>
@@ -112,13 +79,13 @@ export default function DailyPlanScreen() {
             {/* Dica do Dia */}
             <View style={styles.sectionCard}>
               <Text style={styles.sectionTitle}>💡 Dica do Dia</Text>
-              <Text style={styles.tipText}>{dailyPlan.tip}</Text>
+              <Text style={styles.tipText}>{dailyPlan?.tip}</Text>
             </View>
 
             {/* Receita */}
             <View style={styles.sectionCard}>
               <Text style={styles.sectionTitle}>🍽️ Receita Especial</Text>
-              <Text style={styles.recipeText}>{dailyPlan.recipe}</Text>
+              <Text style={styles.recipeText}>{dailyPlan?.recipe}</Text>
             </View>
 
             {/* Botão para gerar novo plano */}

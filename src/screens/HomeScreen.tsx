@@ -13,9 +13,10 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { generateDailyPlan, ChatContext } from '@/services/ai';
-import { getDailyPlan, saveDailyPlan } from '@/services/supabase';
-import { format } from 'date-fns';
+import { useDailyPlan } from '@/hooks/useDailyPlan';
+import type { DailyPlanLocal, QuickActionProps } from '@/types';
+import { logger } from '@/utils/logger';
+import React, { useState, useEffect } from 'react';
 import { Logo } from '@/components/Logo';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
@@ -26,12 +27,10 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const [userName, setUserName] = useState('');
   const [pregnancyWeek, setPregnancyWeek] = useState<number | null>(null);
-  const [dailyPlan, setDailyPlan] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const { dailyPlan, loading, generating, generatePlan } = useDailyPlan();
 
   useEffect(() => {
     loadUserProfile();
-    loadDailyPlan();
   }, []);
 
   const loadUserProfile = async () => {
@@ -43,51 +42,7 @@ export default function HomeScreen() {
     }
   };
 
-  const loadDailyPlan = async () => {
-    const userId = await AsyncStorage.getItem('userId');
-    const today = format(new Date(), 'yyyy-MM-dd');
-
-    if (userId) {
-      try {
-        const plan = await getDailyPlan(userId, today);
-        setDailyPlan(plan);
-      } catch (error) {
-        console.log('Nenhum plano encontrado para hoje');
-      }
-    }
-  };
-
-  const generateTodaysPlan = async () => {
-    setLoading(true);
-    try {
-      const profileJson = await AsyncStorage.getItem('userProfile');
-      const context: ChatContext = profileJson ? JSON.parse(profileJson) : {};
-
-      const planData = await generateDailyPlan(context);
-      setDailyPlan(planData);
-
-      // Salvar no Supabase
-      const userId = await AsyncStorage.getItem('userId');
-      const today = format(new Date(), 'yyyy-MM-dd');
-
-      if (userId) {
-        await saveDailyPlan({
-          user_id: userId,
-          date: today,
-          priorities: planData.priorities,
-          tip: planData.tip,
-          recipe: planData.recipe,
-        });
-      }
-    } catch (error) {
-      console.error('Erro ao gerar plano diário:', error);
-      Alert.alert('Erro', 'Não foi possível gerar o plano diário');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const QuickActionButton = ({ iconName, title, onPress, accessibilityLabel }: any) => (
+  const QuickActionButton: React.FC<QuickActionProps> = ({ iconName, title, onPress, accessibilityLabel }) => (
     <TouchableOpacity
       style={styles.quickAction}
       onPress={onPress}
@@ -183,13 +138,13 @@ export default function HomeScreen() {
                 <Icon name="lightbulb-outline" size={20} color={colors.primary} />
                 <Text style={styles.sectionTitle}>Dica do Dia:</Text>
               </View>
-              <Text style={styles.tip}>{dailyPlan.tip}</Text>
+              <Text style={styles.tip}>{dailyPlan?.tip}</Text>
 
               <View style={[styles.sectionTitleContainer, { marginTop: spacing.lg }]}>
                 <Icon name="food-variant" size={20} color={colors.primary} />
                 <Text style={styles.sectionTitle}>Receita:</Text>
               </View>
-              <Text style={styles.recipe}>{dailyPlan.recipe}</Text>
+              <Text style={styles.recipe}>{dailyPlan?.recipe}</Text>
             </View>
           ) : (
             <View style={styles.emptyStateContainer}>
@@ -199,9 +154,9 @@ export default function HomeScreen() {
                 variant="primary"
                 size="md"
                 fullWidth
-                onPress={generateTodaysPlan}
-                loading={loading}
-                disabled={loading}
+                onPress={handleGeneratePlan}
+                loading={generating}
+                disabled={generating}
                 icon="sparkles"
                 accessibilityLabel="Gerar plano diário"
                 accessibilityHint="Cria um plano personalizado baseado no seu perfil"

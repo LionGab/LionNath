@@ -6,7 +6,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { Logo } from '@/components/Logo';
-import { supabase, UserProfile } from '@/services/supabase';
+import { validateOnboardingData } from '@/utils/validation';
+import { UserRepository } from '@/repositories/UserRepository';
+import type { UserProfileLocal, UserType } from '@/types';
+import { logger } from '@/utils/logger';
 import { borderRadius, colors, shadows, spacing, typography } from '@/theme/colors';
 
 interface OnboardingScreenProps {
@@ -19,7 +22,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete, route }
 
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
-  const [type, setType] = useState<'gestante' | 'mae' | 'tentante' | null>(null);
+  const [type, setType] = useState<UserType | null>(null);
   const [pregnancyWeek, setPregnancyWeek] = useState('');
   const [babyName, setBabyName] = useState('');
   const [preferences, setPreferences] = useState<string[]>([]);
@@ -67,7 +70,22 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete, route }
   const handleComplete = async () => {
     setLoading(true);
     try {
-      // Criar perfil no Supabase
+      // Validar dados antes de salvar
+      const validation = validateOnboardingData({
+        name,
+        type,
+        pregnancyWeek: pregnancyWeek,
+        typeIsGestante: type === 'gestante',
+      });
+
+      if (!validation.isValid) {
+        const firstError = validation.errors[0];
+        Alert.alert('Ops!', firstError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Criar usuário temporário
       const {
         data: { user },
       } = await supabase.auth.signUp({
@@ -75,35 +93,39 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete, route }
         password: `${Date.now()}-${Math.random()}`, // Senha temporária
       });
 
-      if (user) {
-        // Salvar perfil do usuário
-        const profile: Partial<UserProfile> = {
-          id: user.id,
-          name,
-          type: type!,
-          pregnancy_week: type === 'gestante' ? parseInt(pregnancyWeek) : undefined,
-          baby_name: babyName || undefined,
-          preferences,
-          subscription_tier: 'free',
-          daily_interactions: 0,
-          last_interaction_date: new Date().toISOString(),
-        };
-
-        const { error } = await supabase.from('user_profiles').insert(profile);
-
-        if (error) throw error;
-
-        // Salvar dados localmente
-        await AsyncStorage.setItem('onboarded', 'true');
-        await AsyncStorage.setItem('userId', user.id);
-        await AsyncStorage.setItem('userProfile', JSON.stringify(profile));
-
-        if (onComplete) {
-          onComplete();
-        }
+      if (!user) {
+        throw new Error('Falha ao criar usuário');
       }
-    } catch (error: any) {
-      console.error('Erro ao completar onboarding:', error);
+
+      // Salvar perfil usando repositório
+      const profile: Partial<UserProfileLocal> = {
+        id: user.id,
+        name,
+        type: type!,
+        pregnancy_week: type === 'gestante' ? parseInt(pregnancyWeek, 10) : undefined,
+        baby_name: babyName || undefined,
+        preferences,
+        subscription_tier: 'free',
+        daily_interactions: 0,
+        last_interaction_date: new Date().toISOString(),
+      };
+
+      const saveResult = await UserRepository.save(profile);
+
+      if (saveResult.error) {
+        throw saveResult.error;
+      }
+
+      // Salvar dados localmente
+      await AsyncStorage.setItem('onboarded', 'true');
+      await AsyncStorage.setItem('userId', user.id);
+      await AsyncStorage.setItem('userProfile', JSON.stringify(profile));
+
+      if (onComplete) {
+        onComplete();
+      }
+    } catch (error) {
+      logger.error('Erro ao completar onboarding', { error });
       Alert.alert('Erro', 'Não foi possível salvar seus dados. Tente novamente.');
     } finally {
       setLoading(false);

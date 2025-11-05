@@ -10,7 +10,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Loading } from '@/shared/components/Loading';
+import { LoadingScreen } from '@/components/LoadingScreen';
+import { logger } from '@/utils/logger';
 
 import { RootStackParamList } from './types';
 import { TabNavigator } from './TabNavigator';
@@ -44,7 +45,7 @@ export function AppNavigator() {
   if (loading) {
     return (
       <SafeAreaProvider>
-        <Loading message="Carregando..." />
+        <LoadingScreen message="Carregando..." />
       </SafeAreaProvider>
     );
   }

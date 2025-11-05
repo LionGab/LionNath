@@ -14,7 +14,7 @@ function validateApiKey(key: string | undefined, keyName: string): string {
 export const API_CONFIG = {
   CLAUDE_API_KEY: process.env.EXPO_PUBLIC_CLAUDE_API_KEY || '',
   OPENAI_API_KEY: process.env.EXPO_PUBLIC_OPENAI_API_KEY || '',
-  GEMINI_API_KEY: process.env.EXPO_PUBLIC_GEMINI_API_KEY || '',
+  GEMINI_API_KEY: process.env.EXPO_PUBLIC_GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || '',
   PERPLEXITY_API_KEY: process.env.EXPO_PUBLIC_PERPLEXITY_API_KEY || '',
   ELEVENLABS_API_KEY: process.env.EXPO_PUBLIC_ELEVENLABS_API_KEY || '',
   HEYGEN_API_KEY: process.env.EXPO_PUBLIC_HEYGEN_API_KEY || '',

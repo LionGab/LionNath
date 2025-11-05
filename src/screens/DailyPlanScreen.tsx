@@ -1,13 +1,17 @@
-import { useDailyPlan } from '@/hooks/useDailyPlan';
-import { logger } from '@/utils/logger';
-import { useNavigation } from '@react-navigation/native';
-import { format } from 'date-fns';
+/**
+ * DailyPlanScreen - Tela de plano diário acolhedora e otimizada mobile-first
+ * Design empático para gestantes, mães e tentantes
+ */
+
 import React from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useDailyPlan } from '@/hooks/useDailyPlan';
-import type { DailyPlanLocal } from '@/types';
 import { logger } from '@/utils/logger';
+import { LoadingScreen } from '@/components/LoadingScreen';
+import { Button } from '@/components/Button';
 import { borderRadius, colors, shadows, spacing, typography } from '@/theme/colors';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function DailyPlanScreen() {
   const navigation = useNavigation();
@@ -23,54 +27,68 @@ export default function DailyPlanScreen() {
     }
   };
 
-  const handleGeneratePlan = async () => {
-    try {
-      await generatePlan();
-      Alert.alert('Sucesso!', 'Plano gerado com sucesso! 🎉');
-    } catch (error) {
-      logger.error('Erro ao gerar plano', { error });
-      Alert.alert('Erro', 'Não foi possível gerar o plano');
-    }
-  };
-
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Carregando...</Text>
-      </View>
-    );
+    return <LoadingScreen message="Carregando seu plano diário..." />;
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.headerBack}>← Voltar</Text>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          accessible={true}
+          accessibilityLabel="Voltar"
+          accessibilityRole="button"
+          style={styles.backButton}
+        >
+          <Icon name="arrow-left" size={24} color={colors.primary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Plano Diário</Text>
-        <View style={{ width: 60 }} />
+        <Text style={styles.headerTitle}>Plano Diário 📅</Text>
+        <View style={styles.headerSpacer} />
       </View>
 
       <View style={styles.content}>
         {!dailyPlan ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyStateIcon}>📅</Text>
+            <View style={styles.emptyStateIconContainer}>
+              <Icon name="calendar-blank-outline" size={64} color={colors.muted} />
+            </View>
             <Text style={styles.emptyStateTitle}>Nenhum plano para hoje</Text>
             <Text style={styles.emptyStateDescription}>
-              Gere seu plano personalizado diário com prioridades, dicas e receitas!
+              Vamos criar um plano personalizado para você? Com prioridades, dicas e receitas especiais! 💝
             </Text>
-            <TouchableOpacity style={styles.generateButton} onPress={handleGeneratePlan} disabled={generating}>
-              <Text style={styles.generateButtonText}>{generating ? 'Gerando...' : 'Gerar Plano Agora'}</Text>
-            </TouchableOpacity>
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              onPress={handleGeneratePlan}
+              loading={generating}
+              disabled={generating}
+              icon="sparkles"
+              accessibilityLabel="Gerar plano diário"
+              accessibilityHint="Cria um plano personalizado baseado no seu perfil"
+              style={styles.generateButton}
+            >
+              {generating ? 'Gerando...' : 'Gerar Plano Agora ✨'}
+            </Button>
           </View>
         ) : (
           <>
             {/* Prioridades */}
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionTitle}>🎯 Prioridades de Hoje</Text>
-              {dailyPlan?.priorities?.map((priority: string, index: number) => (
+              <View style={styles.sectionHeader}>
+                <Icon name="target" size={24} color={colors.primary} />
+                <Text style={styles.sectionTitle}>Prioridades de Hoje</Text>
+              </View>
+              {dailyPlan.priorities?.map((priority: string, index: number) => (
                 <View key={index} style={styles.priorityItem}>
-                  <Text style={styles.priorityNumber}>{index + 1}</Text>
+                  <View style={styles.priorityNumberContainer}>
+                    <Text style={styles.priorityNumber}>{index + 1}</Text>
+                  </View>
                   <Text style={styles.priorityText}>{priority}</Text>
                 </View>
               ))}
@@ -78,22 +96,37 @@ export default function DailyPlanScreen() {
 
             {/* Dica do Dia */}
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionTitle}>💡 Dica do Dia</Text>
-              <Text style={styles.tipText}>{dailyPlan?.tip}</Text>
+              <View style={styles.sectionHeader}>
+                <Icon name="lightbulb-on" size={24} color={colors.accent} />
+                <Text style={styles.sectionTitle}>Dica do Dia</Text>
+              </View>
+              <Text style={styles.tipText}>{dailyPlan.tip}</Text>
             </View>
 
             {/* Receita */}
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionTitle}>🍽️ Receita Especial</Text>
-              <Text style={styles.recipeText}>{dailyPlan?.recipe}</Text>
+              <View style={styles.sectionHeader}>
+                <Icon name="chef-hat" size={24} color={colors.primary} />
+                <Text style={styles.sectionTitle}>Receita Especial</Text>
+              </View>
+              <Text style={styles.recipeText}>{dailyPlan.recipe}</Text>
             </View>
 
             {/* Botão para gerar novo plano */}
-            <TouchableOpacity style={styles.regenerateButton} onPress={handleGeneratePlan} disabled={generating}>
-              <Text style={styles.regenerateButtonText}>
-                {generating ? 'Gerando novo plano...' : '🔄 Gerar Novo Plano'}
-              </Text>
-            </TouchableOpacity>
+            <Button
+              variant="outline"
+              size="lg"
+              fullWidth
+              onPress={handleGeneratePlan}
+              loading={generating}
+              disabled={generating}
+              icon="refresh"
+              accessibilityLabel="Gerar novo plano"
+              accessibilityHint="Gera um novo plano personalizado para hoje"
+              style={styles.regenerateButton}
+            >
+              {generating ? 'Gerando novo plano...' : '🔄 Gerar Novo Plano'}
+            </Button>
           </>
         )}
       </View>
@@ -106,33 +139,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.background,
-  },
-  loadingText: {
-    fontSize: typography.sizes.base,
-    color: colors.mutedForeground,
+  contentContainer: {
+    paddingBottom: spacing['3xl'],
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: spacing.lg,
+    paddingTop: Platform.OS === 'ios' ? spacing.md : spacing.lg,
     backgroundColor: colors.card,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerBack: {
-    fontSize: typography.sizes.base,
-    color: colors.primary,
+  backButton: {
+    padding: spacing.xs,
+    borderRadius: borderRadius.md,
   },
   headerTitle: {
-    fontSize: typography.sizes.lg,
+    fontSize: typography.sizes.xl,
     fontWeight: typography.weights.bold as any,
     color: colors.foreground,
+    fontFamily: typography.fontFamily.sans,
+  },
+  headerSpacer: {
+    width: 40,
   },
   content: {
     padding: spacing.lg,
@@ -140,97 +171,102 @@ const styles = StyleSheet.create({
   emptyState: {
     backgroundColor: colors.card,
     padding: spacing['2xl'],
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     alignItems: 'center',
     ...shadows.light.md,
+    marginTop: spacing.xl,
   },
-  emptyStateIcon: {
-    fontSize: 64,
+  emptyStateIconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: spacing.lg,
   },
   emptyStateTitle: {
-    fontSize: typography.sizes.xl,
+    fontSize: typography.sizes['2xl'],
     fontWeight: typography.weights.bold as any,
     color: colors.foreground,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
+    textAlign: 'center',
+    fontFamily: typography.fontFamily.sans,
   },
   emptyStateDescription: {
-    fontSize: typography.sizes.sm,
+    fontSize: typography.sizes.base,
     color: colors.mutedForeground,
     textAlign: 'center',
     marginBottom: spacing['2xl'],
+    lineHeight: 24,
+    fontFamily: typography.fontFamily.sans,
   },
   generateButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing['2xl'],
-    borderRadius: borderRadius.md,
-    ...shadows.light.md,
-  },
-  generateButtonText: {
-    color: colors.primaryForeground,
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.bold as any,
+    marginTop: spacing.md,
   },
   sectionCard: {
     backgroundColor: colors.card,
-    padding: spacing.lg,
-    borderRadius: borderRadius.lg,
+    padding: spacing.xl,
+    borderRadius: borderRadius.xl,
     marginBottom: spacing.lg,
     ...shadows.light.md,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
   },
   sectionTitle: {
     fontSize: typography.sizes.xl,
     fontWeight: typography.weights.bold as any,
     color: colors.primary,
-    marginBottom: spacing.lg,
+    fontFamily: typography.fontFamily.sans,
   },
   priorityItem: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: spacing.md,
     paddingVertical: spacing.sm,
+    gap: spacing.md,
   },
-  priorityNumber: {
+  priorityNumberContainer: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: borderRadius.full,
     backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexShrink: 0,
+  },
+  priorityNumber: {
     color: colors.primaryForeground,
-    fontSize: typography.sizes.sm,
+    fontSize: typography.sizes.base,
     fontWeight: typography.weights.bold as any,
-    textAlign: 'center',
-    lineHeight: 32,
-    marginRight: spacing.md,
+    fontFamily: typography.fontFamily.sans,
   },
   priorityText: {
     flex: 1,
-    fontSize: typography.sizes.sm,
+    fontSize: typography.sizes.base,
     color: colors.foreground,
+    lineHeight: 24,
+    fontFamily: typography.fontFamily.sans,
   },
   tipText: {
     fontSize: typography.sizes.base,
     color: colors.mutedForeground,
-    lineHeight: 24,
+    lineHeight: 26,
+    fontFamily: typography.fontFamily.sans,
     fontStyle: 'italic',
   },
   recipeText: {
-    fontSize: typography.sizes.sm,
-    color: colors.foreground,
-    lineHeight: 22,
+    fontSize: typography.sizes.base,
+    color: colors.mutedForeground,
+    lineHeight: 24,
+    fontFamily: typography.fontFamily.sans,
   },
   regenerateButton: {
-    backgroundColor: colors.secondary,
-    padding: spacing.lg,
-    borderRadius: borderRadius.md,
-    alignItems: 'center',
-    marginBottom: 40,
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  regenerateButtonText: {
-    color: colors.primary,
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.bold as any,
+    marginTop: spacing.md,
+    marginBottom: spacing['2xl'],
   },
 });

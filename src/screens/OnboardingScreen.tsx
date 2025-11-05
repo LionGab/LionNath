@@ -1,20 +1,25 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Alert, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { Logo } from '@/components/Logo';
 import { validateOnboardingData } from '@/utils/validation';
 import { UserRepository } from '@/repositories/UserRepository';
+import { supabase } from '@/services/supabase';
 import type { UserProfileLocal, UserType } from '@/types';
 import { logger } from '@/utils/logger';
 import { borderRadius, colors, shadows, spacing, typography } from '@/theme/colors';
 
 interface OnboardingScreenProps {
   onComplete?: () => void;
-  route?: any;
+  route?: {
+    params?: {
+      onComplete?: () => void;
+    };
+  };
 }
 
 const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete, route }) => {
@@ -40,7 +45,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete, route }
 
   const togglePreference = (pref: string) => {
     if (preferences.includes(pref)) {
-      setPreferences(preferences.filter((p) => p !== pref));
+      setPreferences(preferences.filter((p: string) => p !== pref));
     } else {
       setPreferences([...preferences, pref]);
     }

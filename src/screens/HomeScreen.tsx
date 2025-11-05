@@ -1,3 +1,8 @@
+/**
+ * HomeScreen - Tela principal acolhedora e otimizada mobile-first
+ * Design empático para gestantes, mães e tentantes
+ */
+
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -8,15 +13,14 @@ import {
   Alert,
   SafeAreaView,
   StatusBar,
-  ActivityIndicator,
   Linking,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDailyPlan } from '@/hooks/useDailyPlan';
-import type { DailyPlanLocal, QuickActionProps } from '@/types';
+import type { QuickActionProps } from '@/types';
 import { logger } from '@/utils/logger';
-import React, { useState, useEffect } from 'react';
 import { Logo } from '@/components/Logo';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
@@ -42,6 +46,15 @@ export default function HomeScreen() {
     }
   };
 
+  const handleGeneratePlan = async () => {
+    try {
+      await generatePlan();
+    } catch (error) {
+      logger.error('Erro ao gerar plano diário', { error });
+      Alert.alert('Erro', 'Não foi possível gerar o plano diário');
+    }
+  };
+
   const QuickActionButton: React.FC<QuickActionProps> = ({ iconName, title, onPress, accessibilityLabel }) => (
     <TouchableOpacity
       style={styles.quickAction}
@@ -52,32 +65,43 @@ export default function HomeScreen() {
       accessibilityHint={`Abre a tela de ${title.toLowerCase()}`}
       activeOpacity={0.7}
     >
-      <Icon name={iconName} size={32} color={colors.primary} />
-      <Text style={styles.quickActionTitle}>{title}</Text>
+      <View style={styles.quickActionIconContainer}>
+        <Icon name={iconName} size={28} color={colors.primary} />
+      </View>
+      <Text style={styles.quickActionTitle} numberOfLines={2}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-      <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.logoHeader}>
-            <Logo size={50} />
-          </View>
-          <View style={styles.greetingContainer}>
-            <Icon name="hand-wave" size={24} color={colors.primary} />
-            <Text style={styles.greeting}>Olá, {userName}!</Text>
-          </View>
-          {pregnancyWeek && (
-            <View style={styles.subGreetingContainer}>
-              <Icon name="heart-pulse" size={18} color={colors.destructive} />
-              <Text style={styles.subGreeting}>Semana {pregnancyWeek} de gestação</Text>
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.contentContainer}
+      >
+        {/* Header acolhedor */}
+        <View style={styles.headerContainer}>
+          <View style={styles.header}>
+            <View style={styles.logoHeader}>
+              <Logo size={48} />
             </View>
-          )}
+            <View style={styles.greetingContainer}>
+              <Icon name="hand-wave" size={28} color={colors.primary} />
+              <Text style={styles.greeting}>Olá, {userName}! 👋</Text>
+            </View>
+            {pregnancyWeek && (
+              <View style={styles.subGreetingContainer}>
+                <Icon name="heart-pulse" size={20} color={colors.destructive} />
+                <Text style={styles.subGreeting}>Semana {pregnancyWeek} de gestação 💕</Text>
+              </View>
+            )}
+          </View>
         </View>
 
-        {/* Botões de ação rápida */}
+        {/* Botões de ação rápida - otimizado mobile */}
         <View style={styles.quickActionsContainer}>
           <QuickActionButton
             iconName="message-text-outline"
@@ -105,15 +129,15 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* Plano Diário */}
-        <Card title="Seu Plano de Hoje" icon="target" variant="elevated" style={styles.dailyPlanCard}>
+        {/* Plano Diário - Card acolhedor */}
+        <Card title="Seu Plano de Hoje ✨" icon="target" variant="elevated" style={styles.dailyPlanCard}>
           <View style={styles.dailyPlanHeader}>
             <Button
               variant="outline"
               size="sm"
-              onPress={generateTodaysPlan}
-              loading={loading}
-              disabled={loading}
+              onPress={handleGeneratePlan}
+              loading={generating}
+              disabled={generating}
               icon="refresh"
               accessibilityLabel="Atualizar plano diário"
               accessibilityHint="Gera um novo plano personalizado para hoje"
@@ -123,33 +147,35 @@ export default function HomeScreen() {
           </View>
 
           {dailyPlan ? (
-            <View>
+            <View style={styles.planContent}>
               <View style={styles.sectionTitleContainer}>
-                <Icon name="checkbox-marked-circle-outline" size={20} color={colors.primary} />
+                <Icon name="checkbox-marked-circle-outline" size={22} color={colors.primary} />
                 <Text style={styles.sectionTitle}>Prioridades:</Text>
               </View>
               {dailyPlan.priorities?.map((priority: string, index: number) => (
-                <Text key={index} style={styles.priorityItem}>
-                  • {priority}
-                </Text>
+                <View key={index} style={styles.priorityItemContainer}>
+                  <View style={styles.priorityBullet} />
+                  <Text style={styles.priorityItem}>{priority}</Text>
+                </View>
               ))}
 
               <View style={[styles.sectionTitleContainer, { marginTop: spacing.lg }]}>
-                <Icon name="lightbulb-outline" size={20} color={colors.primary} />
+                <Icon name="lightbulb-outline" size={22} color={colors.accent} />
                 <Text style={styles.sectionTitle}>Dica do Dia:</Text>
               </View>
-              <Text style={styles.tip}>{dailyPlan?.tip}</Text>
+              <Text style={styles.tip}>{dailyPlan.tip}</Text>
 
               <View style={[styles.sectionTitleContainer, { marginTop: spacing.lg }]}>
-                <Icon name="food-variant" size={20} color={colors.primary} />
+                <Icon name="food-variant" size={22} color={colors.primary} />
                 <Text style={styles.sectionTitle}>Receita:</Text>
               </View>
-              <Text style={styles.recipe}>{dailyPlan?.recipe}</Text>
+              <Text style={styles.recipe}>{dailyPlan.recipe}</Text>
             </View>
           ) : (
             <View style={styles.emptyStateContainer}>
-              <Icon name="calendar-blank-outline" size={48} color={colors.muted} />
+              <Icon name="calendar-blank-outline" size={56} color={colors.muted} />
               <Text style={styles.emptyState}>Nenhum plano gerado ainda para hoje.</Text>
+              <Text style={styles.emptyStateSubtext}>Vamos criar um plano especial para você? 💝</Text>
               <Button
                 variant="primary"
                 size="md"
@@ -160,25 +186,26 @@ export default function HomeScreen() {
                 icon="sparkles"
                 accessibilityLabel="Gerar plano diário"
                 accessibilityHint="Cria um plano personalizado baseado no seu perfil"
+                style={styles.generateButton}
               >
-                {loading ? 'Gerando...' : 'Gerar Plano Agora'}
+                {generating ? 'Gerando...' : 'Gerar Plano Agora'}
               </Button>
             </View>
           )}
         </Card>
 
-        {/* Dicas Rápidas */}
-        <Card title="Você sabia?" icon="lightbulb-on" variant="outlined" style={styles.tipsCard}>
+        {/* Dicas Rápidas - Card acolhedor */}
+        <Card title="Você sabia? 💡" icon="lightbulb-on" variant="outlined" style={styles.tipsCard}>
           <View style={styles.tipContainer}>
-            <Icon name="sleep" size={24} color={colors.accent} />
+            <Icon name="sleep" size={28} color={colors.accent} />
             <Text style={styles.tipText}>
-              Durante a gravidez, é normal sentir cansaço. Ouça seu corpo e descanse sempre que possível!
+              Durante a gravidez, é normal sentir cansaço. Ouça seu corpo e descanse sempre que possível! 💤
             </Text>
           </View>
         </Card>
 
         {/* FAQ Rápido */}
-        <Card title="Perguntas Frequentes" icon="help-circle-outline" variant="elevated" style={styles.faqCard}>
+        <Card title="Perguntas Frequentes ❓" icon="help-circle-outline" variant="elevated" style={styles.faqCard}>
           <TouchableOpacity
             style={styles.faqItem}
             onPress={() => navigation.navigate('Chat' as never)}
@@ -188,7 +215,7 @@ export default function HomeScreen() {
             activeOpacity={0.7}
           >
             <View style={styles.faqQuestionContainer}>
-              <Icon name="stomach" size={20} color={colors.primary} style={styles.faqIcon} />
+              <Icon name="stomach" size={22} color={colors.primary} style={styles.faqIcon} />
               <Text style={styles.faqQuestion}>Como aliviar enjoo matinal?</Text>
             </View>
             <Icon name="chevron-right" size={24} color={colors.primary} />
@@ -202,7 +229,7 @@ export default function HomeScreen() {
             activeOpacity={0.7}
           >
             <View style={styles.faqQuestionContainer}>
-              <Icon name="run" size={20} color={colors.primary} style={styles.faqIcon} />
+              <Icon name="run" size={22} color={colors.primary} style={styles.faqIcon} />
               <Text style={styles.faqQuestion}>Quais exercícios posso fazer?</Text>
             </View>
             <Icon name="chevron-right" size={24} color={colors.primary} />
@@ -216,39 +243,41 @@ export default function HomeScreen() {
             activeOpacity={0.7}
           >
             <View style={styles.faqQuestionContainer}>
-              <Icon name="stethoscope" size={20} color={colors.primary} style={styles.faqIcon} />
+              <Icon name="stethoscope" size={22} color={colors.primary} style={styles.faqIcon} />
               <Text style={styles.faqQuestion}>Quando devo ir ao médico?</Text>
             </View>
             <Icon name="chevron-right" size={24} color={colors.primary} />
           </TouchableOpacity>
         </Card>
 
-        {/* Emergency Button */}
-        <Button
-          variant="destructive"
-          size="lg"
-          fullWidth
-          icon="phone-alert"
-          onPress={() => {
-            Alert.alert(
-              '🚨 Emergência',
-              'Você será direcionado para ligar para o SAMU (192).\n\nSe você está com sintomas graves, ligue imediatamente ou procure um hospital!',
-              [
-                { text: 'Cancelar', style: 'cancel' },
-                {
-                  text: 'Ligar Agora',
-                  style: 'destructive',
-                  onPress: () => Linking.openURL('tel:192'),
-                },
-              ]
-            );
-          }}
-          accessibilityLabel="Botão de emergência"
-          accessibilityHint="Ligar para SAMU 192 em caso de emergência médica"
-          style={styles.emergencyButton}
-        >
-          Emergência - SAMU 192
-        </Button>
+        {/* Emergency Button - Acolhedor mas visível */}
+        <View style={styles.emergencyContainer}>
+          <Button
+            variant="destructive"
+            size="lg"
+            fullWidth
+            icon="phone-alert"
+            onPress={() => {
+              Alert.alert(
+                '🚨 Emergência',
+                'Você será direcionado para ligar para o SAMU (192).\n\nSe você está com sintomas graves, ligue imediatamente ou procure um hospital!',
+                [
+                  { text: 'Cancelar', style: 'cancel' },
+                  {
+                    text: 'Ligar Agora',
+                    style: 'destructive',
+                    onPress: () => Linking.openURL('tel:192'),
+                  },
+                ]
+              );
+            }}
+            accessibilityLabel="Botão de emergência"
+            accessibilityHint="Ligar para SAMU 192 em caso de emergência médica"
+            style={styles.emergencyButton}
+          >
+            🚨 Emergência - SAMU 192
+          </Button>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -262,9 +291,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  contentContainer: {
+    paddingBottom: spacing['3xl'],
+  },
+  headerContainer: {
+    backgroundColor: colors.secondary,
+    paddingBottom: spacing.xl,
+    marginBottom: spacing.md,
+    borderBottomLeftRadius: borderRadius['2xl'],
+    borderBottomRightRadius: borderRadius['2xl'],
+  },
   header: {
     padding: spacing.lg,
-    paddingTop: spacing.md,
+    paddingTop: Platform.OS === 'ios' ? spacing.md : spacing.lg,
   },
   logoHeader: {
     alignItems: 'center',
@@ -275,6 +314,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.sm,
+    marginBottom: spacing.xs,
   },
   greeting: {
     fontSize: typography.sizes['2xl'],
@@ -288,7 +328,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
-    marginTop: spacing.sm,
+    marginTop: spacing.xs,
   },
   subGreeting: {
     fontSize: typography.sizes.base,
@@ -300,24 +340,36 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
     marginBottom: spacing.xl,
-    gap: spacing.md,
+    gap: spacing.sm,
+    flexWrap: 'wrap',
   },
   quickAction: {
     flex: 1,
+    minWidth: '22%',
     alignItems: 'center',
     backgroundColor: colors.card,
-    padding: spacing.lg,
-    paddingVertical: spacing.xl,
+    padding: spacing.md,
+    paddingVertical: spacing.lg,
     borderRadius: borderRadius.lg,
     minHeight: 100,
+    maxWidth: '48%',
     ...shadows.light.sm,
   },
+  quickActionIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
   quickActionTitle: {
-    fontSize: typography.sizes.sm, // 14px agora
+    fontSize: typography.sizes.sm,
     color: colors.foreground,
     textAlign: 'center',
-    marginTop: spacing.sm,
     fontWeight: typography.weights.medium as any,
+    fontFamily: typography.fontFamily.sans,
   },
   dailyPlanCard: {
     marginHorizontal: spacing.lg,
@@ -329,27 +381,61 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.md,
   },
+  planContent: {
+    gap: spacing.md,
+  },
   emptyStateContainer: {
     alignItems: 'center',
     gap: spacing.md,
     paddingVertical: spacing.xl,
   },
+  emptyState: {
+    fontSize: typography.sizes.base,
+    color: colors.mutedForeground,
+    textAlign: 'center',
+    fontFamily: typography.fontFamily.sans,
+    fontWeight: typography.weights.medium as any,
+  },
+  emptyStateSubtext: {
+    fontSize: typography.sizes.sm,
+    color: colors.mutedForeground,
+    textAlign: 'center',
+    fontFamily: typography.fontFamily.sans,
+    marginBottom: spacing.md,
+  },
+  generateButton: {
+    marginTop: spacing.md,
+  },
   sectionTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+    marginBottom: spacing.xs,
   },
   sectionTitle: {
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.bold as any,
     color: colors.foreground,
     fontFamily: typography.fontFamily.sans,
-    marginBottom: spacing.xs,
+  },
+  priorityItemContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: spacing.sm,
+    gap: spacing.sm,
+  },
+  priorityBullet: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.primary,
+    marginTop: 8,
+    flexShrink: 0,
   },
   priorityItem: {
     fontSize: typography.sizes.base,
     color: colors.mutedForeground,
-    marginTop: spacing.sm,
+    flex: 1,
     lineHeight: 24,
     fontFamily: typography.fontFamily.sans,
   },
@@ -358,18 +444,14 @@ const styles = StyleSheet.create({
     color: colors.mutedForeground,
     lineHeight: 24,
     fontFamily: typography.fontFamily.sans,
+    marginTop: spacing.xs,
   },
   recipe: {
     fontSize: typography.sizes.base,
     color: colors.mutedForeground,
     lineHeight: 24,
     fontFamily: typography.fontFamily.sans,
-  },
-  emptyState: {
-    fontSize: typography.sizes.base,
-    color: colors.mutedForeground,
-    textAlign: 'center',
-    fontFamily: typography.fontFamily.sans,
+    marginTop: spacing.xs,
   },
   tipsCard: {
     marginHorizontal: spacing.lg,
@@ -400,7 +482,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     backgroundColor: colors.background,
     marginBottom: spacing.sm,
-    minHeight: 52,
+    minHeight: 56,
   },
   faqQuestionContainer: {
     flexDirection: 'row',
@@ -418,8 +500,11 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontFamily: typography.fontFamily.sans,
   },
-  emergencyButton: {
+  emergencyContainer: {
     marginHorizontal: spacing.lg,
-    marginBottom: spacing['3xl'],
+    marginTop: spacing.lg,
+  },
+  emergencyButton: {
+    marginBottom: spacing['2xl'],
   },
 });

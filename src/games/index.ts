@@ -1,6 +1,14 @@
 /**
  * Arquivo de índice - Exporta todos os módulos principais do sistema de jogos
+ * Adaptado para React Native e Web
  */
+
+// React Components
+export { GameView, GameWebView } from './components';
+export type { GameViewProps, GameWebViewProps } from './components';
+
+// Screens
+export { GameScreen } from './screens/game-screen';
 
 // Engine
 export { GameEngine } from './game-engine';
@@ -15,6 +23,9 @@ export { Player } from './entities/player';
 
 // Assets
 export { AssetManager } from './assets/asset-manager';
+
+// Utils
+export { StorageManager } from './utils/storage-manager';
 
 // Types
 export type {

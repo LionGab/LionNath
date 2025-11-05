@@ -1,62 +1,80 @@
-# 🎮 Estrutura de Jogos
+# 🎮 Sistema de Jogos - Nossa Maternidade
 
-Este diretório contém a estrutura base para desenvolvimento de jogos usando Pixi.js.
+Este diretório contém a estrutura completa para desenvolvimento de jogos usando Pixi.js, **adaptada para React Native e Web**.
 
 ## 📁 Estrutura de Diretórios
 
 ```
-games/
-├── scenes/              # Cenas do jogo (menu, gameplay, gameover)
-│   ├── menu-scene.ts
-│   ├── gameplay-scene.ts
-│   └── gameover-scene.ts
+src/games/
+├── components/          # Componentes React
+│   ├── game-view.tsx           # Componente Web (Canvas)
+│   ├── game-web-view.tsx       # Componente Mobile (WebView)
+│   └── index.ts
+├── screens/             # Screens React Native
+│   └── game-screen.tsx         # Screen de exemplo
+├── scenes/              # Cenas do jogo
+│   ├── base-scene.ts          # Classe base
+│   └── gameplay-scene.ts      # Exemplo
 ├── entities/            # Entidades do jogo
-│   ├── player.ts
-│   ├── enemy.ts
-│   └── item.ts
-├── systems/             # Sistemas do jogo
-│   ├── physics-system.ts
-│   ├── collision-system.ts
-│   └── scoring-system.ts
+│   └── player.ts              # Exemplo
 ├── assets/              # Gerenciamento de assets
-│   ├── asset-manager.ts
-│   └── asset-loader.ts
+│   └── asset-manager.ts
 ├── utils/               # Utilitários
-│   ├── math-utils.ts
-│   └── game-utils.ts
+│   └── storage-manager.ts     # Storage adaptado (AsyncStorage)
 ├── types/               # Tipos TypeScript
 │   └── game-types.ts
-└── constants/           # Constantes do jogo
-    └── game-config.ts
+├── constants/           # Constantes
+│   └── game-config.ts         # Adaptado para RN
+├── game-engine.ts       # Motor do jogo
+└── index.ts            # Exportações principais
 ```
 
-## 🚀 Uso Básico
+## 🚀 Uso Rápido
 
-Ver `docs/PIXIJS_GAME_DEVELOPMENT_GUIDE.md` para diretrizes completas.
+### Instalar Dependências
 
-## 📝 Exemplo Mínimo
+```bash
+cd apps/mobile
+pnpm add pixi.js react-native-webview
+```
+
+### Usar no App
 
 ```typescript
-import { Application } from 'pixi.js';
-import { GameScene } from './scenes/gameplay-scene';
+import { GameScreen } from '@/games';
 
-const initGame = async (): Promise<void> => {
-  const app = new Application();
-  await app.init({
-    width: 800,
-    height: 600,
-    preference: RendererType.WEBGPU,
-    fallback: RendererType.WEBGL,
-  });
-  
-  document.body.appendChild(app.canvas);
-  
-  const scene = new GameScene(app);
-  app.stage.addChild(scene);
-  
-  // Iniciar game loop
-  Ticker.shared.add(() => {
-    scene.update(Ticker.shared.deltaTime);
-  });
-};
+// Na navegação
+<Stack.Screen name="Game" component={GameScreen} />
 ```
+
+### Usar Componente
+
+```typescript
+import { GameView } from '@/games'; // Web
+import { GameWebView } from '@/games'; // Mobile
+
+<GameView
+  config={{ width: 800, height: 600 }}
+  onReady={() => console.log('Pronto!')}
+/>
+```
+
+## 📚 Documentação Completa
+
+- **[docs/GAMES_INTEGRATION.md](../../docs/GAMES_INTEGRATION.md)** - Guia de integração
+- **[docs/PIXIJS_GAME_DEVELOPMENT_GUIDE.md](../../docs/PIXIJS_GAME_DEVELOPMENT_GUIDE.md)** - Diretrizes de desenvolvimento
+
+## ✅ Características
+
+- ✅ **Cross-Platform**: Funciona em Web e React Native
+- ✅ **TypeScript**: Tipagem completa
+- ✅ **Performance**: Otimizado para mobile
+- ✅ **Storage**: AsyncStorage integrado
+- ✅ **Responsivo**: Adapta-se automaticamente à tela
+
+## 🎯 Próximos Passos
+
+1. Instalar dependências
+2. Criar assets do jogo
+3. Implementar lógica específica
+4. Adicionar à navegação

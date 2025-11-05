@@ -4,18 +4,41 @@
 
 /**
  * Configuração de renderização
+ * Adaptado para mobile e web
  */
+import { Dimensions } from 'react-native';
+
+/**
+ * Obter dimensões da tela (dinâmico para React Native)
+ */
+const getScreenDimensions = () => {
+  if (typeof window !== 'undefined') {
+    // Web
+    return {
+      width: window.innerWidth || 800,
+      height: window.innerHeight || 600,
+    };
+  }
+  // React Native
+  const { width, height } = Dimensions.get('window');
+  return { width, height };
+};
+
+const screenDims = getScreenDimensions();
+
 export const RENDER_CONFIG = {
   /** Largura padrão da tela */
-  DEFAULT_WIDTH: 800,
+  DEFAULT_WIDTH: screenDims.width,
   /** Altura padrão da tela */
-  DEFAULT_HEIGHT: 600,
+  DEFAULT_HEIGHT: screenDims.height,
   /** FPS alvo */
   TARGET_FPS: 60,
   /** FPS mínimo aceitável */
   MIN_FPS: 30,
   /** FPS quando bateria baixa */
   LOW_BATTERY_FPS: 30,
+  /** Aspect ratio padrão */
+  ASPECT_RATIO: 16 / 9,
 } as const;
 
 /**

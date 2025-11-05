@@ -1,8 +1,9 @@
 /**
  * Tipos TypeScript para o sistema de jogos
+ * Adaptado para React Native e Web
  */
 
-import { Container, Point } from 'pixi.js';
+import type { Container, Point } from 'pixi.js';
 
 /**
  * Posição no espaço 2D

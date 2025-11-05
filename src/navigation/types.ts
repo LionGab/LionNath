@@ -11,6 +11,7 @@ export type RootStackParamList = {
   Habits: undefined;
   Content: undefined;
   ContentDetail: { contentId: string };
+  Game: undefined;
 };
 
 export type TabParamList = {

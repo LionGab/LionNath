@@ -5,36 +5,7 @@
  * contexto e disponibilidade de API keys.
  */
 
-export type AIModel = 'claude' | 'gemini' | 'perplexity' | 'manus' | 'fallback';
-
-export type TaskType = 
-  | 'empathy'      // Empatia/conversa
-  | 'moderation'   // Moderação de conteúdo
-  | 'long-context' // Análise de contexto longo
-  | 'research'     // Pesquisa/citações
-  | 'execution';   // Execução de tarefas
-
-export interface ModelRouterConfig {
-  /** API keys disponíveis */
-  apiKeys: {
-    anthropic?: string;
-    gemini?: string;
-    perplexity?: string;
-    manus?: string;
-  };
-  
-  /** Modelo preferencial por tarefa */
-  preferences?: Partial<Record<TaskType, AIModel>>;
-  
-  /** Fallback quando modelo preferido indisponível */
-  fallback?: AIModel;
-}
-
-export interface RoutingDecision {
-  model: AIModel;
-  reason: string;
-  apiKey?: string;
-}
+import type { AIModel, TaskType, ModelRouterConfig, RoutingDecision } from './schemas';
 
 /**
  * Roteia tarefa para o modelo IA apropriado
@@ -135,3 +106,6 @@ export const DEFAULT_ROUTING: Partial<Record<TaskType, AIModel>> = {
   research: 'perplexity',
   execution: 'manus',
 };
+
+// Re-export types from schemas for convenience
+export type { AIModel, TaskType, ModelRouterConfig, RoutingDecision } from './schemas';

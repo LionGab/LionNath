@@ -49,7 +49,7 @@ jobs:
             pnpm-${{ runner.os }}-
       
       - name: Install dependencies
-        run: pnpm -w install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       
       - name: Build Validation
         run: pnpm -w run build

@@ -8,19 +8,8 @@
  * - Utilitários compartilhados
  */
 
-// Sistema de IA
-export * from './nat-ai/system-prompt';
-export * from './nat-ai/guardrails';
-export * from './nat-ai/risk-analyzer';
-export * from './nat-ai/context-manager';
-export * from './nat-ai/team-notifier';
-export * from './nat-ai/model-router';
-export * from './nat-ai/schemas';
-
-// Schemas Zod
-export * from './schemas/user-profile';
-export * from './schemas/chat-message';
-export * from './schemas/risk-analysis';
+// Sistema de IA - NAT-AI exporta tudo incluindo schemas internos
+export * from './nat-ai';
 
 // Design System
 export * from './theme/colors';

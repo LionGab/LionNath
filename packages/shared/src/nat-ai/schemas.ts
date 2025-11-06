@@ -63,12 +63,11 @@ export const ChatRequestSchema = z.object({
 export const RiskLevelSchema = z.enum(['low', 'medium', 'high', 'critical']);
 
 export const RiskAnalysisSchema = z.object({
-  riskLevel: RiskLevelSchema,
-  requiresHumanReview: z.boolean(),
-  flags: z.array(z.string()),
-  confidence: z.number().min(0).max(1),
-  reasoning: z.string().optional(),
-  timestamp: z.number(),
+  level: z.number().min(0).max(10), // 0-10 scale
+  flags: z.array(z.string()), // ex: ["suicidal_ideation", "severe_depression"]
+  requires_intervention: z.boolean(),
+  suggested_resources: z.array(z.string()), // ex: ["cvv", "caps", "emergency"]
+  reasoning: z.string(),
 });
 
 // ============================================================================

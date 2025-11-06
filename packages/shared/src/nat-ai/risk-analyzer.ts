@@ -6,17 +6,10 @@
 
 import axios from 'axios';
 import { getRiskLevel } from './guardrails';
+import type { RiskAnalysis } from './schemas';
 
 const CLAUDE_API_KEY = process.env.EXPO_PUBLIC_CLAUDE_API_KEY || '';
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
-
-export interface RiskAnalysis {
-  level: number; // 0-10
-  flags: string[]; // ex: ["suicidal_ideation", "severe_depression"]
-  requires_intervention: boolean;
-  suggested_resources: string[]; // ex: ["cvv", "caps", "emergency"]
-  reasoning: string;
-}
 
 /**
  * System prompt para Claude especializado em saúde mental materna
@@ -273,3 +266,6 @@ Estou aqui sempre que precisar. 🤗`;
   // Nível < 7: Sem intervenção específica necessária
   return '';
 }
+
+// Re-export type from schemas for convenience
+export type { RiskAnalysis } from './schemas';

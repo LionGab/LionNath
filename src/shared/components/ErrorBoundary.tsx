@@ -5,8 +5,8 @@
  */
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors, spacing, typography } from '@/theme/colors';
+import { View, Text, StyleSheet } from 'react-native';
+import { colors, spacing, typography } from '@/theme';
 import { Button } from '@/components';
 
 interface Props {
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.bold as any,
+    fontWeight: typography.weights.bold,
     color: colors.foreground,
     marginBottom: spacing.sm,
     textAlign: 'center',
@@ -133,3 +133,4 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
 });
+

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Logo } from './Logo';
-import { colors, spacing, typography } from '@/theme/colors';
+import { colors, spacing, typography } from '@/theme';
 
 interface WelcomeHeaderProps {
   name: string;
@@ -53,3 +53,4 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.sans,
   },
 });
+

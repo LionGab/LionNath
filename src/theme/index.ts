@@ -1,12 +1,56 @@
-/**
- * Tema Bubblegum - Export Central
- * Use este arquivo para importar tudo que precisa do tema
- */
+import type {
+  ColorScale,
+  GradientTokens,
+  OverlayTokens,
+  RadiusTokens,
+  Shadows,
+  ThemeColors,
+  ThemePalette,
+  TypographyScale,
+  SpacingTokens,
+} from './designSystemV1';
 
-export { light, dark, colors, getTheme, shadows, typography, spacing, borderRadius, default as theme } from './colors';
+export {
+  designTokens,
+  palette,
+  light,
+  dark,
+  colors,
+  overlay,
+  gradients,
+  getTheme,
+  shadows,
+  typography,
+  spacing,
+  borderRadius,
+} from './designSystemV1';
 
-// Tipo helper para cores
-export type ThemeColors = typeof import('./colors').colors;
+export type {
+  ColorScale,
+  GradientTokens,
+  OverlayTokens,
+  RadiusTokens,
+  Shadows,
+  ThemeColors,
+  ThemePalette,
+  TypographyScale,
+  SpacingTokens,
+} from './designSystemV1';
 
-// Type helper para shadows
-export type Shadows = typeof import('./colors').shadows;
+export { tokens } from './tokens';
+
+export type { Tokens } from './tokens';
+
+export {
+  nossaMaternidadeDesignTokens,
+  getNeutralTone,
+  getSpacing,
+  getRadius,
+} from './themes/v1-nossa-maternidade';
+
+export {
+  nossaMaternidadeTokens,
+  getNativeWindColor,
+  getNativeWindSpacing,
+  getNativeWindRadius,
+} from './tokens/nossa-maternidade-v1';

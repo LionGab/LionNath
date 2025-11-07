@@ -7,7 +7,7 @@
  * - Microinterações acolhedoras
  */
 
-import { shadows } from '@/theme/colors';
+import { shadows } from '@/theme';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { Animated, StyleSheet, ViewStyle } from 'react-native';
 import { Button, ButtonProps } from './Button';
@@ -88,3 +88,4 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
 };
 
 const styles = StyleSheet.create({});
+

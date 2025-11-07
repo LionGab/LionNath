@@ -6,7 +6,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, ViewStyle } from 'react-native';
-import { colors, spacing, borderRadius } from '@/theme/colors';
+import { colors, spacing, borderRadius } from '@/theme';
 
 export interface SkeletonProps {
   /** Largura do skeleton */
@@ -156,3 +156,4 @@ export const SkeletonPresets = {
     </View>
   ),
 };
+

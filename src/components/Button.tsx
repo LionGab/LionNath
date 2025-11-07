@@ -1,4 +1,4 @@
-import { borderRadius, colors, shadows, spacing, typography } from '@/theme/colors';
+import { borderRadius, colors, shadows, spacing, typography } from '@/theme';
 import React, { useCallback, useMemo } from 'react';
 import {
   ActivityIndicator,
@@ -348,3 +348,4 @@ const styles = StyleSheet.create({
 
 // Memoizar componente para evitar re-renders desnecessários
 export const Button = React.memo(ButtonComponent);
+

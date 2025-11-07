@@ -1,0 +1,34 @@
+﻿[
+    {
+        "Type":  "refactor",
+        "PID":  25576
+    },
+    {
+        "Type":  "performance",
+        "PID":  26956
+    },
+    {
+        "Type":  "test",
+        "PID":  28244
+    },
+    {
+        "Type":  "docs",
+        "PID":  13060
+    },
+    {
+        "Type":  "type-safety",
+        "PID":  4852
+    },
+    {
+        "Type":  "accessibility",
+        "PID":  33616
+    },
+    {
+        "Type":  "security",
+        "PID":  34196
+    },
+    {
+        "Type":  "cleanup",
+        "PID":  27088
+    }
+]

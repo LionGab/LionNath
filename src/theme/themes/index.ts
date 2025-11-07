@@ -4,45 +4,12 @@
  * Suporta múltiplos temas: Bubblegum (padrão) e v0.app
  */
 
-import { light as bubblegumLight, dark as bubblegumDark } from '../colors';
+import { light as bubblegumLight, dark as bubblegumDark } from '..';
+import type { ThemeColors } from '../designSystemV1';
+export type { ThemeColors } from '../designSystemV1';
 import { v0AppLight, v0AppDark } from './v0-app';
 
 export type ThemeName = 'bubblegum' | 'v0-app';
-
-export interface ThemeColors {
-  background: string;
-  foreground: string;
-  card: string;
-  cardForeground: string;
-  popover: string;
-  popoverForeground: string;
-  primary: string;
-  primaryForeground: string;
-  secondary: string;
-  secondaryForeground: string;
-  muted: string;
-  mutedForeground: string;
-  accent: string;
-  accentForeground: string;
-  destructive: string;
-  destructiveForeground: string;
-  border: string;
-  input: string;
-  ring: string;
-  sidebar: string;
-  sidebarForeground: string;
-  sidebarPrimary: string;
-  sidebarPrimaryForeground: string;
-  sidebarAccent: string;
-  sidebarAccentForeground: string;
-  sidebarBorder: string;
-  sidebarRing: string;
-  chart1: string;
-  chart2: string;
-  chart3: string;
-  chart4: string;
-  chart5: string;
-}
 
 /**
  * Map de temas disponíveis

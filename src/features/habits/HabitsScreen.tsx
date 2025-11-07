@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Card } from '@/components/Card';
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
-import { colors, spacing, typography, borderRadius, shadows } from '@/theme/colors';
+import { colors, spacing, typography, borderRadius, shadows } from '@/theme';
 import { supabase } from '@/services/supabase';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { SkeletonPresets } from '@/shared/components/Skeleton';
@@ -390,3 +390,4 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
 });
+

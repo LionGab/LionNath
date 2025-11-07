@@ -1,4 +1,4 @@
-import { borderRadius, colors, shadows, spacing, typography } from '@/theme/colors';
+import { borderRadius, colors, shadows, spacing, typography } from '@/theme';
 import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -248,3 +248,4 @@ const styles = StyleSheet.create({
 
 // Memoizar componente para evitar re-renders desnecessários
 export const Input = React.memo(InputComponent);
+

@@ -12,7 +12,7 @@ import { getTheme } from '@/constants/theme';
 
 import { getThemeColors, ThemeName, defaultTheme } from '@/theme/themes';
 import type { ThemeColors } from '@/theme/themes';
-import { shadows, typography, spacing, borderRadius } from '@/theme/colors';
+import { shadows, typography, spacing, borderRadius } from '@/theme';
 
 type ThemeMode = 'light' | 'dark' | 'auto';
 

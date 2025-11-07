@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { View, ViewStyle, StyleSheet } from 'react-native';
-import { colors, borderRadius } from '@/theme/colors';
+import { colors, borderRadius } from '@/theme';
 import { GradientViewProps, GradientVariant } from './GradientView';
 
 /**
@@ -48,3 +48,4 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 });
+

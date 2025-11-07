@@ -8,7 +8,7 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { Animated, StyleSheet, ViewStyle } from 'react-native';
 import { Card, CardProps } from './Card';
-import { colors, shadows, spacing } from '@/theme/colors';
+import { colors, shadows, spacing } from '@/theme';
 
 export interface AnimatedCardProps extends CardProps {
   /** Animação de entrada (fade + scale) */
@@ -79,3 +79,4 @@ const styles = StyleSheet.create({
     ...shadows.light.lg,
   },
 });
+

@@ -9,7 +9,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { lazy, Suspense } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Loading } from '@/shared/components/Loading';
-import { colors, spacing } from '@/theme/colors';
+import { colors, spacing } from '@/theme';
 
 import { TabParamList } from './types';
 
@@ -105,3 +105,4 @@ export function TabNavigator() {
     </Tab.Navigator>
   );
 }
+

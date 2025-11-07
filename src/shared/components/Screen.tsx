@@ -8,7 +8,7 @@ import React from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { colors, spacing } from '@/theme/colors';
+import { colors, spacing } from '@/theme';
 import { Loading } from './Loading';
 import { ErrorBoundary } from './ErrorBoundary';
 
@@ -94,3 +94,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+

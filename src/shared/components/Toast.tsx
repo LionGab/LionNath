@@ -6,7 +6,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, TouchableOpacity, Platform } from 'react-native';
-import { colors, spacing, typography, borderRadius } from '@/theme/colors';
+import { colors, spacing, typography, borderRadius } from '@/theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -203,3 +203,4 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.sans,
   },
 });
+

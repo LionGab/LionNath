@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, ViewStyle } from 'react-native';
-import { colors, spacing } from '@/theme/colors';
+import { colors, spacing } from '@/theme';
 
 export interface LoadingProps {
   /** Tamanho do spinner */
@@ -68,3 +68,4 @@ const styles = StyleSheet.create({
     opacity: 0.3,
   },
 });
+

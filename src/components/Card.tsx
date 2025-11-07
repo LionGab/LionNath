@@ -1,4 +1,4 @@
-import { borderRadius, colors, shadows, spacing, typography } from '@/theme/colors';
+import { borderRadius, colors, shadows, spacing, typography } from '@/theme';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TextStyle, TouchableOpacity, TouchableOpacityProps, View, ViewStyle } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -203,3 +203,4 @@ const styles = StyleSheet.create({
 
 // Memoizar componente para evitar re-renders desnecessários
 export const Card = React.memo(CardComponent);
+

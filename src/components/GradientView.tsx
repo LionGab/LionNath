@@ -5,7 +5,7 @@
  * Baseado no tema Bubblegum com tons rosa e azul
  */
 
-import { borderRadius } from '@/theme/colors';
+import { borderRadius } from '@/theme';
 import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 
@@ -146,3 +146,4 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 });
+

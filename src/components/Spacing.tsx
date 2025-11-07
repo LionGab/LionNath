@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { View, ViewStyle, StyleSheet } from 'react-native';
-import { spacing } from '@/theme/colors';
+import { spacing } from '@/theme';
 
 export type SpacingSize = keyof typeof spacing;
 
@@ -105,3 +105,4 @@ export const Gap: React.FC<GapProps> = ({ size = 'md', direction = 'column' }) =
 
   return <View style={gapStyle} />;
 };
+

@@ -4,8 +4,8 @@
   "private": true,
   "packageManager": "pnpm@9.12.0",
   "scripts": {
-    "dev": "pnpm -C apps/mobile dev",
-    "build": "turbo run build",
+    "dev": "pnpm run validate:env && pnpm -C apps/mobile dev",
+    "build": "pnpm run validate:env && turbo run build",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
@@ -18,10 +18,11 @@
     "test:ui": "turbo run test -- --ui",
     "e2e:android": "maestro test e2e/maestro/smoke-flow.yaml",
     "check": "pnpm run type-check && pnpm run lint && pnpm run test",
-    "validate": "pnpm run type-check && pnpm run lint && pnpm run test && pnpm run format:check",
+    "validate": "pnpm run validate:env && pnpm run type-check && pnpm run lint && pnpm run test && pnpm run format:check",
     "validate:full": "pnpm run validate && pnpm run test:coverage",
     "validate:quick": "pnpm run type-check && pnpm run lint",
-    "audit": "pnpm audit --audit-level=moderate || true",
+    "validate:env": "node scripts/validate-env.js",
+    "audit": "pnpm audit --audit-level=moderate",
     "prepare": "husky install",
     "agents:start": "node scripts/start-agents.js",
     "agents:start:windows": "powershell -ExecutionPolicy Bypass -File scripts/start-agents-windows.ps1",
@@ -30,6 +31,9 @@
     "agents:logs": "node scripts/agents-logs.js",
     "browser:automation": "tsx scripts/browser-automation-agent.ts",
     "refactor:web": "tsx scripts/refactor-web-agent.ts",
+    "design:system:v1": "tsx scripts/design-system-v1-agent.ts",
+    "metrics:backfill": "tsx scripts/backfill-metrics.ts",
+    "metrics:weekly-report": "tsx scripts/generate-weekly-report.ts",
     "precommit": "lint-staged",
     "prepush": "pnpm run validate:quick"
   },
@@ -78,7 +82,9 @@
     }
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.30.1",
     "expo-constants": "~18.0.10",
-    "expo-linear-gradient": "~15.0.7"
+    "expo-linear-gradient": "~15.0.7",
+    "tailwindcss-animate": "^1.0.7"
   }
 }

@@ -13,7 +13,7 @@ import { GradientView } from '@/components/GradientView';
 import { Input } from '@/components/Input';
 import { Logo } from '@/components/Logo';
 import { Text } from '@/components/Text';
-import { borderRadius, colors, spacing } from '@/theme/colors';
+import { borderRadius, colors, spacing } from '@/theme';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Dimensions, Platform, ScrollView, StyleSheet, View } from 'react-native';
@@ -640,3 +640,4 @@ const styles = StyleSheet.create({
     fontSize: getResponsiveValue(13, 14, 15),
   },
 });
+

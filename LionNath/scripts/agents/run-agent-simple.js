@@ -5,8 +5,13 @@
  * Usa tsx para executar TypeScript diretamente
  */
 
-const { spawn } = require('child_process');
-const path = require('path');
+import path from 'node:path';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { spawn } from 'node:child_process';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const agentType = process.argv[2];
 
@@ -17,22 +22,22 @@ if (!agentType) {
 
 const agentFile = path.join(__dirname, 'agents', `${agentType}-agent.ts`);
 
-if (!require('fs').existsSync(agentFile)) {
+if (!fs.existsSync(agentFile)) {
   console.error(`Agent file not found: ${agentFile}`);
   process.exit(1);
 }
 
 // Executa agente usando tsx
-const process = spawn('npx', ['tsx', agentFile], {
+const childProcess = spawn('npx', ['tsx', agentFile], {
   stdio: 'inherit',
   cwd: path.join(__dirname, '..', '..'),
 });
 
-process.on('error', (error) => {
+childProcess.on('error', (error) => {
   console.error(`Error running agent: ${error.message}`);
   process.exit(1);
 });
 
-process.on('exit', (code) => {
+childProcess.on('exit', (code) => {
   process.exit(code || 0);
 });

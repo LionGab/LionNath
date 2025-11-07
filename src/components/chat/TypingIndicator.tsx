@@ -5,7 +5,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
-import { colors, spacing, typography } from '@/theme/colors';
+import { colors, spacing, typography } from '@/theme';
 
 export const TypingIndicator = React.memo(() => {
   const fadeAnim = useRef(new Animated.Value(0.5)).current;
@@ -51,3 +51,4 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
 });
+

@@ -19,7 +19,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Logo } from '@/components/Logo';
-import { spacing, typography, borderRadius, shadows } from '@/theme/colors';
+import { spacing, typography, borderRadius, shadows } from '@/theme';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -385,3 +385,4 @@ const styles = StyleSheet.create({
 });
 
 export default WelcomeScreen;
+

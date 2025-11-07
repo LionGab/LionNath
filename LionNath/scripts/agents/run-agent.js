@@ -4,8 +4,12 @@
  * Run Agent - Executa um agente específico em loop contínuo
  */
 
-const path = require('path');
-const { spawn } = require('child_process');
+import path from 'node:path';
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const agentType = process.argv[2];
 

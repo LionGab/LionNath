@@ -5,7 +5,7 @@ import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } fr
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Logo } from '@/components/Logo';
-import { borderRadius, colors, shadows, spacing, typography } from '@/theme/colors';
+import { borderRadius, colors, shadows, spacing, typography } from '@/theme';
 
 // Blue Theme Constants
 const BLUE_THEME = {
@@ -380,3 +380,4 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.bold as any,
   },
 });
+

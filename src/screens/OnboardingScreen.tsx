@@ -5,7 +5,7 @@
 
 import { Button } from '@/components/Button';
 import { Logo } from '@/components/Logo';
-import { borderRadius, shadows, spacing, typography } from '@/theme/colors';
+import { borderRadius, shadows, spacing, typography } from '@/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -640,3 +640,4 @@ const getStyles = () => ({
 const styles = getStyles();
 
 export default OnboardingScreen;
+

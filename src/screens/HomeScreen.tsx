@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, StatusBar, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,11 +7,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Logo } from '@/components/Logo';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
-import { colors, shadows, spacing, borderRadius, typography } from '@/theme/colors';
+import { Badge } from '@/components/Badge';
+import { colors, shadows, spacing, borderRadius, typography } from '@/theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { DailyInsightCard } from '@/components/home/DailyInsightCard';
 import { useDailyInsight } from '@/hooks/useDailyInsight';
 import { RootStackParamList } from '@/navigation/types';
+import { Toast, ToastType } from '@/shared/components/Toast';
+import { logger } from '@/utils/logger';
 
 interface QuickActionButtonProps {
   iconName?: string;
@@ -22,68 +25,101 @@ interface QuickActionButtonProps {
   gradientColors?: [string, string];
 }
 
-const QuickActionButton: React.FC<QuickActionButtonProps> = ({
+const QuickActionButton = React.memo<QuickActionButtonProps>(function QuickActionButton({
   iconName,
   iconEmoji,
   title,
   onPress,
   accessibilityLabel,
   gradientColors,
-}) => (
-  <TouchableOpacity
-    style={styles.quickAction}
-    onPress={onPress}
-    accessible={true}
-    accessibilityLabel={accessibilityLabel}
-    accessibilityRole="button"
-    accessibilityHint={`Abre a tela de ${title.toLowerCase()}`}
-    activeOpacity={0.8}
-  >
-    <View style={styles.quickActionIconContainer}>
-      <LinearGradient
-        colors={gradientColors || colors.gradients.pink}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.quickActionIconGradient}
-      >
-        {iconEmoji ? (
-          <Text style={styles.quickActionEmoji}>{iconEmoji}</Text>
-        ) : (
-          <Icon name={iconName || 'help-circle'} size={28} color="#fff" />
-        )}
-      </LinearGradient>
-    </View>
-    <Text style={styles.quickActionTitle}>{title}</Text>
-  </TouchableOpacity>
-);
+}) {
+  const handlePress = useCallback(() => {
+    onPress();
+  }, [onPress]);
+
+  const accessibilityHint = useMemo(
+    () => `Abre a tela de ${title.toLowerCase()}`,
+    [title]
+  );
+
+  return (
+    <Card
+      variant="elevated"
+      padding="xl"
+      style={styles.quickActionCard}
+      contentStyle={styles.quickActionContent}
+      onPress={handlePress}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+    >
+      {/* Ícone com gradiente mantém a identidade alegre do app */}
+      <View style={styles.quickActionIconContainer}>
+        <LinearGradient
+          colors={gradientColors || colors.gradients.pink}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.quickActionIconGradient}
+        >
+          {iconEmoji ? (
+            <Text style={styles.quickActionEmoji}>{iconEmoji}</Text>
+          ) : (
+            <Icon name={iconName || 'help-circle'} size={28} color={colors.primaryForeground} />
+          )}
+        </LinearGradient>
+      </View>
+
+      {/* Texto curto facilita a leitura rápida em telas pequenas */}
+      <Text style={styles.quickActionTitle}>{title}</Text>
+    </Card>
+  );
+});
+
+QuickActionButton.displayName = 'QuickActionButton';
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [userName, setUserName] = useState('');
   const [pregnancyWeek, setPregnancyWeek] = useState<number | null>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<ToastType>('info');
 
   // Daily Insight hook
-  const { insight, loading: insightLoading, regenerate, markAsViewed } = useDailyInsight();
+  const { insight, loading: insightLoading, regenerate, markAsViewed, error } = useDailyInsight();
+
+  const loadUserProfile = useCallback(async () => {
+    try {
+      const profileJson = await AsyncStorage.getItem('userProfile');
+      if (!profileJson) {
+        return;
+      }
+
+      const profile = JSON.parse(profileJson);
+      setUserName(profile?.name ?? 'Querida');
+      setPregnancyWeek(profile?.pregnancy_week ?? null);
+    } catch (error) {
+      logger.error('Erro ao carregar perfil do usuário', {}, error);
+    }
+  }, []);
 
   useEffect(() => {
     loadUserProfile();
-  }, []);
+  }, [loadUserProfile]);
 
-  const loadUserProfile = async () => {
-    const profileJson = await AsyncStorage.getItem('userProfile');
-    if (profileJson) {
-      const profile = JSON.parse(profileJson);
-      setUserName(profile.name || 'Querida');
-      setPregnancyWeek(profile.pregnancy_week);
+  useEffect(() => {
+    if (!error) {
+      return;
     }
-  };
+
+    // Feedback imediato quando não conseguimos carregar ou gerar a dica
+    setToastMessage(error);
+    setToastType('error');
+    setToastVisible(true);
+  }, [error]);
 
   const handleChatAboutInsight = useCallback(() => {
     if (insight) {
-      // Marcar como visualizada
       markAsViewed();
-
-      // Navegar para o chat com contexto da dica
       navigation.navigate('Chat', {
         context: insight.description,
         initialPrompt: `Quero conversar sobre: ${insight.title}`,
@@ -91,9 +127,85 @@ export default function HomeScreen() {
     }
   }, [insight, markAsViewed, navigation]);
 
+  const handleNavigateToChat = useCallback(() => {
+    navigation.navigate('Chat');
+  }, [navigation]);
+
+  const handleNavigateToDailyPlan = useCallback(() => {
+    navigation.navigate('DailyPlan');
+  }, [navigation]);
+
+  const handleNavigateToProfile = useCallback(() => {
+    navigation.navigate('Profile');
+  }, [navigation]);
+
+  const handleProgressPress = useCallback(() => {
+    Alert.alert('Em breve', 'Acompanhe seu progresso aqui!');
+  }, []);
+
+  const handleRegenerateInsight = useCallback(async () => {
+    await regenerate();
+    // Reforça a sensação de cuidado quando uma nova dica chega
+    setToastMessage('Preparei uma nova dica personalizada para você 💗');
+    setToastType('success');
+    setToastVisible(true);
+  }, [regenerate]);
+
+  const quickActions = useMemo(
+    () => [
+      {
+        key: 'chat',
+        iconEmoji: '💬',
+        title: 'Conversar',
+        accessibilityLabel: 'Botão Conversar',
+        gradientColors: colors.gradients.blue as [string, string],
+        onPress: handleNavigateToChat,
+      },
+      {
+        key: 'daily-plan',
+        iconEmoji: '📅',
+        title: 'Plano Diário',
+        accessibilityLabel: 'Botão Plano Diário',
+        gradientColors: colors.gradients.purple as [string, string],
+        onPress: handleNavigateToDailyPlan,
+      },
+      {
+        key: 'progress',
+        iconEmoji: '📊',
+        title: 'Progresso',
+        accessibilityLabel: 'Botão Progresso',
+        gradientColors: colors.gradients.green as [string, string],
+        onPress: handleProgressPress,
+      },
+      {
+        key: 'profile',
+        iconEmoji: '👤',
+        title: 'Perfil',
+        accessibilityLabel: 'Botão Perfil',
+        gradientColors: colors.gradients.amber as [string, string],
+        onPress: handleNavigateToProfile,
+      },
+    ],
+    [handleNavigateToChat, handleNavigateToDailyPlan, handleNavigateToProfile, handleProgressPress]
+  );
+
+  const greetingBadgeLabel = useMemo(() => {
+    if (!pregnancyWeek) {
+      return null;
+    }
+
+    return `Semana ${pregnancyWeek}`;
+  }, [pregnancyWeek]);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+      <Toast
+        type={toastType}
+        message={toastMessage}
+        visible={toastVisible}
+        onDismiss={() => setToastVisible(false)}
+      />
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
@@ -107,51 +219,27 @@ export default function HomeScreen() {
             <Icon name="hand-wave" size={24} color={colors.primary} />
             <Text style={styles.greeting}>Olá, {userName}!</Text>
           </View>
-          {pregnancyWeek && (
+          {greetingBadgeLabel && (
             <View style={styles.subGreetingContainer}>
-              <Icon name="heart-pulse" size={18} color={colors.destructive} />
-              <Text style={styles.subGreeting}>Semana {pregnancyWeek} de gestação</Text>
+              <Badge variant="info" size="md" style={styles.weekBadge}>
+                {greetingBadgeLabel}
+              </Badge>
             </View>
           )}
         </View>
 
         {/* Botões de ação rápida */}
         <View style={styles.quickActionsContainer}>
-          <QuickActionButton
-            iconEmoji="💬"
-            title="Conversar"
-            accessibilityLabel="Botão Conversar"
-            gradientColors={colors.gradients.blue}
-            onPress={() => navigation.navigate('Chat')}
-          />
-          <QuickActionButton
-            iconEmoji="📅"
-            title="Plano Diário"
-            accessibilityLabel="Botão Plano Diário"
-            gradientColors={colors.gradients.purple}
-            onPress={() => navigation.navigate('DailyPlan')}
-          />
-          <QuickActionButton
-            iconEmoji="📊"
-            title="Progresso"
-            accessibilityLabel="Botão Progresso"
-            gradientColors={colors.gradients.green}
-            onPress={() => Alert.alert('Em breve', 'Acompanhe seu progresso aqui!')}
-          />
-          <QuickActionButton
-            iconEmoji="👤"
-            title="Perfil"
-            accessibilityLabel="Botão Perfil"
-            gradientColors={colors.gradients.amber}
-            onPress={() => navigation.navigate('Profile')}
-          />
+          {quickActions.map(({ key, ...props }) => (
+            <QuickActionButton key={key} {...props} />
+          ))}
         </View>
 
         {/* Dica Diária Personalizada */}
         <DailyInsightCard
           insight={insight}
           loading={insightLoading}
-          onRefresh={regenerate}
+          onRefresh={handleRegenerateInsight}
           onActionPress={handleChatAboutInsight}
         />
 
@@ -285,13 +373,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.xs,
     marginTop: spacing.sm,
   },
-  subGreeting: {
-    fontSize: typography.sizes.base,
-    color: colors.mutedForeground,
-    fontFamily: typography.fontFamily.sans,
+  weekBadge: {
+    alignSelf: 'center',
   },
   quickActionsContainer: {
     flexDirection: 'row',
@@ -301,21 +386,19 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     flexWrap: 'wrap',
   },
-  quickAction: {
+  quickActionCard: {
     flex: 1,
     minWidth: '45%',
-    alignItems: 'center',
-    backgroundColor: colors.overlay.white,
-    padding: spacing.lg,
-    paddingVertical: spacing.xl,
     borderRadius: borderRadius.xl,
     minHeight: 120,
-    ...shadows.light.lg,
-    borderWidth: 1,
-    borderColor: colors.overlay.primaryBorderLight,
+  },
+  quickActionContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.md,
   },
   quickActionIconContainer: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   quickActionIconGradient: {
     width: 64,
@@ -388,3 +471,4 @@ const styles = StyleSheet.create({
     marginBottom: spacing['3xl'],
   },
 });
+

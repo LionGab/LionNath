@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { colors, spacing, borderRadius, typography, shadows } from '@/theme/colors';
+import { colors, spacing, borderRadius, typography, shadows } from '@/theme';
 
 export const ThemeShowcase = () => {
   return (
@@ -312,3 +312,4 @@ const styles = StyleSheet.create({
 });
 
 export default ThemeShowcase;
+

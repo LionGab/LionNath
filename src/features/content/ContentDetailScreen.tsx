@@ -13,7 +13,7 @@ import { Card } from '@/components/Card';
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { Loading } from '@/shared/components/Loading';
-import { colors, spacing, typography, borderRadius, shadows } from '@/theme/colors';
+import { colors, spacing, typography, borderRadius, shadows } from '@/theme';
 import { supabase } from '@/services/supabase';
 import { RootStackParamList } from '@/navigation/types';
 
@@ -407,3 +407,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+

@@ -5,7 +5,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
-import { borderRadius, colors, spacing } from '@/theme/colors';
+import { borderRadius, colors, spacing } from '@/theme';
 
 export const MessageSkeleton = React.memo(() => {
   const pulseAnim = useRef(new Animated.Value(0.5)).current;
@@ -57,3 +57,4 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.sm,
   },
 });
+

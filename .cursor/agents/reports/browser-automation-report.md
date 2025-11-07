@@ -1,6 +1,6 @@
 # 📊 Relatório de Automação do Browser
 
-**Data**: 06/11/2025, 19:19:00
+**Data**: 07/11/2025, 17:27:18
 
 ---
 
@@ -26,87 +26,88 @@
 
 - **Rota**: /onboarding
 - **Status**: ✅ Navegada
-- **Tempo de Carregamento**: 1027ms
+- **Tempo de Carregamento**: 2102ms
 - **Erros Encontrados**: 0
 - **Erros Corrigidos**: 0
 
 #### Screenshot:
 
-![Onboarding](C:\Users\User\NossaMaternidade\LionNath-1.cursor\agents\reports\screenshots\onboarding.png)
+![Onboarding](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\onboarding.png)
 
 ### Home
 
 - **Rota**: /home
 - **Status**: ✅ Navegada
-- **Tempo de Carregamento**: 2001ms
+- **Tempo de Carregamento**: 2442ms
 - **Erros Encontrados**: 0
 - **Erros Corrigidos**: 0
 
 #### Screenshot:
 
-![Home](C:\Users\User\NossaMaternidade\LionNath-1.cursor\agents\reports\screenshots\home.png)
+![Home](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\home.png)
 
 ### Chat
 
 - **Rota**: /chat
 - **Status**: ✅ Navegada
-- **Tempo de Carregamento**: 1522ms
+- **Tempo de Carregamento**: 1056ms
 - **Erros Encontrados**: 0
 - **Erros Corrigidos**: 0
 
 #### Screenshot:
 
-![Chat](C:\Users\User\NossaMaternidade\LionNath-1.cursor\agents\reports\screenshots\chat.png)
+![Chat](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\chat.png)
 
 ### Habits
 
 - **Rota**: /habits
 - **Status**: ✅ Navegada
-- **Tempo de Carregamento**: 2097ms
+- **Tempo de Carregamento**: 1792ms
 - **Erros Encontrados**: 0
 - **Erros Corrigidos**: 0
 
 #### Screenshot:
 
-![Habits](C:\Users\User\NossaMaternidade\LionNath-1.cursor\agents\reports\screenshots\habits.png)
+![Habits](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\habits.png)
 
 ### Content
 
 - **Rota**: /content
 - **Status**: ✅ Navegada
-- **Tempo de Carregamento**: 1675ms
+- **Tempo de Carregamento**: 2581ms
 - **Erros Encontrados**: 0
 - **Erros Corrigidos**: 0
 
 #### Screenshot:
 
-![Content](C:\Users\User\NossaMaternidade\LionNath-1.cursor\agents\reports\screenshots\content.png)
+![Content](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\content.png)
 
 ### Profile
 
 - **Rota**: /profile
 - **Status**: ✅ Navegada
-- **Tempo de Carregamento**: 1055ms
+- **Tempo de Carregamento**: 2498ms
 - **Erros Encontrados**: 0
 - **Erros Corrigidos**: 0
 
 #### Screenshot:
 
-![Profile](C:\Users\User\NossaMaternidade\LionNath-1.cursor\agents\reports\screenshots\profile.png)
+![Profile](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\profile.png)
 
 ### DailyPlan
 
 - **Rota**: /daily-plan
 - **Status**: ✅ Navegada
-- **Tempo de Carregamento**: 1165ms
+- **Tempo de Carregamento**: 1801ms
 - **Erros Encontrados**: 0
 - **Erros Corrigidos**: 0
 
 #### Screenshot:
 
-![DailyPlan](C:\Users\User\NossaMaternidade\LionNath-1.cursor\agents\reports\screenshots\dailyplan.png)
+![DailyPlan](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\dailyplan.png)
 
 ## 💡 Recomendações
+
 
 ---
 

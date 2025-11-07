@@ -1,14 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { format } from 'date-fns';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ChatContext } from '@/services/ai';
 // TODO: Migrar para daily-insight Edge Function (já implementada)
 import { getDailyPlan, saveDailyPlan } from '@/services/supabase';
-import { borderRadius, colors, shadows, spacing, typography } from '@/theme/colors';
+import { borderRadius, colors, shadows, spacing, typography } from '@/theme';
+import { logger } from '@/utils/logger';
 
 // Blue Theme Constants
 const BLUE_THEME = {
@@ -23,49 +24,62 @@ const BLUE_THEME = {
   darkGray: '#94A3B8',
 };
 
+interface DailyPlan {
+  priorities: string[];
+  tip: string;
+  recipe: string;
+}
+
+const FALLBACK_DAILY_PLAN: DailyPlan = {
+  priorities: ['💧 Beber 8 copos de água', '📅 Marcar consulta pré-natal', '🧘 Exercícios leves'],
+  tip: 'Cuidar de você é cuidar do seu bebê! Tire um tempo para respirar hoje. 💕',
+  recipe: 'Vitamina de Banana: 1 banana + 1 copo de leite + 1 colher de mel. Batido com gelo!',
+};
+
 export default function DailyPlanScreen() {
   const navigation = useNavigation();
-  const [dailyPlan, setDailyPlan] = useState<any>(null);
+  const [dailyPlan, setDailyPlan] = useState<DailyPlan | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
 
-  useEffect(() => {
-    loadDailyPlan();
-  }, []);
-
-  const loadDailyPlan = async () => {
+  const loadDailyPlan = useCallback(async () => {
     setLoading(true);
     try {
       const userId = await AsyncStorage.getItem('userId');
       const today = format(new Date(), 'yyyy-MM-dd');
 
-      if (userId) {
-        const plan = await getDailyPlan(userId, today);
-        setDailyPlan(plan);
+      if (!userId) {
+        return;
       }
+
+      const plan = await getDailyPlan(userId, today);
+      setDailyPlan(plan);
     } catch (error) {
-      console.log('Erro ao carregar plano:', error);
+      logger.error('Erro ao carregar plano diário', {}, error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleGeneratePlan = async () => {
+  useEffect(() => {
+    loadDailyPlan();
+  }, [loadDailyPlan]);
+
+  const handleGeneratePlan = useCallback(async () => {
     setGenerating(true);
     try {
       const profileJson = await AsyncStorage.getItem('userProfile');
-      const context: ChatContext = profileJson ? JSON.parse(profileJson) : {};
+      const hasContext = Boolean(profileJson);
+      const context: ChatContext = hasContext ? JSON.parse(profileJson) : {};
+
+      logger.info('Gerando plano diário local', {
+        hasContext,
+        stage: context.type,
+      });
 
       // TODO: Migrar para daily-insight Edge Function
-      // Fallback temporário com dados estáticos
-      const planData = {
-        priorities: ['💧 Beber 8 copos de água', '📅 Marcar consulta pré-natal', '🧘 Exercícios leves'],
-        tip: 'Cuidar de você é cuidar do seu bebê! Tire um tempo para respirar hoje. 💕',
-        recipe: 'Vitamina de Banana: 1 banana + 1 copo de leite + 1 colher de mel. Batido com gelo!',
-      };
-      setDailyPlan(planData);
+      setDailyPlan(FALLBACK_DAILY_PLAN);
 
-      // Salvar no Supabase
       const userId = await AsyncStorage.getItem('userId');
       const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -73,20 +87,28 @@ export default function DailyPlanScreen() {
         await saveDailyPlan({
           user_id: userId,
           date: today,
-          priorities: planData.priorities,
-          tip: planData.tip,
-          recipe: planData.recipe,
+          priorities: FALLBACK_DAILY_PLAN.priorities,
+          tip: FALLBACK_DAILY_PLAN.tip,
+          recipe: FALLBACK_DAILY_PLAN.recipe,
         });
       }
 
       Alert.alert('Sucesso!', 'Plano gerado com sucesso! 🎉');
-    } catch (error) {
-      console.error('Erro ao gerar plano:', error);
+    } catch (caughtError) {
+      const error = caughtError instanceof Error ? caughtError : new Error(String(caughtError));
+
+      logger.error('Erro ao gerar plano diário', error);
       Alert.alert('Erro', 'Não foi possível gerar o plano');
     } finally {
       setGenerating(false);
     }
-  };
+  }, []);
+
+  const handleGoBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
+  const priorities = useMemo(() => (dailyPlan?.priorities ? [...dailyPlan.priorities] : []), [dailyPlan]);
 
   if (loading) {
     return (
@@ -99,11 +121,11 @@ export default function DailyPlanScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={handleGoBack}>
           <Text style={styles.headerBack}>← Voltar</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Plano Diário</Text>
-        <View style={{ width: 60 }} />
+        <View style={styles.headerPlaceholder} />
       </View>
 
       <View style={styles.content}>
@@ -135,8 +157,8 @@ export default function DailyPlanScreen() {
                 </View>
                 <Text style={styles.sectionTitle}>Prioridades de Hoje</Text>
               </View>
-              {dailyPlan.priorities?.map((priority: string, index: number) => (
-                <View key={index} style={styles.priorityItem}>
+              {priorities.map((priority, index) => (
+                <View key={`${index}-${priority}`} style={styles.priorityItem}>
                   <LinearGradient
                     colors={[BLUE_THEME.primaryBlue, BLUE_THEME.lightBlue]}
                     start={{ x: 0, y: 0 }}
@@ -207,6 +229,9 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.bold as any,
     color: colors.foreground,
+  },
+  headerPlaceholder: {
+    width: 60,
   },
   content: {
     padding: spacing.lg,
@@ -341,3 +366,4 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.bold as any,
   },
 });
+

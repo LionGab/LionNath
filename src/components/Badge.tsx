@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';
-import { borderRadius, colors, spacing, typography } from '@/theme/colors';
+import { borderRadius, colors, spacing, typography } from '@/theme';
 
 /**
  * Badge Component - Sistema de Design Bubblegum
@@ -130,3 +130,4 @@ const styles = StyleSheet.create({
 
 // Memoizar componente para evitar re-renders desnecessários
 export const Badge = React.memo(BadgeComponent);
+

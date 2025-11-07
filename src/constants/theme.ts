@@ -5,7 +5,7 @@
  * Adaptado para maternidade com foco em acolhimento visual
  */
 
-import { light, dark, shadows, typography, spacing, borderRadius } from '@/theme/colors';
+import { light, dark, shadows, typography, spacing, borderRadius } from '@/theme';
 
 /**
  * Cores expandidas do tema
@@ -95,35 +95,44 @@ export const theme = {
   },
 
   spacing: {
-    xs: 4,
-    sm: 8,
-    md: 16,
-    lg: 24,
-    xl: 32,
-    xxl: 48,
-    xxxl: 64,
+    none: spacing.none,
+    xxs: spacing.xxs,
+    xs: spacing.xs,
+    sm: spacing.sm,
+    md: spacing.md,
+    lg: spacing.lg,
+    xl: spacing.xl,
+    '2xl': spacing['2xl'],
+    '3xl': spacing['3xl'],
+    '4xl': spacing['4xl'],
+    // Aliases legados para compatibilidade com versões anteriores
+    xxl: spacing['3xl'],
+    xxxl: spacing['4xl'],
   },
 
   typography: {
     fontFamily: {
       primary: typography.fontFamily.sans,
-      secondary: typography.fontFamily.sans,
+      secondary: typography.fontFamily.serif,
+      mono: typography.fontFamily.mono,
     },
-    sizes: typography.sizes,
-    weights: typography.weights,
+    sizes: { ...typography.sizes },
+    weights: { ...typography.weights },
     lineHeights: {
-      tight: 1.2,
-      normal: 1.5,
-      relaxed: 1.8,
+      tight: typography.lineHeight.tight,
+      normal: typography.lineHeight.normal,
+      relaxed: typography.lineHeight.relaxed,
+      loose: typography.lineHeight.loose,
     },
+    scale: { ...typography.scale },
   },
 
   borderRadius: {
-    sm: 8,
-    md: 16,
-    lg: 24,
-    xl: 32,
-    full: 9999,
+    sm: borderRadius.sm,
+    md: borderRadius.md,
+    lg: borderRadius.lg,
+    xl: borderRadius.xl,
+    full: borderRadius.full,
   },
 
   shadows: {

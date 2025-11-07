@@ -5,9 +5,8 @@
  * Navega por todas as telas do app, identifica erros e corrige automaticamente
  */
 
-import { execSync } from 'child_process';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
-import { join } from 'path';
+import path from 'node:path';
 
 interface ErrorReport {
   screen: string;
@@ -194,11 +193,15 @@ function fixError(error: ErrorReport): ErrorReport {
 }
 
 // Função para gerar screenshot
+function joinPath(...segments: string[]): string {
+  return path.join(...segments);
+}
+
 function takeScreenshot(screen: string): string {
   console.log(`   📸 Gerando screenshot...`);
 
   // Simula geração de screenshot
-  const screenshotPath = join(
+  const screenshotPath = joinPath(
     process.cwd(),
     '.cursor',
     'agents',
@@ -381,8 +384,8 @@ function generateMarkdownReport(report: AutomationReport): string {
 function main() {
   try {
     // Criar diretório de relatórios se não existir
-    const reportsDir = join(process.cwd(), '.cursor', 'agents', 'reports');
-    const screenshotsDir = join(reportsDir, 'screenshots');
+    const reportsDir = joinPath(process.cwd(), '.cursor', 'agents', 'reports');
+    const screenshotsDir = joinPath(reportsDir, 'screenshots');
 
     if (!existsSync(reportsDir)) {
       mkdirSync(reportsDir, { recursive: true });
@@ -399,7 +402,7 @@ function main() {
     const markdownReport = generateMarkdownReport(report);
 
     // Salvar relatório
-    const reportPath = join(reportsDir, 'browser-automation-report.md');
+    const reportPath = joinPath(reportsDir, 'browser-automation-report.md');
     writeFileSync(reportPath, markdownReport, 'utf-8');
 
     console.log(`\n✅ Relatório salvo em: ${reportPath}`);

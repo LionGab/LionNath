@@ -5,7 +5,7 @@
  */
 
 import { theme } from '@/constants/theme';
-import { colors, typography } from '@/theme/colors';
+import { colors, typography } from '@/theme';
 import React, { useMemo } from 'react';
 import { Text as RNText, TextProps as RNTextProps, StyleSheet, TextStyle } from 'react-native';
 
@@ -153,3 +153,4 @@ export const H3: React.FC<Omit<TextProps, 'variant'>> = (props) => <Text variant
 export const Body: React.FC<Omit<TextProps, 'variant'>> = (props) => <Text variant="body" {...props} />;
 
 export const Caption: React.FC<Omit<TextProps, 'variant'>> = (props) => <Text variant="caption" {...props} />;
+

@@ -6,11 +6,13 @@
     "jsx": "react-native",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "strict": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
-    "strictFunctionTypes": false,
-    "strictPropertyInitialization": false,
+
+    // ✅ STRICT MODE - Habilitando progressivamente
+    "strict": false,  // TODO: habilitar após Fase 2
+    "noImplicitAny": true,  // ✅ Habilitado agora (Fase 1)
+    "strictNullChecks": false,  // TODO: habilitar na Fase 2
+    "strictFunctionTypes": false,  // TODO: habilitar na Fase 3
+    "strictPropertyInitialization": false,  // TODO: habilitar na Fase 3
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,

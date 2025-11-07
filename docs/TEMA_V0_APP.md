@@ -111,10 +111,10 @@ export const v0AppLight = {
 
 Os componentes já usam o sistema de tema, mas podem precisar de ajustes:
 
-1. **Verificar componentes que usam `colors` diretamente:**
+1. **Verificar componentes que usam tokens diretamente:**
 
    ```bash
-   grep -r "from '@/theme/colors'" src/
+   grep -r "from '@/theme'" src/
    ```
 
 2. **Atualizar para usar `useTheme()` quando possível:**
@@ -177,11 +177,13 @@ Os componentes já usam o sistema de tema, mas podem precisar de ajustes:
 ```
 src/
 ├── theme/
-│   ├── colors.ts              # Tema Bubblegum (original)
+│   ├── designSystemV1.ts      # Tokens v1 unificados (Bubblegum)
 │   ├── themes/
 │   │   ├── index.ts           # Sistema de gerenciamento
-│   │   └── v0-app.ts         # Tema v0.app (preencher)
-│   └── index.ts               # Exports
+│   │   └── v0-app.ts          # Tema v0.app (preencher)
+│   ├── tokens/
+│   │   └── nossa-maternidade-v1.js
+│   └── index.ts               # Barrel export central
 ├── contexts/
 │   └── ThemeContext.tsx       # Context atualizado
 ├── components/

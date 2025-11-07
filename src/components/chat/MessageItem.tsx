@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text } from 'react-native';
-import { borderRadius, colors, spacing, typography } from '@/theme/colors';
+import { borderRadius, colors, spacing, typography } from '@/theme';
 
 export interface MessageItemProps {
   message: {
@@ -86,3 +86,4 @@ const styles = StyleSheet.create({
 });
 
 MessageItem.displayName = 'MessageItem';
+

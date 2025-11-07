@@ -16,7 +16,7 @@ $agents = @(
 
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectRoot = Split-Path -Parent $scriptPath
-$runAgentScript = Join-Path $scriptPath "agents" "run-agent.js"
+$runAgentScript = [System.IO.Path]::Combine($scriptPath, "agents", "run-agent.js")
 
 Write-Host "Starting 8 agents in separate PowerShell windows..." -ForegroundColor Cyan
 Write-Host ""
@@ -35,10 +35,12 @@ foreach ($agentType in $agents) {
     $windowTitle = "Agent: $agentType"
     
     # Abre nova janela PowerShell para cada agente
+    $command = "cd '$projectRoot'; Write-Host 'Agent: $agentType' -ForegroundColor Green; Write-Host ''; node `"$runAgentScript`" $agentType"
+
     $process = Start-Process powershell -ArgumentList @(
         "-NoExit",
         "-Command",
-        "cd '$projectRoot'; Write-Host 'Agent: $agentType' -ForegroundColor Green; Write-Host ''; node '$runAgentScript' $agentType"
+        $command
     ) -PassThru -WindowStyle Normal
     
     $pids += @{

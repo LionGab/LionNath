@@ -7,7 +7,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { colors, spacing, typography, borderRadius } from '@/theme/colors';
+import { colors, spacing, typography, borderRadius } from '@/theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export interface HeaderProps {
@@ -172,3 +172,4 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.sans,
   },
 });
+

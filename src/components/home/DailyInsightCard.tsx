@@ -7,7 +7,7 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { colors, spacing, typography, borderRadius, shadows } from '@/theme/colors';
+import { colors, spacing, typography, borderRadius, shadows } from '@/theme';
 import { DailyInsight } from '@/services/dailyInsight';
 
 interface DailyInsightCardProps {
@@ -375,3 +375,4 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
   },
 });
+

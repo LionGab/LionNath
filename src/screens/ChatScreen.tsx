@@ -22,7 +22,7 @@ import { MessageItem } from '@/components/chat/MessageItem';
 import { TypingIndicator } from '@/components/chat/TypingIndicator';
 import { MessageSkeleton } from '@/components/chat/MessageSkeleton';
 import { Message, useChatOptimized } from '@/hooks/useChatOptimized';
-import { borderRadius, colors, spacing, typography, shadows } from '@/theme/colors';
+import { borderRadius, colors, spacing, typography, shadows } from '@/theme';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { logger } from '@/utils/logger';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -515,3 +515,4 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
 });
+

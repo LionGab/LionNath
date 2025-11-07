@@ -32,44 +32,70 @@ export const claymorphismColors = {
 /**
  * Sombras Claymorphism para React Native
  * Progressão mobile → tablet → desktop
+ * Usa boxShadow para web (react-native-web) e elevation para Android
  */
 export const clayShadows = {
   // Mobile (base) - sombras menores
-  xs: {
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  sm: {
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  md: {
-    shadowColor: '#000',
-    shadowOffset: { width: 8, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  lg: {
-    shadowColor: '#000',
-    shadowOffset: { width: 12, height: 12 },
-    shadowOpacity: 0.3,
-    shadowRadius: 24,
-    elevation: 12,
-  },
-  xl: {
-    shadowColor: '#000',
-    shadowOffset: { width: 16, height: 16 },
-    shadowOpacity: 0.35,
-    shadowRadius: 32,
-    elevation: 16,
-  },
+  xs: Platform.select({
+    web: {
+      boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.15)',
+    } as ViewStyle,
+    default: {
+      shadowColor: '#000',
+      shadowOffset: { width: 2, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+  }),
+  sm: Platform.select({
+    web: {
+      boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.2)',
+    } as ViewStyle,
+    default: {
+      shadowColor: '#000',
+      shadowOffset: { width: 4, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+  }),
+  md: Platform.select({
+    web: {
+      boxShadow: '8px 8px 16px rgba(0, 0, 0, 0.25)',
+    } as ViewStyle,
+    default: {
+      shadowColor: '#000',
+      shadowOffset: { width: 8, height: 8 },
+      shadowOpacity: 0.25,
+      shadowRadius: 16,
+      elevation: 8,
+    },
+  }),
+  lg: Platform.select({
+    web: {
+      boxShadow: '12px 12px 24px rgba(0, 0, 0, 0.3)',
+    } as ViewStyle,
+    default: {
+      shadowColor: '#000',
+      shadowOffset: { width: 12, height: 12 },
+      shadowOpacity: 0.3,
+      shadowRadius: 24,
+      elevation: 12,
+    },
+  }),
+  xl: Platform.select({
+    web: {
+      boxShadow: '16px 16px 32px rgba(0, 0, 0, 0.35)',
+    } as ViewStyle,
+    default: {
+      shadowColor: '#000',
+      shadowOffset: { width: 16, height: 16 },
+      shadowOpacity: 0.35,
+      shadowRadius: 32,
+      elevation: 16,
+    },
+  }),
 };
 
 /**

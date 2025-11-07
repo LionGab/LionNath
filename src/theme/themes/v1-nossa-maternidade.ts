@@ -6,6 +6,8 @@
  * e espaçamentos generosos seguindo base 4.
  */
 
+import { Platform } from 'react-native';
+
 export type NeutralStop = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
 export interface NeutralPalette {
@@ -64,18 +66,7 @@ export interface TypographyScale {
   overline: TypographyToken;
 }
 
-export type SpacingToken =
-  | 'none'
-  | 'xxs'
-  | 'xs'
-  | 'sm'
-  | 'md'
-  | 'lg'
-  | 'xl'
-  | '2xl'
-  | '3xl'
-  | '4xl'
-  | '5xl';
+export type SpacingToken = 'none' | 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
 
 export type RadiusToken = 'sm' | 'md' | 'lg' | 'full';
 
@@ -84,12 +75,12 @@ export interface SpacingScale extends Record<SpacingToken, number> {}
 export interface RadiusScale extends Record<RadiusToken, number> {}
 
 export interface ShadowLevel {
-  shadowColor: string;
-  shadowOffset: { width: number; height: number };
-  shadowOpacity: number;
-  shadowRadius: number;
-  elevation: number;
-  boxShadow: string;
+  shadowColor?: string;
+  shadowOffset?: { width: number; height: number };
+  shadowOpacity?: number;
+  shadowRadius?: number;
+  elevation?: number;
+  boxShadow?: string;
 }
 
 export interface ShadowScale {
@@ -203,22 +194,30 @@ const radiusScale: RadiusScale = {
 };
 
 const shadowScale: ShadowScale = {
-  soft: {
-    shadowColor: 'rgba(106, 84, 80, 0.12)',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 1,
-    shadowRadius: 18,
-    elevation: 8,
-    boxShadow: '0px 12px 24px -12px rgba(106, 84, 80, 0.30)',
-  },
-  medium: {
-    shadowColor: 'rgba(106, 84, 80, 0.18)',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 1,
-    shadowRadius: 32,
-    elevation: 14,
-    boxShadow: '0px 18px 48px -16px rgba(106, 84, 80, 0.35)',
-  },
+  soft: Platform.select({
+    web: {
+      boxShadow: '0px 12px 24px -12px rgba(106, 84, 80, 0.30)',
+    },
+    default: {
+      shadowColor: 'rgba(106, 84, 80, 0.12)',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 1,
+      shadowRadius: 18,
+      elevation: 8,
+    },
+  }) as ShadowLevel,
+  medium: Platform.select({
+    web: {
+      boxShadow: '0px 18px 48px -16px rgba(106, 84, 80, 0.35)',
+    },
+    default: {
+      shadowColor: 'rgba(106, 84, 80, 0.18)',
+      shadowOffset: { width: 0, height: 12 },
+      shadowOpacity: 1,
+      shadowRadius: 32,
+      elevation: 14,
+    },
+  }) as ShadowLevel,
 };
 
 export const nossaMaternidadeDesignTokens: NossaMaternidadeDesignTokens = {
@@ -261,5 +260,3 @@ export function getSpacing(token: SpacingToken): number {
 export function getRadius(token: RadiusToken): number {
   return nossaMaternidadeDesignTokens.radius[token];
 }
-
-

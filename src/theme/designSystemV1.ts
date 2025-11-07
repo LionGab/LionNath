@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { nossaMaternidadeDesignTokens, getNeutralTone, getSpacing, getRadius } from './themes/v1-nossa-maternidade';
 
 type ColorStop = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
@@ -361,62 +362,96 @@ const DARK_SHADOW_COLOR = 'rgba(17, 34, 54, 0.55)';
 
 const shadows: Shadows = {
   light: {
-    xs: {
-      shadowColor: LIGHT_SHADOW_COLOR,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.12,
-      shadowRadius: 6,
-      elevation: 2,
-      boxShadow: '0px 4px 10px -6px rgba(32, 58, 84, 0.25)',
-    },
-    sm: {
-      ...nossaMaternidadeDesignTokens.shadow.soft,
-    },
-    md: {
-      ...nossaMaternidadeDesignTokens.shadow.medium,
-    },
-    lg: {
-      shadowColor: 'rgba(32, 58, 84, 0.22)',
-      shadowOffset: { width: 0, height: 20 },
-      shadowOpacity: 1,
-      shadowRadius: 40,
-      elevation: 18,
-      boxShadow: '0px 28px 64px -18px rgba(32, 58, 84, 0.30)',
-    },
+    xs: Platform.select({
+      web: {
+        boxShadow: '0px 4px 10px -6px rgba(32, 58, 84, 0.25)',
+      },
+      default: {
+        shadowColor: LIGHT_SHADOW_COLOR,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.12,
+        shadowRadius: 6,
+        elevation: 2,
+      },
+    }),
+    sm: Platform.select({
+      web: {
+        boxShadow: nossaMaternidadeDesignTokens.shadow.soft.boxShadow,
+      },
+      default: {
+        ...nossaMaternidadeDesignTokens.shadow.soft,
+      },
+    }),
+    md: Platform.select({
+      web: {
+        boxShadow: nossaMaternidadeDesignTokens.shadow.medium.boxShadow,
+      },
+      default: {
+        ...nossaMaternidadeDesignTokens.shadow.medium,
+      },
+    }),
+    lg: Platform.select({
+      web: {
+        boxShadow: '0px 28px 64px -18px rgba(32, 58, 84, 0.30)',
+      },
+      default: {
+        shadowColor: 'rgba(32, 58, 84, 0.22)',
+        shadowOffset: { width: 0, height: 20 },
+        shadowOpacity: 1,
+        shadowRadius: 40,
+        elevation: 18,
+      },
+    }),
   },
   dark: {
-    xs: {
-      shadowColor: DARK_SHADOW_COLOR,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.22,
-      shadowRadius: 6,
-      elevation: 2,
-      boxShadow: '0px 4px 12px -6px rgba(17, 34, 54, 0.45)',
-    },
-    sm: {
-      shadowColor: 'rgba(17, 34, 54, 0.35)',
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 1,
-      shadowRadius: 18,
-      elevation: 10,
-      boxShadow: '0px 14px 28px -12px rgba(17, 34, 54, 0.45)',
-    },
-    md: {
-      shadowColor: DARK_SHADOW_COLOR,
-      shadowOffset: { width: 0, height: 14 },
-      shadowOpacity: 1,
-      shadowRadius: 32,
-      elevation: 16,
-      boxShadow: '0px 24px 48px -18px rgba(17, 34, 54, 0.55)',
-    },
-    lg: {
-      shadowColor: 'rgba(17, 34, 54, 0.65)',
-      shadowOffset: { width: 0, height: 24 },
-      shadowOpacity: 1,
-      shadowRadius: 48,
-      elevation: 24,
-      boxShadow: '0px 36px 72px -24px rgba(17, 34, 54, 0.65)',
-    },
+    xs: Platform.select({
+      web: {
+        boxShadow: '0px 4px 12px -6px rgba(17, 34, 54, 0.45)',
+      },
+      default: {
+        shadowColor: DARK_SHADOW_COLOR,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.22,
+        shadowRadius: 6,
+        elevation: 2,
+      },
+    }),
+    sm: Platform.select({
+      web: {
+        boxShadow: '0px 14px 28px -12px rgba(17, 34, 54, 0.45)',
+      },
+      default: {
+        shadowColor: 'rgba(17, 34, 54, 0.35)',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 1,
+        shadowRadius: 18,
+        elevation: 10,
+      },
+    }),
+    md: Platform.select({
+      web: {
+        boxShadow: '0px 24px 48px -18px rgba(17, 34, 54, 0.55)',
+      },
+      default: {
+        shadowColor: DARK_SHADOW_COLOR,
+        shadowOffset: { width: 0, height: 14 },
+        shadowOpacity: 1,
+        shadowRadius: 32,
+        elevation: 16,
+      },
+    }),
+    lg: Platform.select({
+      web: {
+        boxShadow: '0px 36px 72px -24px rgba(17, 34, 54, 0.65)',
+      },
+      default: {
+        shadowColor: 'rgba(17, 34, 54, 0.65)',
+        shadowOffset: { width: 0, height: 24 },
+        shadowOpacity: 1,
+        shadowRadius: 48,
+        elevation: 24,
+      },
+    }),
   },
 };
 
@@ -501,4 +536,3 @@ export default {
   spacing,
   borderRadius,
 };
-

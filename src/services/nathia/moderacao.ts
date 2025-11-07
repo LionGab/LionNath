@@ -3,11 +3,7 @@
  * Sistema de detecção e reescrita de conteúdo problemático
  */
 
-import {
-  ModerationAnalysis,
-  ValidationError,
-  NathiaError,
-} from './types';
+import { ModerationAnalysis, ValidationError, NathiaError } from './types';
 import { SYSTEM_PROMPTS } from './prompts';
 import { NATHIA_CONFIG } from './config';
 
@@ -37,11 +33,7 @@ export async function detectarJulgamento(mensagem: string): Promise<number> {
 
     return score;
   } catch (error) {
-    throw new NathiaError(
-      'Erro ao detectar julgamento',
-      'JUDGEMENT_DETECTION_ERROR',
-      { error }
-    );
+    throw new NathiaError('Erro ao detectar julgamento', 'JUDGEMENT_DETECTION_ERROR', { error });
   }
 }
 
@@ -144,9 +136,7 @@ export function gerarRationale(analise: Partial<ModerationAnalysis>): string {
 
   if (toxicity_score > 0.5) {
     reasons.push(
-      `Toxicidade detectada (score: ${toxicity_score.toFixed(
-        2
-      )}). A mensagem contém linguagem ofensiva ou agressiva.`
+      `Toxicidade detectada (score: ${toxicity_score.toFixed(2)}). A mensagem contém linguagem ofensiva ou agressiva.`
     );
   }
 
@@ -190,8 +180,7 @@ export async function analisarMensagem(mensagem: string): Promise<ModerationAnal
 
     // Determinar se é segura
     const config = NATHIA_CONFIG.moderacao;
-    const is_safe =
-      judgement_score < config.judgement_threshold && toxicity_score < config.toxicity_threshold;
+    const is_safe = judgement_score < config.judgement_threshold && toxicity_score < config.toxicity_threshold;
 
     // Identificar concerns específicos
     const concerns = identifyConcerns(mensagem, judgement_score, toxicity_score);
@@ -231,18 +220,12 @@ export function decidirAcao(analise: ModerationAnalysis): 'approve' | 'review' |
   const { judgement_score, toxicity_score } = analise;
 
   // Auto-rejeitar se muito problemático
-  if (
-    judgement_score >= config.auto_reject_threshold ||
-    toxicity_score >= config.auto_reject_threshold
-  ) {
+  if (judgement_score >= config.auto_reject_threshold || toxicity_score >= config.auto_reject_threshold) {
     return 'reject';
   }
 
   // Auto-aprovar se seguro
-  if (
-    judgement_score < config.auto_approve_threshold &&
-    toxicity_score < config.auto_approve_threshold
-  ) {
+  if (judgement_score < config.auto_approve_threshold && toxicity_score < config.auto_approve_threshold) {
     return 'approve';
   }
 
@@ -253,9 +236,7 @@ export function decidirAcao(analise: ModerationAnalysis): 'approve' | 'review' |
 /**
  * Exporta estatísticas de moderação (para analytics)
  */
-export function getModerationStats(
-  analyses: ModerationAnalysis[]
-): {
+export function getModerationStats(analyses: ModerationAnalysis[]): {
   total: number;
   approved: number;
   rejected: number;
@@ -272,7 +253,7 @@ export function getModerationStats(
     avg_toxicity: 0,
   };
 
-  analyses.forEach(a => {
+  analyses.forEach((a) => {
     const decision = decidirAcao(a);
     if (decision === 'approve') stats.approved++;
     else if (decision === 'reject') stats.rejected++;
@@ -327,7 +308,7 @@ function analyzeToxicityPatterns(mensagem: string): number {
 
   // Palavras ofensivas (lista reduzida - expandir conforme necessário)
   const offensiveWords = ['idiota', 'burra', 'estúpida', 'incompetente', 'péssima', 'horrível'];
-  offensiveWords.forEach(word => {
+  offensiveWords.forEach((word) => {
     if (lowerMsg.includes(word)) score += 0.3;
   });
 
@@ -443,5 +424,5 @@ export const ALLOWED_PRESCRIPTIVE_CONTEXTS = [
  */
 export function isInAllowedContext(mensagem: string): boolean {
   const lowerMsg = mensagem.toLowerCase();
-  return ALLOWED_PRESCRIPTIVE_CONTEXTS.some(context => lowerMsg.includes(context));
+  return ALLOWED_PRESCRIPTIVE_CONTEXTS.some((context) => lowerMsg.includes(context));
 }

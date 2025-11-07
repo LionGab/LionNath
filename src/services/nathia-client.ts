@@ -147,7 +147,7 @@ class NathiaClient {
       timeout: this.timeoutMs,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+        Authorization: `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
       },
     });
 
@@ -176,18 +176,13 @@ class NathiaClient {
   /**
    * Retry com exponential backoff
    */
-  private async retryRequest<T>(
-    fn: () => Promise<T>,
-    retries = this.maxRetries
-  ): Promise<T> {
+  private async retryRequest<T>(fn: () => Promise<T>, retries = this.maxRetries): Promise<T> {
     try {
       return await fn();
     } catch (error) {
       if (retries === 0) throw error;
 
-      const isRetriable =
-        axios.isAxiosError(error) &&
-        (!error.response || error.response.status >= 500);
+      const isRetriable = axios.isAxiosError(error) && (!error.response || error.response.status >= 500);
 
       if (!isRetriable) throw error;
 
@@ -220,13 +215,9 @@ class NathiaClient {
   /**
    * Envia mensagem para NAT-IA Chat
    */
-  async sendMessage(
-    request: NathiaChatRequest
-  ): Promise<NathiaChatResponse> {
+  async sendMessage(request: NathiaChatRequest): Promise<NathiaChatResponse> {
     try {
-      const response = await this.retryRequest(() =>
-        this.client.post<NathiaChatResponse>('/nathia-chat', request)
-      );
+      const response = await this.retryRequest(() => this.client.post<NathiaChatResponse>('/nathia-chat', request));
 
       const data = response.data;
 
@@ -267,9 +258,7 @@ class NathiaClient {
   /**
    * Processa onboarding inicial
    */
-  async processOnboarding(
-    request: NathiaOnboardingRequest
-  ): Promise<NathiaOnboardingResponse> {
+  async processOnboarding(request: NathiaOnboardingRequest): Promise<NathiaOnboardingResponse> {
     try {
       const response = await this.retryRequest(() =>
         this.client.post<NathiaOnboardingResponse>('/nathia-onboarding', request)
@@ -284,15 +273,10 @@ class NathiaClient {
   /**
    * Busca recomendações personalizadas
    */
-  async getRecommendations(
-    request: NathiaRecommendationsRequest
-  ): Promise<NathiaRecommendationsResponse> {
+  async getRecommendations(request: NathiaRecommendationsRequest): Promise<NathiaRecommendationsResponse> {
     try {
       const response = await this.retryRequest(() =>
-        this.client.post<NathiaRecommendationsResponse>(
-          '/nathia-recommendations',
-          request
-        )
+        this.client.post<NathiaRecommendationsResponse>('/nathia-recommendations', request)
       );
 
       return response.data;

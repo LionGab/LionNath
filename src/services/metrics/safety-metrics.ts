@@ -13,6 +13,7 @@
 import { supabase } from '../supabase';
 import type { RiskDetection, ModerationEvent, SOSEvent, SafetyMetrics } from './types';
 import { createHash } from 'crypto';
+import { logger } from '@/utils/logger';
 
 // ============= DETECÇÃO DE RISCOS =============
 
@@ -49,7 +50,7 @@ export const trackRiscoDetectado = async (
       await triggerCriticalRiskAlert(session_id, sinais_detectados);
     }
   } catch (error) {
-    console.error('Erro ao registrar risco:', error);
+    logger.error('Erro ao registrar risco:', error);
     throw error;
   }
 };
@@ -57,10 +58,7 @@ export const trackRiscoDetectado = async (
 /**
  * Marca detecção como falso positivo (para treinar modelo)
  */
-export const marcarFalsoPositivo = async (
-  detection_id: string,
-  falso_positivo: boolean
-): Promise<void> => {
+export const marcarFalsoPositivo = async (detection_id: string, falso_positivo: boolean): Promise<void> => {
   try {
     const { error } = await supabase
       .from('nathia_safety_events')
@@ -72,7 +70,7 @@ export const marcarFalsoPositivo = async (
     // Recalcular precision/recall
     await updateSafetyMetrics();
   } catch (error) {
-    console.error('Erro ao marcar falso positivo:', error);
+    logger.error('Erro ao marcar falso positivo:', error);
   }
 };
 
@@ -123,7 +121,7 @@ export const getRiskDetectionMetrics = async (
       taxa_falso_positivo,
     };
   } catch (error) {
-    console.error('Erro ao calcular métricas de risco:', error);
+    logger.error('Erro ao calcular métricas de risco:', error);
     return {
       total_detectados: 0,
       por_nivel: {},
@@ -161,7 +159,7 @@ export const trackModeracaoManual = async (
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao registrar moderação:', error);
+    logger.error('Erro ao registrar moderação:', error);
   }
 };
 
@@ -205,8 +203,7 @@ export const getModerationMetrics = async (
 
     // Calcular tempos
     const tempos = data.map((d) => d.tempo_resposta_min).sort((a, b) => a - b);
-    const tempo_medio_resposta_min =
-      tempos.reduce((acc, t) => acc + t, 0) / tempos.length;
+    const tempo_medio_resposta_min = tempos.reduce((acc, t) => acc + t, 0) / tempos.length;
     const tempo_mediano_resposta_min = tempos[Math.floor(tempos.length / 2)];
 
     return {
@@ -216,7 +213,7 @@ export const getModerationMetrics = async (
       tempo_mediano_resposta_min,
     };
   } catch (error) {
-    console.error('Erro ao calcular métricas de moderação:', error);
+    logger.error('Erro ao calcular métricas de moderação:', error);
     return {
       total_moderacoes: 0,
       por_decisao: {},
@@ -263,7 +260,7 @@ export const trackSOS = async (
       await triggerSOSAlert(user_id_hash, tipo_situacao);
     }
   } catch (error) {
-    console.error('Erro ao registrar SOS:', error);
+    logger.error('Erro ao registrar SOS:', error);
   }
 };
 
@@ -326,7 +323,7 @@ export const getSOSMetrics = async (
       por_fase,
     };
   } catch (error) {
-    console.error('Erro ao calcular métricas SOS:', error);
+    logger.error('Erro ao calcular métricas SOS:', error);
     return {
       total_eventos: 0,
       por_urgencia: {},
@@ -404,7 +401,7 @@ export const getPrecisionRecall = async (
       false_negatives,
     };
   } catch (error) {
-    console.error('Erro ao calcular precision/recall:', error);
+    logger.error('Erro ao calcular precision/recall:', error);
     return {
       precision: 0,
       recall: 0,
@@ -462,9 +459,7 @@ const anonimizarTipo = (tipo: string): string => {
     abuso: 'violencia',
   };
 
-  const categoria = Object.keys(categorias).find((key) =>
-    tipo.toLowerCase().includes(key)
-  );
+  const categoria = Object.keys(categorias).find((key) => tipo.toLowerCase().includes(key));
 
   return categoria ? categorias[categoria] : 'geral';
 };
@@ -512,22 +507,19 @@ const updateSafetyMetrics = async (): Promise<void> => {
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao atualizar métricas de segurança:', error);
+    logger.error('Erro ao atualizar métricas de segurança:', error);
   }
 };
 
 /**
  * Dispara alerta de risco crítico
  */
-const triggerCriticalRiskAlert = async (
-  session_id: string,
-  sinais: string[]
-): Promise<void> => {
+const triggerCriticalRiskAlert = async (session_id: string, sinais: string[]): Promise<void> => {
   try {
     const { default: alerts } = await import('./alerts');
     await alerts.alertIfRiskCritical(session_id, sinais);
   } catch (error) {
-    console.error('Erro ao disparar alerta de risco crítico:', error);
+    logger.error('Erro ao disparar alerta de risco crítico:', error);
   }
 };
 
@@ -539,6 +531,6 @@ const triggerSOSAlert = async (user_id_hash: string, tipo: string): Promise<void
     const { default: alerts } = await import('./alerts');
     await alerts.alertIfSOSEvent(user_id_hash, tipo);
   } catch (error) {
-    console.error('Erro ao disparar alerta SOS:', error);
+    logger.error('Erro ao disparar alerta SOS:', error);
   }
 };

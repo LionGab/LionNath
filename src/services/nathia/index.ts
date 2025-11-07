@@ -15,30 +15,13 @@ import { recomendarConteudo as recomendarConteudoFn } from './recomendacoes';
 import { criarMicroObjetivo as criarMicroObjetivoFn } from './habitos';
 import { extrairRotulos as extrairRotulosFn } from './analytics';
 import { gerarPushNotification as gerarPushNotificationFn } from './copys';
-import {
-  NATHIA_CONFIG,
-  validateConfig,
-  getConfig,
-  updateConfig,
-} from './config';
+import { NATHIA_CONFIG, validateConfig, getConfig, updateConfig } from './config';
 
 // ============= Módulo 1: Chat Empático =============
-export {
-  chatEmpatico,
-  buildChatPrompt,
-  addToHistory,
-  createChatContext,
-  truncateHistory,
-} from './chat';
+export { chatEmpatico, buildChatPrompt, addToHistory, createChatContext, truncateHistory } from './chat';
 
 // ============= Módulo 2: Triagem Emocional & Risco =============
-export {
-  classificarSentimento,
-  detectarRisco,
-  acionarSOS,
-  atualizarKeywordsRisco,
-  getTriagemStats,
-} from './triagem';
+export { classificarSentimento, detectarRisco, acionarSOS, atualizarKeywordsRisco, getTriagemStats } from './triagem';
 
 // ============= Módulo 3: Onboarding Inteligente =============
 export {
@@ -75,12 +58,7 @@ export {
 } from './moderacao';
 
 // ============= Módulo 6: Recomendações Personalizadas =============
-export {
-  recomendarConteudo,
-  recomendarCirculo,
-  recomendarHabito,
-  rerankWithFeedback,
-} from './recomendacoes';
+export { recomendarConteudo, recomendarCirculo, recomendarHabito, rerankWithFeedback } from './recomendacoes';
 
 // ============= Módulo 7: Hábitos & Coaching =============
 export {
@@ -174,11 +152,7 @@ export { NATHIA_CONFIG, validateConfig, getConfig, updateConfig };
 
 // ============= Configuração =============
 // ============= Prompts =============
-export {
-  SYSTEM_PROMPTS,
-  ERROR_MESSAGES,
-  SUPPORT_RESOURCES,
-} from './prompts';
+export { SYSTEM_PROMPTS, ERROR_MESSAGES, SUPPORT_RESOURCES } from './prompts';
 
 // ============= Versão =============
 export const NATHIA_VERSION = '1.0.0';
@@ -220,7 +194,7 @@ export function initializeNathia(customConfig?: Partial<typeof NATHIA_CONFIG>): 
 } {
   // Aplicar configurações customizadas se fornecidas
   if (customConfig) {
-    Object.keys(customConfig).forEach(key => {
+    Object.keys(customConfig).forEach((key) => {
       const configKey = key as keyof typeof NATHIA_CONFIG;
       if (NATHIA_CONFIG[configKey]) {
         Object.assign(NATHIA_CONFIG[configKey], customConfig[configKey]);
@@ -260,7 +234,7 @@ export function healthCheck(): {
     copys: typeof gerarPushNotificationFn === 'function',
   };
 
-  const allModulesHealthy = Object.values(modules).every(v => v);
+  const allModulesHealthy = Object.values(modules).every((v) => v);
   const configValid = validateConfig();
 
   let status: 'healthy' | 'degraded' | 'unhealthy';

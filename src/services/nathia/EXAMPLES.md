@@ -75,10 +75,7 @@ const contexto = createChatContext('user_123', {
   user_profile: analise.perfil,
 });
 
-const primeiraResposta = await chatEmpatico(
-  'Olá! Estou um pouco ansiosa com a gravidez',
-  contexto
-);
+const primeiraResposta = await chatEmpatico('Olá! Estou um pouco ansiosa com a gravidez', contexto);
 
 console.log(primeiraResposta.resposta);
 // "Olá! É completamente normal sentir ansiedade durante a gravidez..."
@@ -91,12 +88,7 @@ console.log(primeiraResposta.next_step);
 ## Cenário 2: Detecção de Risco e Protocolo SOS
 
 ```typescript
-import {
-  chatEmpatico,
-  classificarSentimento,
-  detectarRisco,
-  acionarSOS,
-} from '@/services/nathia';
+import { chatEmpatico, classificarSentimento, detectarRisco, acionarSOS } from '@/services/nathia';
 
 // Usuária envia mensagem preocupante
 const mensagem = 'Não aguento mais essa situação, quero que tudo acabe';
@@ -226,12 +218,7 @@ await publishContent({
 ## Cenário 4: Moderação de Comentário em Círculo
 
 ```typescript
-import {
-  analisarMensagem,
-  decidirAcao,
-  sugerirReescrita,
-  gerarRationale,
-} from '@/services/nathia';
+import { analisarMensagem, decidirAcao, sugerirReescrita, gerarRationale } from '@/services/nathia';
 
 // Usuária postou comentário em círculo
 const comentario = 'Você DEVERIA amamentar exclusivamente! Mães de verdade não dão fórmula.';
@@ -293,12 +280,7 @@ if (acao === 'reject') {
 ## Cenário 5: Sistema de Recomendações Personalizado
 
 ```typescript
-import {
-  recomendarConteudo,
-  recomendarCirculo,
-  recomendarHabito,
-  rerankWithFeedback,
-} from '@/services/nathia';
+import { recomendarConteudo, recomendarCirculo, recomendarHabito, rerankWithFeedback } from '@/services/nathia';
 
 // Usuária abre o app
 const userId = 'user_123';
@@ -464,7 +446,7 @@ console.log('Barreiras identificadas:', barreiras);
 // Oferecer ajustes
 showSuggestion({
   message: 'Percebi que está difícil manter a meditação diária.',
-  suggestions: barreiras.map(b => b.suggestion),
+  suggestions: barreiras.map((b) => b.suggestion),
   actions: [
     { label: 'Ajustar horário', action: 'edit_schedule' },
     { label: 'Reduzir para 3x/semana', action: 'reduce_frequency' },
@@ -691,10 +673,7 @@ const userId = 'user_123';
 const mensagem = 'Estou muito preocupada, meu bebê chora muito e não sei o que fazer';
 
 // 1. TRIAGEM - Analisar sentimento e risco
-const [sentimento, risco] = await Promise.all([
-  classificarSentimento(mensagem),
-  detectarRisco(mensagem),
-]);
+const [sentimento, risco] = await Promise.all([classificarSentimento(mensagem), detectarRisco(mensagem)]);
 
 // 2. CHAT - Processar mensagem
 const contexto = await getUserChatContext(userId);
@@ -786,21 +765,25 @@ console.log('Versão:', nathia.info.version); // "1.0.0"
 ## Notas Importantes
 
 ### Privacidade
+
 - SEMPRE anonimizar dados antes de analytics
 - NUNCA armazenar mensagens completas com identificação
 - Validar conformidade LGPD em todos os dados
 
 ### Revisão Humana
+
 - Copys SEMPRE requerem aprovação
 - Decisões de moderação "reject" podem ser automáticas, mas "review" vai para humanos
 - SOS de risco alto notifica equipe imediatamente
 
 ### Performance
+
 - Triagem pode rodar em paralelo com chat
 - Analytics é processado em background (não bloqueia UI)
 - Recomendações podem ser pré-computadas
 
 ### Monitoramento
+
 - Health check em cada deploy
 - Logs de erros com contexto (sem PII)
 - Métricas de qualidade de respostas

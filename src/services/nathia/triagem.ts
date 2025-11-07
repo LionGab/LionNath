@@ -14,6 +14,7 @@ import {
 } from './types';
 import { SYSTEM_PROMPTS, SUPPORT_RESOURCES } from './prompts';
 import { NATHIA_CONFIG } from './config';
+import { logger } from '@/utils/logger';
 
 /**
  * Classifica o sentimento de uma mensagem
@@ -29,9 +30,7 @@ import { NATHIA_CONFIG } from './config';
  * // { sentimento: "alegria", intensidade: 8, valence: "positive", keywords: ["feliz", "dormiu"] }
  * ```
  */
-export async function classificarSentimento(
-  mensagem: string
-): Promise<SentimentAnalysis> {
+export async function classificarSentimento(mensagem: string): Promise<SentimentAnalysis> {
   validateMessage(mensagem);
 
   try {
@@ -51,11 +50,7 @@ export async function classificarSentimento(
       keywords,
     };
   } catch (error) {
-    throw new NathiaError(
-      'Erro ao classificar sentimento',
-      'SENTIMENT_ERROR',
-      { error }
-    );
+    throw new NathiaError('Erro ao classificar sentimento', 'SENTIMENT_ERROR', { error });
   }
 }
 
@@ -73,9 +68,7 @@ export async function classificarSentimento(
  * // { nivel: "risk", sinais: ["expressão de desistência", "ideação suicida"], confidence: 0.9 }
  * ```
  */
-export async function detectarRisco(
-  mensagem: string
-): Promise<RiskAssessment> {
+export async function detectarRisco(mensagem: string): Promise<RiskAssessment> {
   validateMessage(mensagem);
 
   try {
@@ -83,14 +76,10 @@ export async function detectarRisco(
     const config = NATHIA_CONFIG.triagem;
 
     // Detecção de palavras-chave de alto risco
-    const highRiskKeywords = config.keywords_risco_alto.filter(keyword =>
-      lowerMsg.includes(keyword)
-    );
+    const highRiskKeywords = config.keywords_risco_alto.filter((keyword) => lowerMsg.includes(keyword));
 
     // Detecção de palavras-chave de observação
-    const watchKeywords = config.keywords_observacao.filter(keyword =>
-      lowerMsg.includes(keyword)
-    );
+    const watchKeywords = config.keywords_observacao.filter((keyword) => lowerMsg.includes(keyword));
 
     // Determinar nível de risco baseado em keywords
     let nivel: RiskLevel = 'ok';
@@ -100,11 +89,11 @@ export async function detectarRisco(
     if (highRiskKeywords.length > 0) {
       nivel = 'risk';
       confidence = Math.min(0.9, 0.6 + highRiskKeywords.length * 0.15);
-      sinais.push(...highRiskKeywords.map(k => `Expressão de alto risco: "${k}"`));
+      sinais.push(...highRiskKeywords.map((k) => `Expressão de alto risco: "${k}"`));
     } else if (watchKeywords.length >= 2) {
       nivel = 'watch';
       confidence = Math.min(0.7, 0.4 + watchKeywords.length * 0.1);
-      sinais.push(...watchKeywords.map(k => `Sinal de atenção: "${k}"`));
+      sinais.push(...watchKeywords.map((k) => `Sinal de atenção: "${k}"`));
     } else if (watchKeywords.length === 1) {
       nivel = 'watch';
       confidence = 0.4;
@@ -124,11 +113,7 @@ export async function detectarRisco(
       suggested_resources: getSuggestedResources(nivel),
     };
   } catch (error) {
-    throw new NathiaError(
-      'Erro ao detectar risco',
-      'RISK_DETECTION_ERROR',
-      { error }
-    );
+    throw new NathiaError('Erro ao detectar risco', 'RISK_DETECTION_ERROR', { error });
   }
 }
 
@@ -180,7 +165,7 @@ export async function acionarSOS(
     };
   } catch (error) {
     // Mesmo com erro, retornar recursos de apoio
-    console.error('Erro ao acionar SOS:', error);
+    logger.error('Erro ao acionar SOS:', error);
 
     return {
       sent_to_moderation: false,
@@ -195,10 +180,7 @@ export async function acionarSOS(
  * Atualiza keywords de risco em runtime
  * Útil para ajustes baseados em feedback
  */
-export function atualizarKeywordsRisco(
-  tipo: 'alto' | 'observacao',
-  keywords: string[]
-): void {
+export function atualizarKeywordsRisco(tipo: 'alto' | 'observacao', keywords: string[]): void {
   const config = NATHIA_CONFIG.triagem;
 
   if (tipo === 'alto') {
@@ -211,9 +193,7 @@ export function atualizarKeywordsRisco(
 /**
  * Obtém estatísticas de triagem (para analytics)
  */
-export function getTriagemStats(
-  assessments: RiskAssessment[]
-): {
+export function getTriagemStats(assessments: RiskAssessment[]): {
   total: number;
   by_level: Record<RiskLevel, number>;
   avg_confidence: number;
@@ -226,7 +206,7 @@ export function getTriagemStats(
     requires_review: 0,
   };
 
-  assessments.forEach(a => {
+  assessments.forEach((a) => {
     stats.by_level[a.nivel]++;
     stats.avg_confidence += a.confidence;
     if (a.requires_human_review) stats.requires_review++;
@@ -298,26 +278,15 @@ function extractEmotionalKeywords(mensagem: string): string[] {
   ];
 
   const lowerMsg = mensagem.toLowerCase();
-  return emotionalWords.filter(word => lowerMsg.includes(word));
+  return emotionalWords.filter((word) => lowerMsg.includes(word));
 }
 
-function inferValence(
-  mensagem: string,
-  keywords: string[]
-): 'positive' | 'neutral' | 'negative' {
+function inferValence(mensagem: string, keywords: string[]): 'positive' | 'neutral' | 'negative' {
   const positiveWords = ['feliz', 'alegre', 'grata', 'esperançosa', 'amor'];
-  const negativeWords = [
-    'triste',
-    'preocupada',
-    'ansiosa',
-    'medo',
-    'desesperada',
-    'raiva',
-    'culpada',
-  ];
+  const negativeWords = ['triste', 'preocupada', 'ansiosa', 'medo', 'desesperada', 'raiva', 'culpada'];
 
-  const positiveCount = keywords.filter(k => positiveWords.includes(k)).length;
-  const negativeCount = keywords.filter(k => negativeWords.includes(k)).length;
+  const positiveCount = keywords.filter((k) => positiveWords.includes(k)).length;
+  const negativeCount = keywords.filter((k) => negativeWords.includes(k)).length;
 
   if (positiveCount > negativeCount) return 'positive';
   if (negativeCount > positiveCount) return 'negative';
@@ -329,7 +298,7 @@ function estimateIntensity(mensagem: string, keywords: string[]): number {
 
   // Intensificadores
   const intensifiers = ['muito', 'extremamente', 'demais', 'tanto', 'completamente'];
-  const hasIntensifier = intensifiers.some(i => lowerMsg.includes(i));
+  const hasIntensifier = intensifiers.some((i) => lowerMsg.includes(i));
 
   // Pontuação
   const exclamationCount = (mensagem.match(/!/g) || []).length;
@@ -357,16 +326,12 @@ function getSuggestedResources(nivel: RiskLevel): string[] {
 }
 
 function getEmergencyContacts(): SupportContact[] {
-  return [
-    SUPPORT_RESOURCES.CVV,
-    SUPPORT_RESOURCES.SAMU,
-    SUPPORT_RESOURCES.LIGUE_180,
-  ];
+  return [SUPPORT_RESOURCES.CVV, SUPPORT_RESOURCES.SAMU, SUPPORT_RESOURCES.LIGUE_180];
 }
 
 async function logSOSEvent(user_id: string, contexto: any): Promise<void> {
   // TODO: Implementar integração com sistema de logs/banco de dados
-  console.log('[SOS] Evento registrado:', {
+  logger.info('[SOS] Evento registrado:', {
     user_id,
     timestamp: new Date(),
     contexto_summary: {
@@ -379,7 +344,7 @@ async function logSOSEvent(user_id: string, contexto: any): Promise<void> {
 async function notifyModerationTeam(user_id: string, contexto: any): Promise<void> {
   // TODO: Implementar integração com sistema de notificações
   // Pode ser Slack, email, sistema interno, etc.
-  console.log('[SOS] Moderação notificada:', {
+  logger.info('[SOS] Moderação notificada:', {
     user_id,
     timestamp: new Date(),
     priority: 'HIGH',

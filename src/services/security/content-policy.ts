@@ -3,17 +3,8 @@
  * Community Guidelines & Content Moderation
  */
 
-import {
-  ContentValidationResult,
-  ContentViolation,
-  ViolationType,
-  SeverityLevel,
-} from './types';
-import {
-  SPAM_KEYWORDS,
-  HATE_SPEECH_PATTERNS,
-  COMMERCIAL_PATTERNS,
-} from './constants';
+import { ContentValidationResult, ContentViolation, ViolationType, SeverityLevel } from './types';
+import { SPAM_KEYWORDS, HATE_SPEECH_PATTERNS, COMMERCIAL_PATTERNS } from './constants';
 
 /**
  * Valida conteúdo de uma mensagem contra políticas da comunidade
@@ -116,9 +107,7 @@ function detectarSpam(
   const mensagemLower = mensagem.toLowerCase();
 
   // Verificar palavras-chave de spam
-  const spamMatches = SPAM_KEYWORDS.filter((keyword) =>
-    mensagemLower.includes(keyword)
-  );
+  const spamMatches = SPAM_KEYWORDS.filter((keyword) => mensagemLower.includes(keyword));
 
   if (spamMatches.length > 0) {
     return {
@@ -131,9 +120,7 @@ function detectarSpam(
 
   // Detectar repetição excessiva
   if (contexto?.userHistory) {
-    const repeticoes = contexto.userHistory.filter(
-      (msg) => msg.toLowerCase() === mensagemLower
-    ).length;
+    const repeticoes = contexto.userHistory.filter((msg) => msg.toLowerCase() === mensagemLower).length;
 
     if (repeticoes >= 3) {
       return {
@@ -263,9 +250,7 @@ function detectarConteudoInapropriado(mensagem: string): ContentViolation | null
   const mensagemLower = mensagem.toLowerCase();
 
   // Conteúdo sexual explícito (em contexto de saúde materna, isso é delicado)
-  const sexualExplicitPatterns = [
-    /\b(pornô|porn|xxx|sexo explícito)\b/gi,
-  ];
+  const sexualExplicitPatterns = [/\b(pornô|porn|xxx|sexo explícito)\b/gi];
 
   for (const pattern of sexualExplicitPatterns) {
     if (pattern.test(mensagem)) {
@@ -320,9 +305,7 @@ function calcularConfianca(violations: ContentViolation[]): number {
     [SeverityLevel.CRITICAL]: 1.0,
   };
 
-  const maxSeverity = Math.max(
-    ...violations.map((v) => severityScores[v.severity])
-  );
+  const maxSeverity = Math.max(...violations.map((v) => severityScores[v.severity]));
 
   return maxSeverity;
 }
@@ -336,29 +319,19 @@ function gerarSugestoes(violations: ContentViolation[]): string[] {
   for (const violation of violations) {
     switch (violation.type) {
       case ViolationType.SPAM:
-        suggestions.push(
-          'Evite repetir mensagens ou usar linguagem comercial.'
-        );
+        suggestions.push('Evite repetir mensagens ou usar linguagem comercial.');
         break;
       case ViolationType.COMMERCIAL:
-        suggestions.push(
-          'Links e conteúdo comercial não são permitidos neste espaço.'
-        );
+        suggestions.push('Links e conteúdo comercial não são permitidos neste espaço.');
         break;
       case ViolationType.HATE_SPEECH:
-        suggestions.push(
-          'Por favor, use linguagem respeitosa. Nossa comunidade preza pelo respeito mútuo.'
-        );
+        suggestions.push('Por favor, use linguagem respeitosa. Nossa comunidade preza pelo respeito mútuo.');
         break;
       case ViolationType.HARASSMENT:
-        suggestions.push(
-          'Comportamento agressivo não é tolerado. Seja gentil com todos.'
-        );
+        suggestions.push('Comportamento agressivo não é tolerado. Seja gentil com todos.');
         break;
       case ViolationType.INAPPROPRIATE:
-        suggestions.push(
-          'Por favor, mantenha o conteúdo apropriado para o contexto de saúde materna.'
-        );
+        suggestions.push('Por favor, mantenha o conteúdo apropriado para o contexto de saúde materna.');
         break;
     }
   }
@@ -436,9 +409,7 @@ const MEDICAL_TERMS_WHITELIST = [
 export function contemApenasTermosMedicos(mensagem: string): boolean {
   const mensagemLower = mensagem.toLowerCase();
 
-  return MEDICAL_TERMS_WHITELIST.some((termo) =>
-    mensagemLower.includes(termo)
-  );
+  return MEDICAL_TERMS_WHITELIST.some((termo) => mensagemLower.includes(termo));
 }
 
 /**
@@ -451,10 +422,7 @@ export function sanitizarMensagem(mensagem: string): string {
   sanitized = sanitized.replace(/https?:\/\/[^\s]+/gi, '[link removido]');
 
   // Remover menções de WhatsApp/telefone
-  sanitized = sanitized.replace(
-    /(?:whatsapp|wpp|zap)\s*:?\s*\d+/gi,
-    '[contato removido]'
-  );
+  sanitized = sanitized.replace(/(?:whatsapp|wpp|zap)\s*:?\s*\d+/gi, '[contato removido]');
 
   return sanitized;
 }

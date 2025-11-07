@@ -44,15 +44,12 @@ const contexto = createChatContext('user_123', {
 });
 
 // Processar mensagem
-const resposta = await chatEmpatico(
-  'Meu bebê não dorme e estou exausta',
-  contexto
-);
+const resposta = await chatEmpatico('Meu bebê não dorme e estou exausta', contexto);
 
 // Usar resposta
-console.log(resposta.resposta);        // Texto da resposta
-console.log(resposta.acoes);           // Ações sugeridas
-console.log(resposta.next_step);       // Próximo passo
+console.log(resposta.resposta); // Texto da resposta
+console.log(resposta.acoes); // Ações sugeridas
+console.log(resposta.next_step); // Próximo passo
 ```
 
 ### Detectar Risco
@@ -113,7 +110,7 @@ const recs = await recomendarConteudo('user_123', {
 });
 
 // Exibir top 5
-recs.itens.forEach(item => {
+recs.itens.forEach((item) => {
   console.log(`${item.title} (${item.match_score})`);
   console.log(`Motivo: ${item.reason}`);
 });
@@ -122,11 +119,7 @@ recs.itens.forEach(item => {
 ### Curar Conteúdo
 
 ```typescript
-import {
-  resumirConteudo,
-  criarCincoMinutos,
-  gerarChecklist
-} from '@/services/nathia';
+import { resumirConteudo, criarCincoMinutos, gerarChecklist } from '@/services/nathia';
 
 const artigo = '[artigo longo...]';
 
@@ -166,12 +159,15 @@ serve(async (req) => {
     const result = await model.generateContent(prompt);
 
     // Retornar
-    return new Response(JSON.stringify({
-      ...setup,
-      resposta: result.response.text(),
-    }), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        ...setup,
+        resposta: result.response.text(),
+      }),
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
@@ -223,7 +219,7 @@ async function salvarInteracao(userMessage: string) {
 
   // Criar dados
   const dados = {
-    user_id: 'user_123',  // Será removido
+    user_id: 'user_123', // Será removido
     message: userMessage,
     labels,
     timestamp: new Date(),
@@ -248,10 +244,7 @@ async function salvarInteracao(userMessage: string) {
 ```typescript
 async function processarMensagemUsuaria(userId: string, mensagem: string) {
   // 1. Triagem paralela
-  const [sentimento, risco] = await Promise.all([
-    classificarSentimento(mensagem),
-    detectarRisco(mensagem),
-  ]);
+  const [sentimento, risco] = await Promise.all([classificarSentimento(mensagem), detectarRisco(mensagem)]);
 
   // 2. Chat normal
   const contexto = await getUserContext(userId);
@@ -345,6 +338,7 @@ console.log('Prompt gerado:', prompt);
 ## Referências Rápidas
 
 ### Módulos
+
 1. **chat** - Conversa empática
 2. **triagem** - Sentimento + risco
 3. **onboarding** - Perfil + starter pack
@@ -356,11 +350,13 @@ console.log('Prompt gerado:', prompt);
 9. **copys** - Push + email + App Store
 
 ### Recursos
+
 - 📖 [README.md](./README.md) - Documentação completa
 - 💡 [EXAMPLES.md](./EXAMPLES.md) - Exemplos práticos
 - 📊 [NATHIA_IMPLEMENTATION_REPORT.md](../../NATHIA_IMPLEMENTATION_REPORT.md) - Relatório técnico
 
 ### Links Úteis
+
 - **Configuração:** `src/services/nathia/config.ts`
 - **Tipos:** `src/services/nathia/types.ts`
 - **Prompts:** `src/services/nathia/prompts.ts`
@@ -370,6 +366,7 @@ console.log('Prompt gerado:', prompt);
 ## Suporte
 
 Dúvidas? Veja:
+
 1. README.md para conceitos
 2. EXAMPLES.md para código
 3. Types para referência de API

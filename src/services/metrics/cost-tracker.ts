@@ -15,6 +15,7 @@
 
 import { supabase } from '../supabase';
 import type { CostMetrics, ModelCostConfig, CostOptimization } from './types';
+import { logger } from '@/utils/logger';
 
 // ============= CONFIGURAÇÃO DE CUSTOS =============
 
@@ -127,7 +128,7 @@ export const trackByModel = async (
 
     return result;
   } catch (error) {
-    console.error('Erro ao calcular custos por modelo:', error);
+    logger.error('Erro ao calcular custos por modelo:', error);
     return {};
   }
 };
@@ -152,9 +153,7 @@ export const getCostMetrics = async (periodo: string = '30d'): Promise<CostMetri
     const gemini_cost = data?.reduce((acc, d) => acc + d.cost_usd, 0) || 0;
 
     // Calcular métricas diárias
-    const dias = Math.ceil(
-      (new Date().getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    const dias = Math.ceil((new Date().getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24));
 
     const custo_diario_usd = gemini_cost / dias;
 
@@ -162,8 +161,7 @@ export const getCostMetrics = async (periodo: string = '30d'): Promise<CostMetri
     const supabase_mensal = periodo === '30d' ? SUPABASE_COST_MONTHLY : 0;
     const outros_mensal = periodo === '30d' ? OTHER_SERVICES_MONTHLY : 0;
 
-    const custo_mensal_estimado_usd =
-      (custo_diario_usd * 30) + supabase_mensal + outros_mensal;
+    const custo_mensal_estimado_usd = custo_diario_usd * 30 + supabase_mensal + outros_mensal;
 
     // Custo por usuário e por mensagem
     const sessoes_unicas = new Set(data?.map((d) => d.session_id) || []).size;
@@ -184,7 +182,7 @@ export const getCostMetrics = async (periodo: string = '30d'): Promise<CostMetri
       },
     };
   } catch (error) {
-    console.error('Erro ao calcular métricas de custo:', error);
+    logger.error('Erro ao calcular métricas de custo:', error);
     return {
       custo_diario_usd: 0,
       custo_mensal_estimado_usd: 0,
@@ -202,12 +200,10 @@ export const getCostMetrics = async (periodo: string = '30d'): Promise<CostMetri
 /**
  * Estima custo mensal baseado em uso atual
  */
-export const estimarCustoMensal = async (
-  metricas_uso?: {
-    mensagens_diarias: number;
-    tokens_medio_por_mensagem: number;
-  }
-): Promise<{
+export const estimarCustoMensal = async (metricas_uso?: {
+  mensagens_diarias: number;
+  tokens_medio_por_mensagem: number;
+}): Promise<{
   estimativa_conservadora: number;
   estimativa_realista: number;
   estimativa_otimista: number;
@@ -229,8 +225,7 @@ export const estimarCustoMensal = async (
       const total_msgs = data?.length || 0;
       mensagens_diarias = total_msgs / 7;
 
-      const total_tokens =
-        data?.reduce((acc, d) => acc + d.input_tokens + d.output_tokens, 0) || 0;
+      const total_tokens = data?.reduce((acc, d) => acc + d.input_tokens + d.output_tokens, 0) || 0;
       tokens_medio = total_tokens / total_msgs;
     }
 
@@ -242,8 +237,7 @@ export const estimarCustoMensal = async (
     const output_tokens = tokens_medio * 0.6;
 
     const custo_por_mensagem =
-      (input_tokens / 1000) * config.input_cost_per_1k +
-      (output_tokens / 1000) * config.output_cost_per_1k;
+      (input_tokens / 1000) * config.input_cost_per_1k + (output_tokens / 1000) * config.output_cost_per_1k;
 
     // Cenários
     const conservador = {
@@ -277,7 +271,7 @@ export const estimarCustoMensal = async (
       },
     };
   } catch (error) {
-    console.error('Erro ao estimar custo mensal:', error);
+    logger.error('Erro ao estimar custo mensal:', error);
     return {
       estimativa_conservadora: 0,
       estimativa_realista: 0,
@@ -302,9 +296,9 @@ export const sugerirOtimizacoes = async (): Promise<CostOptimization[]> => {
     // Sugestão 1: Usar Gemini 2.0 Flash em vez de 1.5 Pro
     if (byModel['gemini-1.5-pro']) {
       const economia_mes =
-        (byModel['gemini-1.5-pro'].total_cost * 30) *
-        (1 - MODEL_COSTS['gemini-2.0-flash'].input_cost_per_1k /
-          MODEL_COSTS['gemini-1.5-pro'].input_cost_per_1k);
+        byModel['gemini-1.5-pro'].total_cost *
+        30 *
+        (1 - MODEL_COSTS['gemini-2.0-flash'].input_cost_per_1k / MODEL_COSTS['gemini-1.5-pro'].input_cost_per_1k);
 
       otimizacoes.push({
         recomendacao: 'Migrar de Gemini 1.5 Pro para 2.0 Flash',
@@ -322,8 +316,7 @@ export const sugerirOtimizacoes = async (): Promise<CostOptimization[]> => {
 
     if (totalTokens) {
       const total_input = totalTokens.reduce((acc, d) => acc + d.input_tokens, 0);
-      const economia_cache = (total_input / 1000) *
-        MODEL_COSTS['gemini-2.0-flash'].input_cost_per_1k * 0.5; // 50% cache hit
+      const economia_cache = (total_input / 1000) * MODEL_COSTS['gemini-2.0-flash'].input_cost_per_1k * 0.5; // 50% cache hit
 
       otimizacoes.push({
         recomendacao: 'Implementar cache de contexto (Gemini Context Caching)',
@@ -340,15 +333,11 @@ export const sugerirOtimizacoes = async (): Promise<CostOptimization[]> => {
       .gte('timestamp', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
 
     if (tokenStats && tokenStats.length > 0) {
-      const avg_tokens =
-        tokenStats.reduce((acc, d) => acc + d.input_tokens + d.output_tokens, 0) /
-        tokenStats.length;
+      const avg_tokens = tokenStats.reduce((acc, d) => acc + d.input_tokens + d.output_tokens, 0) / tokenStats.length;
 
       if (avg_tokens > 2000) {
         const economia_otimizacao =
-          (avg_tokens - 1500) / 1000 *
-          MODEL_COSTS['gemini-2.0-flash'].output_cost_per_1k *
-          tokenStats.length * 30;
+          ((avg_tokens - 1500) / 1000) * MODEL_COSTS['gemini-2.0-flash'].output_cost_per_1k * tokenStats.length * 30;
 
         otimizacoes.push({
           recomendacao: 'Otimizar prompts para reduzir tokens (objetivo: <1500 tokens/msg)',
@@ -380,7 +369,7 @@ export const sugerirOtimizacoes = async (): Promise<CostOptimization[]> => {
 
     return otimizacoes;
   } catch (error) {
-    console.error('Erro ao sugerir otimizações:', error);
+    logger.error('Erro ao sugerir otimizações:', error);
     return otimizacoes;
   }
 };
@@ -437,21 +426,15 @@ export const gerarRelatorioCustos = async (
     // Calcular tendência (comparar com período anterior)
     const custo_atual = resumo.custo_diario_usd;
     const dataInicio = getDataInicio(periodo);
-    const dias = Math.ceil(
-      (new Date().getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    const dias = Math.ceil((new Date().getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24));
 
     const { data: periodoAnterior } = await supabase
       .from('nathia_token_usage')
       .select('cost_usd')
       .lt('timestamp', dataInicio.toISOString())
-      .gte(
-        'timestamp',
-        new Date(dataInicio.getTime() - dias * 24 * 60 * 60 * 1000).toISOString()
-      );
+      .gte('timestamp', new Date(dataInicio.getTime() - dias * 24 * 60 * 60 * 1000).toISOString());
 
-    const custo_anterior =
-      (periodoAnterior?.reduce((acc, d) => acc + d.cost_usd, 0) || 0) / dias;
+    const custo_anterior = (periodoAnterior?.reduce((acc, d) => acc + d.cost_usd, 0) || 0) / dias;
 
     let tendencia = 'estável';
     if (custo_atual > custo_anterior * 1.1) {
@@ -468,7 +451,7 @@ export const gerarRelatorioCustos = async (
       tendencia,
     };
   } catch (error) {
-    console.error('Erro ao gerar relatório de custos:', error);
+    logger.error('Erro ao gerar relatório de custos:', error);
     return {
       resumo: {
         custo_diario_usd: 0,

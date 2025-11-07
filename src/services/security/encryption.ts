@@ -4,19 +4,10 @@
  * Uses Web Crypto API (browser) and Node crypto (server)
  */
 
-import {
-  EncryptionResult,
-  DecryptionResult,
-  UserEncryptionKey,
-  KeyStatus,
-  JsonValue,
-} from './types';
+import { EncryptionResult, DecryptionResult, UserEncryptionKey, KeyStatus, JsonValue } from './types';
 import { ENCRYPTION_CONFIG } from './constants';
-import {
-  createSecurityClient,
-  type EncryptionKeyRow,
-  type SecuritySupabaseClient,
-} from './supabase-client';
+import { createSecurityClient, type EncryptionKeyRow, type SecuritySupabaseClient } from './supabase-client';
+import { logger } from '@/utils/logger';
 
 const KEY_STATUS_VALUES = new Set<KeyStatus>(Object.values(KeyStatus));
 
@@ -69,10 +60,7 @@ const keyCache = new Map<string, CryptoKey>();
 /**
  * Inicializa o serviço de criptografia
  */
-export function initializeEncryption(
-  supabaseUrl: string,
-  supabaseKey: string
-): void {
+export function initializeEncryption(supabaseUrl: string, supabaseKey: string): void {
   supabaseClient = createSecurityClient(supabaseUrl, supabaseKey);
 }
 
@@ -239,13 +227,10 @@ async function getUserKey(userId: string): Promise<CryptoKey> {
 /**
  * Criptografa uma mensagem
  */
-export async function encryptMessage(
-  userId: string,
-  plaintext: string
-): Promise<EncryptionResult> {
+export async function encryptMessage(userId: string, plaintext: string): Promise<EncryptionResult> {
   if (!isCryptoAvailable()) {
     // Fallback: retornar sem criptografar (com warning)
-    console.warn('[Encryption] Crypto not available, storing plaintext');
+    logger.warn('Encryption: Crypto not available, storing plaintext', { userId });
     return {
       encrypted: plaintext,
       iv: '',
@@ -299,7 +284,7 @@ export async function encryptMessage(
       keyId: await getKeyId(userId),
     };
   } catch (error) {
-    console.error('[Encryption] Error encrypting message:', error);
+    logger.error('Encryption: Error encrypting message', { error, userId });
     throw error;
   }
 }
@@ -328,9 +313,7 @@ export async function decryptMessage(
     const key = await getUserKey(userId);
 
     // Converter de base64 para bytes
-    const encryptedBytes = Uint8Array.from(atob(encrypted), (c) =>
-      c.charCodeAt(0)
-    );
+    const encryptedBytes = Uint8Array.from(atob(encrypted), (c) => c.charCodeAt(0));
     const ivBytes = Uint8Array.from(atob(iv), (c) => c.charCodeAt(0));
 
     // Descriptografar
@@ -352,7 +335,7 @@ export async function decryptMessage(
       success: true,
     };
   } catch (error) {
-    console.error('[Encryption] Error decrypting message:', error);
+    logger.error('Encryption: Error decrypting message', { error, userId });
     return {
       decrypted: '',
       success: false,
@@ -536,10 +519,7 @@ export async function hashMessage(message: string): Promise<string> {
 /**
  * Verifica integridade de mensagem
  */
-export async function verifyMessageIntegrity(
-  message: string,
-  expectedHash: string
-): Promise<boolean> {
+export async function verifyMessageIntegrity(message: string, expectedHash: string): Promise<boolean> {
   const actualHash = await hashMessage(message);
   return actualHash === expectedHash;
 }

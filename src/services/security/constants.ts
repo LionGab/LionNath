@@ -267,21 +267,8 @@ export const TIMEOUTS = {
 // ==================== LGPD COMPLIANCE ====================
 export const LGPD_CONFIG = {
   DATA_RETENTION_DAYS: 730, // 2 anos (ajustar conforme política)
-  CONSENT_REQUIRED_FOR: [
-    'chat_messages',
-    'voice_recordings',
-    'analytics',
-    'personalization',
-  ],
-  PII_FIELDS: [
-    'full_name',
-    'email',
-    'phone',
-    'cpf',
-    'address',
-    'birth_date',
-    'health_data',
-  ],
+  CONSENT_REQUIRED_FOR: ['chat_messages', 'voice_recordings', 'analytics', 'personalization'],
+  PII_FIELDS: ['full_name', 'email', 'phone', 'cpf', 'address', 'birth_date', 'health_data'],
   RIGHT_TO_DELETION: true,
   RIGHT_TO_PORTABILITY: true,
   RIGHT_TO_RECTIFICATION: true,
@@ -315,11 +302,5 @@ export const EMERGENCY_RESOURCES = {
 export const HEALTH_CHECK_CONFIG = {
   INTERVAL_MS: 60000, // 1 minuto
   TIMEOUT_MS: 5000,
-  CHECKS: [
-    'database_connection',
-    'encryption_service',
-    'rate_limiter',
-    'audit_logger',
-    'openai_api',
-  ],
+  CHECKS: ['database_connection', 'encryption_service', 'rate_limiter', 'audit_logger', 'openai_api'],
 };

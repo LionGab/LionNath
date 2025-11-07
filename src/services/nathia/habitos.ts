@@ -3,16 +3,10 @@
  * Sistema de criação e acompanhamento de hábitos com coaching empático
  */
 
-import {
-  MicroGoal,
-  MotivationalMessage,
-  HabitProgress,
-  Habit,
-  ValidationError,
-  NathiaError,
-} from './types';
+import { MicroGoal, MotivationalMessage, HabitProgress, Habit, ValidationError, NathiaError } from './types';
 import { SYSTEM_PROMPTS } from './prompts';
 import { NATHIA_CONFIG } from './config';
+import { logger } from '@/utils/logger';
 
 /**
  * Cria micro-objetivos a partir de objetivo geral
@@ -151,10 +145,7 @@ export function gerarLembreteGentil(habito: Habit): string {
  * // { streak: 3, completude: 60, last_completed: Date, total_completions: 15 }
  * ```
  */
-export async function trackProgresso(
-  user_id: string,
-  habito_id: string
-): Promise<HabitProgress> {
+export async function trackProgresso(user_id: string, habito_id: string): Promise<HabitProgress> {
   validateIds(user_id, habito_id);
 
   try {
@@ -174,10 +165,7 @@ export async function trackProgresso(
  * @param habito_id - ID do hábito
  * @returns Progresso atualizado
  */
-export async function registrarCompletude(
-  user_id: string,
-  habito_id: string
-): Promise<HabitProgress> {
+export async function registrarCompletude(user_id: string, habito_id: string): Promise<HabitProgress> {
   validateIds(user_id, habito_id);
 
   try {
@@ -212,10 +200,7 @@ export async function registrarCompletude(
  * @param habito - Hábito a ser agendado
  * @returns Sugestões de horário
  */
-export async function sugerirHorario(
-  user_id: string,
-  habito: Habit
-): Promise<{ time: string; reason: string }[]> {
+export async function sugerirHorario(user_id: string, habito: Habit): Promise<{ time: string; reason: string }[]> {
   // Heurísticas simples baseadas no tipo de hábito
   const suggestions: { time: string; reason: string }[] = [];
 
@@ -227,20 +212,14 @@ export async function sugerirHorario(
       { time: '07:00', reason: 'Começar o dia com clareza mental' }
     );
   } else if (category.includes('fisica') || category.includes('exercicio')) {
-    suggestions.push(
-      { time: '06:30', reason: 'Energia da manhã' },
-      { time: '10:00', reason: 'Após rotina matinal' }
-    );
+    suggestions.push({ time: '06:30', reason: 'Energia da manhã' }, { time: '10:00', reason: 'Após rotina matinal' });
   } else if (category.includes('autocuidado')) {
     suggestions.push(
       { time: '14:00', reason: 'Pausa no meio do dia' },
       { time: '20:00', reason: 'Momento de relaxamento noturno' }
     );
   } else {
-    suggestions.push(
-      { time: '09:00', reason: 'Início do dia' },
-      { time: '15:00', reason: 'Tarde' }
-    );
+    suggestions.push({ time: '09:00', reason: 'Início do dia' }, { time: '15:00', reason: 'Tarde' });
   }
 
   return suggestions;
@@ -297,11 +276,11 @@ function inferDifficulty(objetivo: string): 'easy' | 'medium' | 'hard' {
   const easyIndicators = ['começar', 'tentar', 'explorar', '5 minutos', 'pequeno'];
   const hardIndicators = ['transformar', 'completamente', 'sempre', 'todo dia', 'radical'];
 
-  if (easyIndicators.some(indicator => lowerGoal.includes(indicator))) {
+  if (easyIndicators.some((indicator) => lowerGoal.includes(indicator))) {
     return 'easy';
   }
 
-  if (hardIndicators.some(indicator => lowerGoal.includes(indicator))) {
+  if (hardIndicators.some((indicator) => lowerGoal.includes(indicator))) {
     return 'hard';
   }
 
@@ -319,10 +298,7 @@ function generatePracticalSteps(objetivo: string): string[] {
   return steps;
 }
 
-function calculateRealisticDeadline(
-  objetivo: string,
-  difficulty: 'easy' | 'medium' | 'hard'
-): number {
+function calculateRealisticDeadline(objetivo: string, difficulty: 'easy' | 'medium' | 'hard'): number {
   const baseDays = NATHIA_CONFIG.habitos.prazo_padrao_dias;
 
   switch (difficulty) {
@@ -427,7 +403,7 @@ async function fetchProgressFromDB(user_id: string, habito_id: string): Promise<
 
 async function saveProgressToDB(progress: HabitProgress): Promise<void> {
   // Mock - na prática salvar no Supabase
-  console.log('Saving progress:', progress);
+  logger.info('Saving progress:', progress);
 }
 
 function validateObjetivo(objetivo: string): void {

@@ -11,13 +11,8 @@
  */
 
 import { supabase } from '../supabase';
-import type {
-  UtilityFeedback,
-  DeflectionMetric,
-  AcolhimentoMetric,
-  ConversaoMetric,
-  QualityMetrics,
-} from './types';
+import type { UtilityFeedback, DeflectionMetric, AcolhimentoMetric, ConversaoMetric, QualityMetrics } from './types';
+import { logger } from '@/utils/logger';
 
 // ============= UTILIDADE (Thumbs Up/Down) =============
 
@@ -47,7 +42,7 @@ export const trackUtilidade = async (
     // Atualizar métrica agregada
     await updateQualityMetrics('utilidade');
   } catch (error) {
-    console.error('Erro ao registrar utilidade:', error);
+    logger.error('Erro ao registrar utilidade:', error);
     throw error;
   }
 };
@@ -73,7 +68,7 @@ export const getUtilidadePercentual = async (periodo: string = '7d'): Promise<nu
 
     return (thumbsUp / total) * 100;
   } catch (error) {
-    console.error('Erro ao calcular utilidade:', error);
+    logger.error('Erro ao calcular utilidade:', error);
     return 0;
   }
 };
@@ -106,7 +101,7 @@ export const trackDeflexao = async (
     // Atualizar métrica agregada
     await updateQualityMetrics('deflexao');
   } catch (error) {
-    console.error('Erro ao registrar deflexão:', error);
+    logger.error('Erro ao registrar deflexão:', error);
     throw error;
   }
 };
@@ -132,7 +127,7 @@ export const getDeflexaoPercentual = async (periodo: string = '7d'): Promise<num
 
     return (resolvidos / total) * 100;
   } catch (error) {
-    console.error('Erro ao calcular deflexão:', error);
+    logger.error('Erro ao calcular deflexão:', error);
     return 0;
   }
 };
@@ -165,7 +160,7 @@ export const trackAcolhimento = async (
     // Atualizar métrica agregada
     await updateQualityMetrics('csat');
   } catch (error) {
-    console.error('Erro ao registrar acolhimento:', error);
+    logger.error('Erro ao registrar acolhimento:', error);
     throw error;
   }
 };
@@ -189,7 +184,7 @@ export const getCSATMedio = async (periodo: string = '7d'): Promise<number> => {
     const soma = data.reduce((acc, m) => acc + m.csat, 0);
     return soma / data.length;
   } catch (error) {
-    console.error('Erro ao calcular CSAT:', error);
+    logger.error('Erro ao calcular CSAT:', error);
     return 0;
   }
 };
@@ -222,7 +217,7 @@ export const trackConversao = async (
     // Atualizar métrica agregada
     await updateQualityMetrics('conversao');
   } catch (error) {
-    console.error('Erro ao registrar conversão:', error);
+    logger.error('Erro ao registrar conversão:', error);
     throw error;
   }
 };
@@ -248,7 +243,7 @@ export const getConversaoPercentual = async (periodo: string = '7d'): Promise<nu
 
     return (completados / total) * 100;
   } catch (error) {
-    console.error('Erro ao calcular conversão:', error);
+    logger.error('Erro ao calcular conversão:', error);
     return 0;
   }
 };
@@ -277,7 +272,9 @@ export const getQualityMetrics = async (periodo: string = '7d'): Promise<Quality
 /**
  * Verifica se as métricas estão dentro das metas
  */
-export const checkQualityTargets = async (periodo: string = '7d'): Promise<{
+export const checkQualityTargets = async (
+  periodo: string = '7d'
+): Promise<{
   utilidade: { atual: number; meta: number; atingiu: boolean };
   deflexao: { atual: number; meta: number; atingiu: boolean };
   csat: { atual: number; meta: number; atingiu: boolean };
@@ -354,6 +351,6 @@ const updateQualityMetrics = async (metrica: string): Promise<void> => {
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao atualizar métricas agregadas:', error);
+    logger.error('Erro ao atualizar métricas agregadas:', error);
   }
 };

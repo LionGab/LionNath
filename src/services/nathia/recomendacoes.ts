@@ -52,7 +52,7 @@ export async function recomendarConteudo(
     const availableContent = await fetchAvailableContent();
 
     // Calcular scores para cada conteúdo
-    const scoredContent = availableContent.map(content => ({
+    const scoredContent = availableContent.map((content) => ({
       ...content,
       match_score: calculateContentScore(content, fullContext),
       reason: generateRecommendationReason(content, fullContext),
@@ -61,7 +61,7 @@ export async function recomendarConteudo(
     // Ordenar por score e pegar top N
     const config = NATHIA_CONFIG.recomendacoes;
     const topContent = scoredContent
-      .filter(c => c.match_score >= config.min_match_score)
+      .filter((c) => c.match_score >= config.min_match_score)
       .sort((a, b) => b.match_score - a.match_score)
       .slice(0, config.max_conteudos);
 
@@ -74,11 +74,7 @@ export async function recomendarConteudo(
       algorithm_version: NATHIA_CONFIG.geral.version,
     };
   } catch (error) {
-    throw new NathiaError(
-      'Erro ao recomendar conteúdo',
-      'CONTENT_RECOMMENDATION_ERROR',
-      { error }
-    );
+    throw new NathiaError('Erro ao recomendar conteúdo', 'CONTENT_RECOMMENDATION_ERROR', { error });
   }
 }
 
@@ -109,7 +105,7 @@ export async function recomendarCirculo(
     const availableCircles = await fetchAvailableCircles();
 
     // Calcular match scores
-    const scoredCircles = availableCircles.map(circle => ({
+    const scoredCircles = availableCircles.map((circle) => ({
       ...circle,
       match_score: calculateCircleScore(circle, interesses),
       reason: generateCircleReason(circle, interesses),
@@ -118,13 +114,13 @@ export async function recomendarCirculo(
     // Filtrar e ordenar
     const config = NATHIA_CONFIG.recomendacoes;
     const topCircles = scoredCircles
-      .filter(c => c.match_score >= config.min_match_score)
+      .filter((c) => c.match_score >= config.min_match_score)
       .sort((a, b) => b.match_score - a.match_score)
       .slice(0, config.max_circulos);
 
     // Criar map de scores
     const match_scores: Record<string, number> = {};
-    topCircles.forEach(c => {
+    topCircles.forEach((c) => {
       match_scores[c.id] = c.match_score;
     });
 
@@ -152,10 +148,7 @@ export async function recomendarCirculo(
  * // { habito: {...}, micro_objetivos: [...], justificativa: "..." }
  * ```
  */
-export async function recomendarHabito(
-  user_id: string,
-  objetivos: Partial<UserProfile>
-): Promise<HabitRecommendation> {
+export async function recomendarHabito(user_id: string, objetivos: Partial<UserProfile>): Promise<HabitRecommendation> {
   validateUserId(user_id);
 
   try {
@@ -163,7 +156,7 @@ export async function recomendarHabito(
     const availableHabits = await fetchAvailableHabits();
 
     // Calcular scores
-    const scoredHabits = availableHabits.map(habit => ({
+    const scoredHabits = availableHabits.map((habit) => ({
       habit,
       score: calculateHabitScore(habit, objetivos),
     }));
@@ -203,9 +196,9 @@ export function rerankWithFeedback<T extends { id: string; match_score: number }
   recommendations: T[],
   feedback: { id: string; action: 'like' | 'dislike' | 'click' | 'ignore' }[]
 ): T[] {
-  const feedbackMap = new Map(feedback.map(f => [f.id, f.action]));
+  const feedbackMap = new Map(feedback.map((f) => [f.id, f.action]));
 
-  const reranked = recommendations.map(rec => {
+  const reranked = recommendations.map((rec) => {
     const action = feedbackMap.get(rec.id);
     let adjustedScore = rec.match_score;
 
@@ -235,10 +228,7 @@ export function rerankWithFeedback<T extends { id: string; match_score: number }
 
 // ============= Score Calculation =============
 
-function calculateContentScore(
-  content: ContentRecommendation,
-  context: RecommendationContext
-): number {
+function calculateContentScore(content: ContentRecommendation, context: RecommendationContext): number {
   const weights = NATHIA_CONFIG.recomendacoes.pesos;
   let score = 0;
 
@@ -249,7 +239,7 @@ function calculateContentScore(
 
   // Interest/Activity match
   if (context.recent_activity) {
-    const activityMatch = context.recent_activity.some(activity =>
+    const activityMatch = context.recent_activity.some((activity) =>
       content.title.toLowerCase().includes(activity.toLowerCase())
     );
     if (activityMatch) score += weights.interest_match;
@@ -278,7 +268,7 @@ function calculateCircleScore(circle: GroupRecommendation, profile: Partial<User
 
   // Concern match
   if (profile.concerns) {
-    const concernMatch = profile.concerns.some(concern =>
+    const concernMatch = profile.concerns.some((concern) =>
       circle.name.toLowerCase().includes(concern.replace('_', ' '))
     );
     if (concernMatch) score += 0.25;
@@ -286,7 +276,7 @@ function calculateCircleScore(circle: GroupRecommendation, profile: Partial<User
 
   // Interest match
   if (profile.interests) {
-    const interestMatch = profile.interests.some(interest =>
+    const interestMatch = profile.interests.some((interest) =>
       circle.description.toLowerCase().includes(interest.replace('_', ' '))
     );
     if (interestMatch) score += 0.15;
@@ -301,7 +291,7 @@ function calculateHabitScore(habit: Habit, profile: Partial<UserProfile>): numbe
   // Goal alignment
   if (profile.goals) {
     const goalMatch = profile.goals.some(
-      goal =>
+      (goal) =>
         habit.category.toLowerCase().includes(goal.replace('_', ' ')) ||
         habit.title.toLowerCase().includes(goal.replace('_', ' '))
     );
@@ -327,23 +317,20 @@ function getMoodContentScore(mood: string, content: ContentRecommendation): numb
   const relevantKeywords = moodContentMap[mood] || [];
   const contentLower = content.title.toLowerCase();
 
-  const matches = relevantKeywords.filter(keyword => contentLower.includes(keyword));
+  const matches = relevantKeywords.filter((keyword) => contentLower.includes(keyword));
   return matches.length > 0 ? 0.3 : 0;
 }
 
 // ============= Reason Generation =============
 
-function generateRecommendationReason(
-  content: ContentRecommendation,
-  context: RecommendationContext
-): string {
+function generateRecommendationReason(content: ContentRecommendation, context: RecommendationContext): string {
   const reasons: string[] = [];
 
   if (context.current_stage && content.title.toLowerCase().includes(context.current_stage)) {
     reasons.push('alinhado com sua fase atual');
   }
 
-  if (context.recent_activity?.some(a => content.title.toLowerCase().includes(a.toLowerCase()))) {
+  if (context.recent_activity?.some((a) => content.title.toLowerCase().includes(a.toLowerCase()))) {
     reasons.push('relacionado ao que você tem buscado');
   }
 
@@ -359,7 +346,7 @@ function generateCircleReason(circle: GroupRecommendation, profile: Partial<User
     return `Outras mães na mesma fase que você`;
   }
 
-  if (profile.concerns?.some(c => circle.name.toLowerCase().includes(c))) {
+  if (profile.concerns?.some((c) => circle.name.toLowerCase().includes(c))) {
     return `Comunidade focada em suas preocupações`;
   }
 
@@ -370,10 +357,7 @@ function generateHabitJustification(habit: Habit, profile: Partial<UserProfile>)
   return `Este hábito vai te ajudar a ${habit.description.toLowerCase()}, alinhado com seus objetivos de ${profile.goals?.join(' e ') || 'bem-estar'}.`;
 }
 
-function generateOverallJustification(
-  content: ContentRecommendation[],
-  context: RecommendationContext
-): string {
+function generateOverallJustification(content: ContentRecommendation[], context: RecommendationContext): string {
   if (content.length === 0) {
     return 'Não encontramos conteúdos específicos agora, mas continue explorando!';
   }

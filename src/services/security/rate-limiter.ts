@@ -4,18 +4,10 @@
  * Uses Supabase Storage with Redis-like fallback
  */
 
-import {
-  RateLimitResult,
-  RateLimitRecord,
-  RequestTimestamp,
-  JsonValue,
-} from './types';
+import { RateLimitResult, RateLimitRecord, RequestTimestamp, JsonValue } from './types';
 import { RATE_LIMITS, TIMEOUTS } from './constants';
-import {
-  createSecurityClient,
-  type RateLimitRow,
-  type SecuritySupabaseClient,
-} from './supabase-client';
+import { createSecurityClient, type RateLimitRow, type SecuritySupabaseClient } from './supabase-client';
+import { logger } from '@/utils/logger';
 
 function isJsonObject(value: JsonValue | undefined): value is Record<string, JsonValue> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -59,11 +51,7 @@ function toRequestTimestampArray(value: JsonValue | undefined): RequestTimestamp
   return parsed;
 }
 
-function parseRateLimitRow(
-  record: Record<string, JsonValue>,
-  userId: string,
-  endpoint: string
-): RateLimitRecord {
+function parseRateLimitRow(record: Record<string, JsonValue>, userId: string, endpoint: string): RateLimitRecord {
   const requests = toRequestTimestampArray(record.requests);
   const blockedUntil = toStringValue(record.blocked_until);
 
@@ -84,10 +72,7 @@ const memoryCache = new Map<string, RateLimitRecord>();
 /**
  * Inicializa o rate limiter com Supabase
  */
-export function initializeRateLimiter(
-  supabaseUrl: string,
-  supabaseKey: string
-): void {
+export function initializeRateLimiter(supabaseUrl: string, supabaseKey: string): void {
   supabaseClient = createSecurityClient(supabaseUrl, supabaseKey);
 }
 
@@ -97,10 +82,7 @@ export function initializeRateLimiter(
  * @param endpoint - Nome do endpoint (ex: 'chat:message')
  * @returns Resultado do rate limit
  */
-export async function checkRateLimit(
-  userId: string,
-  endpoint: string
-): Promise<RateLimitResult> {
+export async function checkRateLimit(userId: string, endpoint: string): Promise<RateLimitResult> {
   // Buscar configuração do endpoint
   const config = RATE_LIMITS[endpoint] || RATE_LIMITS.API_GENERAL;
 
@@ -114,18 +96,14 @@ export async function checkRateLimit(
         allowed: false,
         remaining: 0,
         resetAt: record.blockedUntil,
-        retryAfter: Math.ceil(
-          (record.blockedUntil.getTime() - Date.now()) / 1000
-        ),
+        retryAfter: Math.ceil((record.blockedUntil.getTime() - Date.now()) / 1000),
       };
     }
 
     // Limpar requests fora da janela (sliding window)
     const now = Date.now();
     const windowStart = now - config.windowMs;
-    const validRequests = record.requests.filter(
-      (req) => req.timestamp > windowStart
-    );
+    const validRequests = record.requests.filter((req) => req.timestamp > windowStart);
 
     // Verificar se atingiu o limite
     if (validRequests.length >= config.maxRequests) {
@@ -168,7 +146,7 @@ export async function checkRateLimit(
       resetAt,
     };
   } catch (error) {
-    console.error('[RateLimit] Error checking rate limit:', error);
+    logger.error('[RateLimit] Error checking rate limit:', error);
 
     // Fail-safe: permitir em caso de erro (mas logar)
     return {
@@ -182,25 +160,15 @@ export async function checkRateLimit(
 /**
  * Busca registro de rate limit do usuário
  */
-async function getRateLimitRecord(
-  userId: string,
-  endpoint: string
-): Promise<RateLimitRecord> {
+async function getRateLimitRecord(userId: string, endpoint: string): Promise<RateLimitRecord> {
   const key = `${userId}:${endpoint}`;
 
   // Tentar buscar do Supabase
   if (supabaseClient) {
     try {
       const { data, error } = await Promise.race([
-        supabaseClient
-          .from('nathia_rate_limits')
-          .select('*')
-          .eq('user_id', userId)
-          .eq('endpoint', endpoint)
-          .single(),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('Timeout')), TIMEOUTS.DATABASE_QUERY)
-        ),
+        supabaseClient.from('nathia_rate_limits').select('*').eq('user_id', userId).eq('endpoint', endpoint).single(),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Timeout')), TIMEOUTS.DATABASE_QUERY)),
       ]);
 
       if (error && error.code !== 'PGRST116') {
@@ -212,7 +180,7 @@ async function getRateLimitRecord(
         return parseRateLimitRow(data, userId, endpoint);
       }
     } catch (error) {
-      console.warn('[RateLimit] Supabase error, using memory cache:', error);
+      logger.warn('[RateLimit] Supabase error, using memory cache:', error);
     }
   }
 
@@ -233,11 +201,7 @@ async function getRateLimitRecord(
 /**
  * Atualiza registro de rate limit
  */
-async function updateRateLimitRecord(
-  userId: string,
-  endpoint: string,
-  record: RateLimitRecord
-): Promise<void> {
+async function updateRateLimitRecord(userId: string, endpoint: string, record: RateLimitRecord): Promise<void> {
   const key = `${userId}:${endpoint}`;
 
   // Atualizar memória
@@ -261,20 +225,16 @@ async function updateRateLimitRecord(
         user_id: userId,
         endpoint,
         requests: requestsPayload,
-        blocked_until: record.blockedUntil
-          ? record.blockedUntil.toISOString()
-          : null,
+        blocked_until: record.blockedUntil ? record.blockedUntil.toISOString() : null,
         updated_at: new Date().toISOString(),
       };
 
       await Promise.race([
         supabaseClient.from('nathia_rate_limits').upsert(payload),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('Timeout')), TIMEOUTS.DATABASE_QUERY)
-        ),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Timeout')), TIMEOUTS.DATABASE_QUERY)),
       ]);
     } catch (error) {
-      console.warn('[RateLimit] Failed to update Supabase:', error);
+      logger.warn('[RateLimit] Failed to update Supabase:', error);
       // Continuar mesmo com erro (dados em memória)
     }
   }
@@ -283,20 +243,13 @@ async function updateRateLimitRecord(
 /**
  * Limpa rate limit de um usuário (admin only)
  */
-export async function clearRateLimit(
-  userId: string,
-  endpoint?: string
-): Promise<void> {
+export async function clearRateLimit(userId: string, endpoint?: string): Promise<void> {
   if (endpoint) {
     const key = `${userId}:${endpoint}`;
     memoryCache.delete(key);
 
     if (supabaseClient) {
-      await supabaseClient
-        .from('nathia_rate_limits')
-        .delete()
-        .eq('user_id', userId)
-        .eq('endpoint', endpoint);
+      await supabaseClient.from('nathia_rate_limits').delete().eq('user_id', userId).eq('endpoint', endpoint);
     }
   } else {
     // Limpar todos os endpoints do usuário
@@ -307,10 +260,7 @@ export async function clearRateLimit(
     }
 
     if (supabaseClient) {
-      await supabaseClient
-        .from('nathia_rate_limits')
-        .delete()
-        .eq('user_id', userId);
+      await supabaseClient.from('nathia_rate_limits').delete().eq('user_id', userId);
     }
   }
 }
@@ -345,13 +295,9 @@ export async function getRateLimitStats(userId: string): Promise<{
 
     const now = Date.now();
     const windowStart = now - config.windowMs;
-    const validRequests = record.requests.filter(
-      (req) => req.timestamp > windowStart
-    );
+    const validRequests = record.requests.filter((req) => req.timestamp > windowStart);
 
-    const isBlocked = !!(
-      record.blockedUntil && record.blockedUntil > new Date()
-    );
+    const isBlocked = !!(record.blockedUntil && record.blockedUntil > new Date());
 
     const oldestRequest = validRequests[0]?.timestamp || now;
     const resetAt = new Date(oldestRequest + config.windowMs);
@@ -380,11 +326,7 @@ export async function isUserBlocked(userId: string): Promise<boolean> {
  * Incrementa contador de rate limit (versão simplificada)
  * Útil para tracking sem bloquear
  */
-export async function trackRequest(
-  userId: string,
-  endpoint: string,
-  metadata?: Record<string, any>
-): Promise<void> {
+export async function trackRequest(userId: string, endpoint: string, metadata?: Record<string, any>): Promise<void> {
   try {
     const record = await getRateLimitRecord(userId, endpoint);
 
@@ -395,7 +337,7 @@ export async function trackRequest(
 
     await updateRateLimitRecord(userId, endpoint, record);
   } catch (error) {
-    console.error('[RateLimit] Error tracking request:', error);
+    logger.error('[RateLimit] Error tracking request:', error);
     // Não falhar se tracking falhar
   }
 }
@@ -412,10 +354,7 @@ export async function cleanupOldRecords(): Promise<number> {
   const maxAge = 24 * 60 * 60 * 1000; // 24 horas
 
   for (const [key, record] of memoryCache.entries()) {
-    const newestRequest = Math.max(
-      ...record.requests.map((r) => r.timestamp),
-      0
-    );
+    const newestRequest = Math.max(...record.requests.map((r) => r.timestamp), 0);
 
     if (now - newestRequest > maxAge) {
       memoryCache.delete(key);
@@ -427,14 +366,11 @@ export async function cleanupOldRecords(): Promise<number> {
   if (supabaseClient) {
     try {
       const cutoff = new Date(now - maxAge).toISOString();
-      const { error } = await supabaseClient
-        .from('nathia_rate_limits')
-        .delete()
-        .lt('updated_at', cutoff);
+      const { error } = await supabaseClient.from('nathia_rate_limits').delete().lt('updated_at', cutoff);
 
       if (error) throw error;
     } catch (error) {
-      console.error('[RateLimit] Cleanup error:', error);
+      logger.error('[RateLimit] Cleanup error:', error);
     }
   }
 

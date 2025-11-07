@@ -31,10 +31,7 @@ import {
  * @param contexto - Contexto da usuária
  * @returns Resultado da análise de risco
  */
-export function analisarRisco(
-  mensagem: string,
-  contexto?: SecurityContext
-): RiskAnalysisResult {
+export function analisarRisco(mensagem: string, contexto?: SecurityContext): RiskAnalysisResult {
   if (!mensagem || mensagem.trim().length === 0) {
     return {
       level: RiskLevel.NONE,
@@ -279,9 +276,7 @@ function determinarNivelRisco(score: number): RiskLevel {
 function determinarUrgencia(signals: RiskSignal[], level: RiskLevel): UrgencyLevel {
   // Psicose pós-parto ou ideação suicida = EMERGÊNCIA
   const hasCriticalSignals = signals.some(
-    (s) =>
-      s.type === RiskSignalType.POSTPARTUM_PSYCHOSIS ||
-      s.type === RiskSignalType.SUICIDE_IDEATION
+    (s) => s.type === RiskSignalType.POSTPARTUM_PSYCHOSIS || s.type === RiskSignalType.SUICIDE_IDEATION
   );
 
   if (hasCriticalSignals) return UrgencyLevel.EMERGENCY;
@@ -307,11 +302,7 @@ function determinarUrgencia(signals: RiskSignal[], level: RiskLevel): UrgencyLev
 /**
  * Determina ação recomendada
  */
-function determinarAcaoRecomendada(
-  level: RiskLevel,
-  urgency: UrgencyLevel,
-  signals: RiskSignal[]
-): RecommendedAction {
+function determinarAcaoRecomendada(level: RiskLevel, urgency: UrgencyLevel, signals: RiskSignal[]): RecommendedAction {
   // EMERGÊNCIA: Contato imediato
   if (urgency === UrgencyLevel.EMERGENCY) {
     return RecommendedAction.EMERGENCY_CONTACT;
@@ -393,9 +384,7 @@ Estou aqui para conversar, mas recomendo também buscar um profissional de saúd
 /**
  * Analisa histórico de conversas para detectar padrões de risco
  */
-export function analisarHistoricoRisco(
-  mensagens: Array<{ texto: string; timestamp: Date }>
-): {
+export function analisarHistoricoRisco(mensagens: Array<{ texto: string; timestamp: Date }>): {
   riscoCumulativo: number;
   tendencia: 'melhorando' | 'estável' | 'piorando';
   alertas: string[];
@@ -440,9 +429,7 @@ export function analisarHistoricoRisco(
     alertas.push('Sinais de deterioração detectados');
   }
 
-  const temSinaisCriticos = analises.some(
-    (a) => a.urgency === UrgencyLevel.EMERGENCY
-  );
+  const temSinaisCriticos = analises.some((a) => a.urgency === UrgencyLevel.EMERGENCY);
 
   if (temSinaisCriticos) {
     alertas.push('Sinais críticos detectados em mensagens recentes');
@@ -463,9 +450,7 @@ export function requerIntervencaoImediata(result: RiskAnalysisResult): boolean {
     result.urgency === UrgencyLevel.EMERGENCY ||
     result.recommendedAction === RecommendedAction.EMERGENCY_CONTACT ||
     result.signals.some(
-      (s) =>
-        s.type === RiskSignalType.POSTPARTUM_PSYCHOSIS ||
-        s.type === RiskSignalType.SUICIDE_IDEATION
+      (s) => s.type === RiskSignalType.POSTPARTUM_PSYCHOSIS || s.type === RiskSignalType.SUICIDE_IDEATION
     )
   );
 }
@@ -473,10 +458,7 @@ export function requerIntervencaoImediata(result: RiskAnalysisResult): boolean {
 /**
  * Gera relatório de risco para moderadores
  */
-export function gerarRelatorioRisco(
-  result: RiskAnalysisResult,
-  contexto?: SecurityContext
-): string {
+export function gerarRelatorioRisco(result: RiskAnalysisResult, contexto?: SecurityContext): string {
   const report = `
 === RELATÓRIO DE RISCO ===
 Data: ${new Date().toISOString()}
@@ -488,13 +470,17 @@ Revisão Humana: ${result.needsHumanReview ? 'SIM' : 'NÃO'}
 Sinais Detectados:
 ${result.signals.map((s) => `- ${s.type}: ${s.indicator} (Confiança: ${s.confidence * 100}%)`).join('\n')}
 
-${contexto ? `
+${
+  contexto
+    ? `
 Contexto do Usuário:
 - Primeira vez: ${contexto.isFirstTime ? 'SIM' : 'NÃO'}
 - Violações anteriores: ${contexto.previousViolations}
 - Idade da conta: ${contexto.accountAge} dias
 - Trust Score: ${contexto.trustScore}/100
-` : ''}
+`
+    : ''
+}
 
 =========================
   `.trim();

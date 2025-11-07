@@ -1,12 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-import type {
-  AuditActionType,
-  AuditFlag,
-  JsonValue,
-  KeyStatus,
-  RequestTimestamp,
-} from './types';
+import type { AuditActionType, AuditFlag, JsonValue, KeyStatus, RequestTimestamp } from './types';
 
 type JsonRecord = Record<string, JsonValue>;
 
@@ -68,10 +62,6 @@ export interface SecurityDatabase {
 
 export type SecuritySupabaseClient = SupabaseClient<SecurityDatabase>;
 
-export function createSecurityClient(
-  supabaseUrl: string,
-  supabaseKey: string
-): SecuritySupabaseClient {
+export function createSecurityClient(supabaseUrl: string, supabaseKey: string): SecuritySupabaseClient {
   return createClient<SecurityDatabase>(supabaseUrl, supabaseKey);
 }
-

@@ -3,15 +3,8 @@
  * LGPD Compliant - Personal Identifiable Information Protection
  */
 
-import {
-  PIIDetectionResult,
-  PIIType,
-  PIIPosition,
-} from './types';
-import {
-  PII_PATTERNS,
-  PII_REPLACEMENTS,
-} from './constants';
+import { PIIDetectionResult, PIIType, PIIPosition } from './types';
+import { PII_PATTERNS, PII_REPLACEMENTS } from './constants';
 
 /**
  * Anonimiza uma mensagem removendo informações pessoais identificáveis
@@ -196,9 +189,7 @@ export function detectarNomes(texto: string): string[] {
     // Adicionar mais conforme necessário
   ];
 
-  return matches.filter(
-    (nome) => !falsosPositivos.some((fp) => nome.includes(fp))
-  );
+  return matches.filter((nome) => !falsosPositivos.some((fp) => nome.includes(fp)));
 }
 
 /**

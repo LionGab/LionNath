@@ -11,13 +11,8 @@
  */
 
 import { supabase } from '../supabase';
-import type {
-  TemaFrequente,
-  HumorTendencia,
-  HorarioPico,
-  FaseUsuarias,
-  UsageAnalytics,
-} from './types';
+import type { TemaFrequente, HumorTendencia, HorarioPico, FaseUsuarias, UsageAnalytics } from './types';
+import { logger } from '@/utils/logger';
 
 // ============= TEMAS MAIS FREQUENTES =============
 
@@ -39,7 +34,7 @@ export const trackTema = async (
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao registrar tema:', error);
+    logger.error('Erro ao registrar tema:', error);
   }
 };
 
@@ -87,7 +82,7 @@ export const trackTemasMaisFrequentes = async (
 
     return temas;
   } catch (error) {
-    console.error('Erro ao calcular temas frequentes:', error);
+    logger.error('Erro ao calcular temas frequentes:', error);
     return [];
   }
 };
@@ -95,9 +90,7 @@ export const trackTemasMaisFrequentes = async (
 /**
  * Retorna temas agrupados por categoria
  */
-export const getTemasPorCategoria = async (
-  periodo: string = '30d'
-): Promise<Record<string, number>> => {
+export const getTemasPorCategoria = async (periodo: string = '30d'): Promise<Record<string, number>> => {
   try {
     const dataInicio = getDataInicio(periodo);
 
@@ -118,7 +111,7 @@ export const getTemasPorCategoria = async (
 
     return categoriaCount;
   } catch (error) {
-    console.error('Erro ao calcular temas por categoria:', error);
+    logger.error('Erro ao calcular temas por categoria:', error);
     return {};
   }
 };
@@ -129,10 +122,7 @@ export const getTemasPorCategoria = async (
  * Registra sentimento de uma mensagem
  * Sentimento: -1 (muito negativo) a 1 (muito positivo)
  */
-export const trackSentimento = async (
-  session_id: string,
-  sentimento_score: number
-): Promise<void> => {
+export const trackSentimento = async (session_id: string, sentimento_score: number): Promise<void> => {
   try {
     const { error } = await supabase.from('nathia_sentimentos').insert({
       session_id,
@@ -142,7 +132,7 @@ export const trackSentimento = async (
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao registrar sentimento:', error);
+    logger.error('Erro ao registrar sentimento:', error);
   }
 };
 
@@ -195,7 +185,7 @@ export const trackHumorTendencia = async (periodo: string = '30d'): Promise<Humo
 
     return tendencias;
   } catch (error) {
-    console.error('Erro ao calcular tendência de humor:', error);
+    logger.error('Erro ao calcular tendência de humor:', error);
     return [];
   }
 };
@@ -219,7 +209,7 @@ export const getSentimentoMedio = async (periodo: string = '7d'): Promise<number
     const soma = data.reduce((acc, d) => acc + d.sentimento_score, 0);
     return soma / data.length;
   } catch (error) {
-    console.error('Erro ao calcular sentimento médio:', error);
+    logger.error('Erro ao calcular sentimento médio:', error);
     return 0;
   }
 };
@@ -273,7 +263,7 @@ export const trackHorariosPico = async (periodo: string = '30d'): Promise<Horari
 
     return horarios;
   } catch (error) {
-    console.error('Erro ao calcular horários de pico:', error);
+    logger.error('Erro ao calcular horários de pico:', error);
     return [];
   }
 };
@@ -302,7 +292,7 @@ export const getHorariosPicoConsolidados = async (
       }))
       .sort((a, b) => a.hora - b.hora);
   } catch (error) {
-    console.error('Erro ao calcular horários consolidados:', error);
+    logger.error('Erro ao calcular horários consolidados:', error);
     return [];
   }
 };
@@ -365,7 +355,7 @@ export const trackFaseUsuarias = async (periodo: string = '30d'): Promise<FaseUs
 
     return fases;
   } catch (error) {
-    console.error('Erro ao calcular fases de usuárias:', error);
+    logger.error('Erro ao calcular fases de usuárias:', error);
     return [];
   }
 };
@@ -415,9 +405,7 @@ export const getUsageAnalytics = async (periodo: string = '7d'): Promise<UsageAn
     const taxa_retencao_d30 = await calcularRetencao(30);
 
     // Sessões por dia
-    const dias = Math.ceil(
-      (new Date().getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    const dias = Math.ceil((new Date().getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24));
     const sessoes_diarias = sessoes / dias;
     const usuarios_ativos_diarios = usuarios_unicos / dias;
 
@@ -430,7 +418,7 @@ export const getUsageAnalytics = async (periodo: string = '7d'): Promise<UsageAn
       taxa_retencao_d30,
     };
   } catch (error) {
-    console.error('Erro ao calcular analytics de uso:', error);
+    logger.error('Erro ao calcular analytics de uso:', error);
     return {
       sessoes_diarias: 0,
       usuarios_ativos_diarios: 0,
@@ -518,7 +506,7 @@ const calcularRetencao = async (dias: number): Promise<number> => {
   try {
     const hoje = new Date();
     const dataInicio = new Date(hoje.getTime() - dias * 24 * 60 * 60 * 1000);
-    const dataInicioRetencao = new Date(hoje.getTime() - (dias * 2) * 24 * 60 * 60 * 1000);
+    const dataInicioRetencao = new Date(hoje.getTime() - dias * 2 * 24 * 60 * 60 * 1000);
 
     // Usuários que estavam ativos no período inicial
     const { data: usuariosIniciais, error: error1 } = await supabase
@@ -555,7 +543,7 @@ const calcularRetencao = async (dias: number): Promise<number> => {
 
     return (retornaram / idsIniciais.size) * 100;
   } catch (error) {
-    console.error('Erro ao calcular retenção:', error);
+    logger.error('Erro ao calcular retenção:', error);
     return 0;
   }
 };

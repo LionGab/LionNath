@@ -31,9 +31,7 @@ import { NATHIA_CONFIG } from './config';
  * // { stage: "mid", concerns: ["saude_bebe", "sono"], perfil: {...}, confidence_score: 0.85 }
  * ```
  */
-export async function analisarRespostas(
-  respostas: OnboardingResponse[]
-): Promise<OnboardingAnalysis> {
+export async function analisarRespostas(respostas: OnboardingResponse[]): Promise<OnboardingAnalysis> {
   // Validação
   validateOnboardingResponses(respostas);
 
@@ -64,11 +62,7 @@ export async function analisarRespostas(
       confidence_score,
     };
   } catch (error) {
-    throw new NathiaError(
-      'Erro ao analisar respostas do onboarding',
-      'ONBOARDING_ANALYSIS_ERROR',
-      { error }
-    );
+    throw new NathiaError('Erro ao analisar respostas do onboarding', 'ONBOARDING_ANALYSIS_ERROR', { error });
   }
 }
 
@@ -88,9 +82,7 @@ export async function analisarRespostas(
  * // { grupos: [...], conteudo: [...], objetivo: "...", welcome_message: "..." }
  * ```
  */
-export async function gerarStarterPack(
-  perfil: UserProfile
-): Promise<StarterPack> {
+export async function gerarStarterPack(perfil: UserProfile): Promise<StarterPack> {
   validateProfile(perfil);
 
   try {
@@ -113,11 +105,7 @@ export async function gerarStarterPack(
       welcome_message,
     };
   } catch (error) {
-    throw new NathiaError(
-      'Erro ao gerar starter pack',
-      'STARTER_PACK_ERROR',
-      { error }
-    );
+    throw new NathiaError('Erro ao gerar starter pack', 'STARTER_PACK_ERROR', { error });
   }
 }
 
@@ -136,9 +124,9 @@ export function isOnboardingComplete(respostas: OnboardingResponse[]): boolean {
   const perguntasEssenciais = config.perguntas_essenciais;
 
   // Verificar se todas as perguntas essenciais foram respondidas
-  const answeredIds = new Set(respostas.map(r => r.question_id));
+  const answeredIds = new Set(respostas.map((r) => r.question_id));
 
-  const allAnswered = perguntasEssenciais.every(q => answeredIds.has(q.id));
+  const allAnswered = perguntasEssenciais.every((q) => answeredIds.has(q.id));
 
   // Verificar número mínimo de respostas
   return allAnswered && respostas.length >= config.min_respostas;
@@ -147,10 +135,7 @@ export function isOnboardingComplete(respostas: OnboardingResponse[]): boolean {
 /**
  * Atualiza perfil com nova informação
  */
-export function updateProfile(
-  currentProfile: UserProfile,
-  updates: Partial<UserProfile>
-): UserProfile {
+export function updateProfile(currentProfile: UserProfile, updates: Partial<UserProfile>): UserProfile {
   return {
     ...currentProfile,
     ...updates,
@@ -161,18 +146,14 @@ export function updateProfile(
     interests: updates.interests
       ? [...new Set([...(currentProfile.interests || []), ...updates.interests])]
       : currentProfile.interests,
-    goals: updates.goals
-      ? [...new Set([...(currentProfile.goals || []), ...updates.goals])]
-      : currentProfile.goals,
+    goals: updates.goals ? [...new Set([...(currentProfile.goals || []), ...updates.goals])] : currentProfile.goals,
   };
 }
 
 // ============= Funções de Extração =============
 
-function extractStage(
-  respostas: OnboardingResponse[]
-): 'early' | 'mid' | 'late' | 'postpartum' | 'ttc' | 'other' {
-  const stageResponse = respostas.find(r => r.question_id === 'stage');
+function extractStage(respostas: OnboardingResponse[]): 'early' | 'mid' | 'late' | 'postpartum' | 'ttc' | 'other' {
+  const stageResponse = respostas.find((r) => r.question_id === 'stage');
   if (!stageResponse) return 'other';
 
   const answer = stageResponse.answer.toLowerCase();
@@ -188,30 +169,30 @@ function extractStage(
 }
 
 function extractConcerns(respostas: OnboardingResponse[]): string[] {
-  const concernsResponse = respostas.find(r => r.question_id === 'concerns');
+  const concernsResponse = respostas.find((r) => r.question_id === 'concerns');
   if (!concernsResponse) return [];
 
   // Parse resposta (pode ser CSV ou array)
   const concerns = concernsResponse.answer
     .split(',')
-    .map(c => c.trim().toLowerCase())
+    .map((c) => c.trim().toLowerCase())
     .map(normalizeConcern);
 
   return concerns;
 }
 
 function extractSupport(respostas: OnboardingResponse[]): string | null {
-  const supportResponse = respostas.find(r => r.question_id === 'support');
+  const supportResponse = respostas.find((r) => r.question_id === 'support');
   return supportResponse?.answer || null;
 }
 
 function extractGoals(respostas: OnboardingResponse[]): string[] {
-  const goalsResponse = respostas.find(r => r.question_id === 'goals');
+  const goalsResponse = respostas.find((r) => r.question_id === 'goals');
   if (!goalsResponse) return [];
 
   return goalsResponse.answer
     .split(',')
-    .map(g => g.trim().toLowerCase())
+    .map((g) => g.trim().toLowerCase())
     .map(normalizeGoal);
 }
 
@@ -253,18 +234,13 @@ function inferInterests(respostas: OnboardingResponse[]): string[] {
   return [...new Set([...concerns, ...goals])];
 }
 
-function inferContentPreferences(
-  respostas: OnboardingResponse[]
-): ('article' | 'video' | 'audio' | 'checklist')[] {
+function inferContentPreferences(respostas: OnboardingResponse[]): ('article' | 'video' | 'audio' | 'checklist')[] {
   // Por enquanto, retornar todos os tipos
   // Futuramente, pode-se adicionar pergunta específica sobre preferência
   return ['article', 'checklist', 'video', 'audio'];
 }
 
-function identifyRiskFactors(
-  respostas: OnboardingResponse[],
-  support: string | null
-): string[] {
+function identifyRiskFactors(respostas: OnboardingResponse[], support: string | null): string[] {
   const riskFactors: string[] = [];
 
   // Apoio limitado
@@ -290,7 +266,7 @@ function calculateConfidence(respostas: OnboardingResponse[]): number {
   let confidence = answeredQuestions / totalQuestions;
 
   // Bonus por qualidade das respostas
-  const detailedAnswers = respostas.filter(r => r.answer.length > 20);
+  const detailedAnswers = respostas.filter((r) => r.answer.length > 20);
   confidence += (detailedAnswers.length / answeredQuestions) * 0.2;
 
   return Math.min(confidence, 1.0);
@@ -325,7 +301,7 @@ async function selecionarGrupos(perfil: UserProfile): Promise<GroupRecommendatio
   ];
 
   // Calcular match score para cada grupo
-  todosGrupos.forEach(grupo => {
+  todosGrupos.forEach((grupo) => {
     grupo.match_score = calculateGroupMatch(grupo, perfil);
     grupo.reason = generateGroupReason(grupo, perfil);
   });
@@ -364,7 +340,7 @@ async function selecionarConteudos(perfil: UserProfile): Promise<ContentRecommen
   ];
 
   // Calcular match score para cada conteúdo
-  todosConteudos.forEach(conteudo => {
+  todosConteudos.forEach((conteudo) => {
     conteudo.match_score = calculateContentMatch(conteudo, perfil);
     conteudo.reason = generateContentReason(conteudo, perfil);
   });
@@ -405,8 +381,7 @@ function gerarWelcomeMessage(perfil: UserProfile): string {
       'Parabéns pelo início dessa jornada incrível! O primeiro trimestre pode ser intenso, mas você não está sozinha.',
     mid: 'Você está no auge da gravidez! Vamos tornar essa fase ainda mais especial e tranquila.',
     late: 'A reta final chegou! Vamos te ajudar a se preparar para conhecer seu bebê.',
-    postpartum:
-      'Bem-vinda ao quarto trimestre! Essa fase é de adaptação e descobertas. Estamos aqui para apoiar você.',
+    postpartum: 'Bem-vinda ao quarto trimestre! Essa fase é de adaptação e descobertas. Estamos aqui para apoiar você.',
     other: 'Que bom ter você aqui! Vamos juntas nessa jornada de maternidade.',
   };
 
@@ -419,7 +394,7 @@ function calculateGroupMatch(grupo: GroupRecommendation, perfil: UserProfile): n
   let score = 0.5; // Base score
 
   // Match por concerns
-  if (perfil.concerns?.some(c => grupo.name.toLowerCase().includes(c))) {
+  if (perfil.concerns?.some((c) => grupo.name.toLowerCase().includes(c))) {
     score += 0.3;
   }
 
@@ -440,7 +415,7 @@ function calculateContentMatch(conteudo: ContentRecommendation, perfil: UserProf
   }
 
   // Match por concerns
-  if (perfil.concerns?.some(c => conteudo.title.toLowerCase().includes(c))) {
+  if (perfil.concerns?.some((c) => conteudo.title.toLowerCase().includes(c))) {
     score += 0.2;
   }
 

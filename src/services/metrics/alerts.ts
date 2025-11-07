@@ -13,6 +13,7 @@
 
 import { supabase } from '../supabase';
 import type { Alert } from './types';
+import { logger } from '@/utils/logger';
 
 // ============= CONFIGURAÇÃO =============
 
@@ -83,7 +84,7 @@ export const monitorQualityMetrics = async (): Promise<void> => {
       await alertIfQualityDrop('conversao', metrics.conversao, 35);
     }
   } catch (error) {
-    console.error('Erro ao monitorar qualidade:', error);
+    logger.error('Erro ao monitorar qualidade:', error);
   }
 };
 
@@ -92,10 +93,7 @@ export const monitorQualityMetrics = async (): Promise<void> => {
 /**
  * Dispara alerta se latência ultrapassar SLO
  */
-export const alertIfLatencySpike = async (
-  endpoint: string,
-  latency_ms: number
-): Promise<void> => {
+export const alertIfLatencySpike = async (endpoint: string, latency_ms: number): Promise<void> => {
   const threshold = 5000; // SLO: p95 < 5s
 
   if (latency_ms < threshold) return;
@@ -131,7 +129,7 @@ export const monitorLatency = async (): Promise<void> => {
       await alertIfLatencySpike('all_endpoints', p95);
     }
   } catch (error) {
-    console.error('Erro ao monitorar latência:', error);
+    logger.error('Erro ao monitorar latência:', error);
   }
 };
 
@@ -169,7 +167,7 @@ export const monitorCosts = async (threshold: number = 100): Promise<void> => {
       await alertIfCostSpike(custo_diario_usd, threshold);
     }
   } catch (error) {
-    console.error('Erro ao monitorar custos:', error);
+    logger.error('Erro ao monitorar custos:', error);
   }
 };
 
@@ -178,10 +176,7 @@ export const monitorCosts = async (threshold: number = 100): Promise<void> => {
 /**
  * Dispara alerta se falso negativo for detectado
  */
-export const alertIfRiskMissed = async (
-  session_id: string,
-  tipo_risco: string
-): Promise<void> => {
+export const alertIfRiskMissed = async (session_id: string, tipo_risco: string): Promise<void> => {
   const alert: Partial<Alert> = {
     tipo: 'risk_missed',
     severidade: 'critical',
@@ -199,10 +194,7 @@ export const alertIfRiskMissed = async (
 /**
  * Dispara alerta para risco crítico detectado
  */
-export const alertIfRiskCritical = async (
-  session_id: string,
-  sinais: string[]
-): Promise<void> => {
+export const alertIfRiskCritical = async (session_id: string, sinais: string[]): Promise<void> => {
   const alert: Partial<Alert> = {
     tipo: 'risk_missed',
     severidade: 'critical',
@@ -273,7 +265,7 @@ export const monitorErrorRate = async (): Promise<void> => {
       await alertIfErrorRateHigh(errorRate);
     }
   } catch (error) {
-    console.error('Erro ao monitorar taxa de erro:', error);
+    logger.error('Erro ao monitorar taxa de erro:', error);
   }
 };
 
@@ -284,17 +276,13 @@ export const monitorErrorRate = async (): Promise<void> => {
  */
 const createAlert = async (alert: Partial<Alert>): Promise<string | null> => {
   try {
-    const { data, error } = await supabase
-      .from('nathia_alerts')
-      .insert(alert)
-      .select()
-      .single();
+    const { data, error } = await supabase.from('nathia_alerts').insert(alert).select().single();
 
     if (error) throw error;
 
     return data?.alert_id || null;
   } catch (error) {
-    console.error('Erro ao criar alerta:', error);
+    logger.error('Erro ao criar alerta:', error);
     return null;
   }
 };
@@ -311,7 +299,7 @@ export const resolveAlert = async (alert_id: string): Promise<void> => {
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao resolver alerta:', error);
+    logger.error('Erro ao resolver alerta:', error);
   }
 };
 
@@ -330,7 +318,7 @@ export const getActiveAlerts = async (): Promise<Alert[]> => {
 
     return data || [];
   } catch (error) {
-    console.error('Erro ao buscar alertas ativos:', error);
+    logger.error('Erro ao buscar alertas ativos:', error);
     return [];
   }
 };
@@ -361,10 +349,7 @@ const sendNotification = async (alert: Partial<Alert>, config: AlertConfig): Pro
 
   // Registrar canais notificados
   if (alert.alert_id) {
-    await supabase
-      .from('nathia_alerts')
-      .update({ notificado_via: config.channels })
-      .eq('alert_id', alert.alert_id);
+    await supabase.from('nathia_alerts').update({ notificado_via: config.channels }).eq('alert_id', alert.alert_id);
   }
 };
 
@@ -424,7 +409,7 @@ const sendSlackNotification = async (alert: Partial<Alert>, webhook_url: string)
       throw new Error(`Slack notification failed: ${response.statusText}`);
     }
   } catch (error) {
-    console.error('Erro ao enviar notificação Slack:', error);
+    logger.error('Erro ao enviar notificação Slack:', error);
   }
 };
 
@@ -442,7 +427,7 @@ const sendEmailNotification = async (alert: Partial<Alert>, recipients: string[]
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao enviar notificação Email:', error);
+    logger.error('Erro ao enviar notificação Email:', error);
   }
 };
 
@@ -460,7 +445,7 @@ const sendSMSNotification = async (alert: Partial<Alert>, recipients: string[]):
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao enviar notificação SMS:', error);
+    logger.error('Erro ao enviar notificação SMS:', error);
   }
 };
 
@@ -470,16 +455,11 @@ const sendSMSNotification = async (alert: Partial<Alert>, recipients: string[]):
  * Executa todos os monitores (para cron job)
  */
 export const runAllMonitors = async (): Promise<void> => {
-  console.log('[Alerts] Executando monitores...');
+  logger.info('[Alerts] Executando monitores...');
 
-  await Promise.allSettled([
-    monitorQualityMetrics(),
-    monitorLatency(),
-    monitorCosts(),
-    monitorErrorRate(),
-  ]);
+  await Promise.allSettled([monitorQualityMetrics(), monitorLatency(), monitorCosts(), monitorErrorRate()]);
 
-  console.log('[Alerts] Monitores concluídos');
+  logger.info('[Alerts] Monitores concluídos');
 };
 
 // Export default

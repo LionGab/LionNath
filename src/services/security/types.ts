@@ -5,13 +5,7 @@
 
 // ==================== Shared JSON Type ====================
 
-export type JsonValue =
-  | string
-  | number
-  | boolean
-  | null
-  | JsonValue[]
-  | { [key: string]: JsonValue | undefined };
+export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue | undefined };
 
 // ==================== PII Protection ====================
 export interface PIIDetectionResult {
@@ -64,9 +58,9 @@ export interface RateLimitRecord {
 }
 
 export interface RequestTimestamp extends Record<string, JsonValue> {
-   timestamp: number;
-   metadata?: Record<string, JsonValue>;
- }
+  timestamp: number;
+  metadata?: Record<string, JsonValue>;
+}
 
 // ==================== Content Policy ====================
 export interface ContentValidationResult {

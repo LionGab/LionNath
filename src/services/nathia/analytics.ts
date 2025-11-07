@@ -3,13 +3,7 @@
  * Sistema de extração de sinais analíticos sem PII (Personally Identifiable Information)
  */
 
-import {
-  ContentLabels,
-  AnonymizedData,
-  AnalyticsMetrics,
-  ValidationError,
-  NathiaError,
-} from './types';
+import { ContentLabels, AnonymizedData, AnalyticsMetrics, ValidationError, NathiaError } from './types';
 import { SYSTEM_PROMPTS } from './prompts';
 import { NATHIA_CONFIG } from './config';
 
@@ -77,17 +71,7 @@ export async function extrairRotulos(mensagem: string): Promise<ContentLabels> {
  */
 export function anonimizar(dados: Record<string, any>): AnonymizedData {
   // Campos que NUNCA devem aparecer em analytics
-  const piiFields = [
-    'user_id',
-    'name',
-    'email',
-    'phone',
-    'cpf',
-    'ip',
-    'address',
-    'location',
-    'device_id',
-  ];
+  const piiFields = ['user_id', 'name', 'email', 'phone', 'cpf', 'ip', 'address', 'location', 'device_id'];
 
   // Criar cópia sem PII
   const cleanData: Record<string, any> = {};
@@ -148,7 +132,7 @@ export function gerarMetricas(interacoes: AnonymizedData[]): AnalyticsMetrics {
   const engagement = calculateEngagement(interacoes);
 
   // Range de tempo
-  const timestamps = interacoes.map(i => new Date(i.timestamp)).sort((a, b) => a.getTime() - b.getTime());
+  const timestamps = interacoes.map((i) => new Date(i.timestamp)).sort((a, b) => a.getTime() - b.getTime());
   const time_range = {
     start: timestamps[0],
     end: timestamps[timestamps.length - 1],
@@ -168,9 +152,7 @@ export function gerarMetricas(interacoes: AnonymizedData[]): AnalyticsMetrics {
  * @param metrics - Métricas de diferentes períodos
  * @returns Tendências identificadas
  */
-export function identificarTendencias(
-  metrics: AnalyticsMetrics[]
-): {
+export function identificarTendencias(metrics: AnalyticsMetrics[]): {
   trending_topics: string[];
   sentiment_trend: 'improving' | 'stable' | 'declining';
   engagement_trend: 'increasing' | 'stable' | 'decreasing';
@@ -260,7 +242,7 @@ export function validarConformidadeLGPD(data: any): {
   function checkObject(obj: any, path: string = ''): void {
     if (typeof obj !== 'object' || obj === null) return;
 
-    Object.keys(obj).forEach(key => {
+    Object.keys(obj).forEach((key) => {
       const currentPath = path ? `${path}.${key}` : key;
 
       if (piiFields.includes(key.toLowerCase())) {
@@ -301,9 +283,7 @@ function extractTemas(mensagem: string): string[] {
   const temasPadronizados = NATHIA_CONFIG.analytics.temas_padronizados;
   const lowerMsg = mensagem.toLowerCase();
 
-  const temasEncontrados = temasPadronizados.filter(tema =>
-    lowerMsg.includes(tema.replace('_', ' '))
-  );
+  const temasEncontrados = temasPadronizados.filter((tema) => lowerMsg.includes(tema.replace('_', ' ')));
 
   // Retornar no máximo 3 temas
   return temasEncontrados.slice(0, 3);
@@ -314,11 +294,11 @@ function inferHumor(mensagem: string): 'positive' | 'neutral' | 'negative' | 'mi
 
   // Palavras positivas
   const positiveWords = ['feliz', 'alegre', 'grata', 'ótimo', 'maravilhoso', 'amor'];
-  const positiveCount = positiveWords.filter(w => lowerMsg.includes(w)).length;
+  const positiveCount = positiveWords.filter((w) => lowerMsg.includes(w)).length;
 
   // Palavras negativas
   const negativeWords = ['triste', 'preocupada', 'medo', 'difícil', 'problema', 'dor'];
-  const negativeCount = negativeWords.filter(w => lowerMsg.includes(w)).length;
+  const negativeCount = negativeWords.filter((w) => lowerMsg.includes(w)).length;
 
   if (positiveCount > 0 && negativeCount > 0) return 'mixed';
   if (positiveCount > negativeCount) return 'positive';
@@ -358,13 +338,13 @@ function determineUrgency(mensagem: string): 'low' | 'medium' | 'high' {
 
   // Urgência alta
   const highUrgencyWords = ['urgente', 'emergência', 'socorro', 'grave', 'sangramento'];
-  if (highUrgencyWords.some(w => lowerMsg.includes(w))) {
+  if (highUrgencyWords.some((w) => lowerMsg.includes(w))) {
     return 'high';
   }
 
   // Urgência média
   const mediumUrgencyWords = ['preocupada', 'medo', 'ajuda', 'dúvida'];
-  if (mediumUrgencyWords.some(w => lowerMsg.includes(w))) {
+  if (mediumUrgencyWords.some((w) => lowerMsg.includes(w))) {
     return 'medium';
   }
 
@@ -408,10 +388,10 @@ function generateAnonymousId(): string {
 function calculateTopicFrequency(interacoes: AnonymizedData[]): Record<string, number> {
   const freq: Record<string, number> = {};
 
-  interacoes.forEach(interacao => {
+  interacoes.forEach((interacao) => {
     const labels = interacao.metadata.labels as ContentLabels | undefined;
     if (labels && labels.tema) {
-      labels.tema.forEach(tema => {
+      labels.tema.forEach((tema) => {
         freq[tema] = (freq[tema] || 0) + 1;
       });
     }
@@ -420,12 +400,14 @@ function calculateTopicFrequency(interacoes: AnonymizedData[]): Record<string, n
   return freq;
 }
 
-function calculateSentimentDistribution(
-  interacoes: AnonymizedData[]
-): { positive: number; neutral: number; negative: number } {
+function calculateSentimentDistribution(interacoes: AnonymizedData[]): {
+  positive: number;
+  neutral: number;
+  negative: number;
+} {
   const dist = { positive: 0, neutral: 0, negative: 0 };
 
-  interacoes.forEach(interacao => {
+  interacoes.forEach((interacao) => {
     const labels = interacao.metadata.labels as ContentLabels | undefined;
     if (labels && labels.humor) {
       if (labels.humor === 'positive') dist.positive++;
@@ -442,9 +424,7 @@ function calculateSentimentDistribution(
   };
 }
 
-function calculateEngagement(
-  interacoes: AnonymizedData[]
-): {
+function calculateEngagement(interacoes: AnonymizedData[]): {
   avg_session_length: number;
   interactions_per_session: number;
   return_rate: number;
@@ -479,7 +459,7 @@ function findTrendingTopics(metrics: AnalyticsMetrics[]): string[] {
 
   const trending: string[] = [];
 
-  Object.keys(last).forEach(topic => {
+  Object.keys(last).forEach((topic) => {
     const growth = (last[topic] - (first[topic] || 0)) / (first[topic] || 1);
     if (growth > 0.5) {
       // Crescimento de 50%+
@@ -502,9 +482,7 @@ function analyzeSentimentTrend(metrics: AnalyticsMetrics[]): 'improving' | 'stab
   return 'stable';
 }
 
-function analyzeEngagementTrend(
-  metrics: AnalyticsMetrics[]
-): 'increasing' | 'stable' | 'decreasing' {
+function analyzeEngagementTrend(metrics: AnalyticsMetrics[]): 'increasing' | 'stable' | 'decreasing' {
   const first = metrics[0].engagement.avg_session_length;
   const last = metrics[metrics.length - 1].engagement.avg_session_length;
 

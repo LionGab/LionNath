@@ -4,27 +4,13 @@
  */
 
 import { anonimizarMensagem } from './pii-protection';
-import {
-  initializeRateLimiter,
-  checkRateLimit,
-} from './rate-limiter';
+import { initializeRateLimiter, checkRateLimit } from './rate-limiter';
 import { validarConteudo } from './content-policy';
-import {
-  analisarRisco,
-  requerIntervencaoImediata,
-} from './risk-detection';
-import {
-  initializeAuditLogger,
-  logRateLimitHit,
-  logContentBlocked,
-  logRiskDetected,
-  logAction,
-} from './audit-log';
+import { analisarRisco, requerIntervencaoImediata } from './risk-detection';
+import { initializeAuditLogger, logRateLimitHit, logContentBlocked, logRiskDetected, logAction } from './audit-log';
 import { initializeEncryption } from './encryption';
-import {
-  validateEnvironment,
-  securityHealthCheck,
-} from './env-validation';
+import { validateEnvironment, securityHealthCheck } from './env-validation';
+import { logger } from '@/utils/logger';
 import {
   AuditActionType,
   AuditFlag,
@@ -117,12 +103,7 @@ export {
 } from './encryption';
 
 // ==================== Environment Validation ====================
-export {
-  validateEnvironment,
-  securityHealthCheck,
-  generateEnvironmentReport,
-  validateOrThrow,
-} from './env-validation';
+export { validateEnvironment, securityHealthCheck, generateEnvironmentReport, validateOrThrow } from './env-validation';
 
 // ==================== Types ====================
 export type {
@@ -210,21 +191,17 @@ export {
  * Inicializa todo o sistema de segurança
  * Deve ser chamado no início da aplicação
  */
-export function initializeSecurity(config: {
-  supabaseUrl: string;
-  supabaseKey: string;
-  validateEnv?: boolean;
-}) {
+export function initializeSecurity(config: { supabaseUrl: string; supabaseKey: string; validateEnv?: boolean }) {
   // Validar ambiente (se solicitado)
   if (config.validateEnv !== false) {
     const validation = validateEnvironment();
     if (!validation.valid) {
-      console.error('[Security] Environment validation failed:', validation);
+      logger.error('[Security] Environment validation failed:', validation);
       throw new Error('Security initialization failed - invalid environment');
     }
 
     if (validation.warnings.length > 0) {
-      console.warn('[Security] Environment warnings:', validation.warnings);
+      logger.warn('[Security] Environment warnings:', validation.warnings);
     }
   }
 
@@ -233,7 +210,7 @@ export function initializeSecurity(config: {
   initializeAuditLogger(config.supabaseUrl, config.supabaseKey);
   initializeEncryption(config.supabaseUrl, config.supabaseKey);
 
-  console.log('[Security] Security system initialized successfully');
+  logger.info('[Security] Security system initialized successfully');
 }
 
 /**
@@ -271,10 +248,7 @@ export async function securityMiddleware(
     if (data.content) {
       const contentValidation = validarConteudo(data.content);
       if (!contentValidation.allowed) {
-        await logContentBlocked(
-          userId,
-          contentValidation.reasons.map((r) => r.description).join(', ')
-        );
+        await logContentBlocked(userId, contentValidation.reasons.map((r) => r.description).join(', '));
         return {
           allowed: false,
           reason: 'Content policy violation',
@@ -284,22 +258,17 @@ export async function securityMiddleware(
       // 3. PII Detection
       const piiResult = anonimizarMensagem(data.content);
       if (piiResult.hasPII) {
-        console.warn('[Security] PII detected and sanitized for user:', userId);
+        logger.warn('Security: PII detected and sanitized for user', { userId });
       }
 
       // 4. Risk Analysis
       const riskAnalysis = analisarRisco(data.content, context);
 
       if (riskAnalysis.level >= RiskLevel.HIGH) {
-        await logRiskDetected(
-          userId,
-          riskAnalysis.level,
-          riskAnalysis.score,
-          {
-            urgency: riskAnalysis.urgency,
-            signals: riskAnalysis.signals.length,
-          }
-        );
+        await logRiskDetected(userId, riskAnalysis.level, riskAnalysis.score, {
+          urgency: riskAnalysis.urgency,
+          signals: riskAnalysis.signals.length,
+        });
 
         // Se crítico, bloquear e escalar
         if (requerIntervencaoImediata(riskAnalysis)) {
@@ -324,7 +293,7 @@ export async function securityMiddleware(
       rateLimit,
     };
   } catch (error) {
-    console.error('[Security] Middleware error:', error);
+    logger.error('[Security] Middleware error:', error);
 
     // Fail-safe: em caso de erro, logar e permitir (mas alertar)
     await logAction(AuditActionType.SECURITY_ALERT, {

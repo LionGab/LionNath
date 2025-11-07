@@ -203,7 +203,7 @@ export function identificarTermosTecnicos(texto: string): string[] {
   ];
 
   const lowerTexto = texto.toLowerCase();
-  return termosTecnicos.filter(termo => lowerTexto.includes(termo));
+  return termosTecnicos.filter((termo) => lowerTexto.includes(termo));
 }
 
 /**
@@ -214,13 +214,13 @@ export function formatarParaEscaneabilidade(texto: string): {
   paragraphs: string[];
   bullets: string[];
 } {
-  const lines = texto.split('\n').filter(l => l.trim());
+  const lines = texto.split('\n').filter((l) => l.trim());
 
   const headings: string[] = [];
   const paragraphs: string[] = [];
   const bullets: string[] = [];
 
-  lines.forEach(line => {
+  lines.forEach((line) => {
     const trimmed = line.trim();
 
     // Headings (começa com #, ou CAPS, ou termina com :)
@@ -281,43 +281,33 @@ Simplifique o texto mantendo todas as informações importantes, mas usando ling
 // ============= Funções Auxiliares =============
 
 function countWords(texto: string): number {
-  return texto.split(/\s+/).filter(w => w.length > 0).length;
+  return texto.split(/\s+/).filter((w) => w.length > 0).length;
 }
 
 function extractKeyPoints(texto: string): string[] {
-  const sentences = texto.split(/[.!?]+/).filter(s => s.trim().length > 20);
+  const sentences = texto.split(/[.!?]+/).filter((s) => s.trim().length > 20);
 
   // Heurística simples: sentenças que contêm palavras-chave importantes
   const keywords = ['importante', 'essencial', 'fundamental', 'necessário', 'deve', 'precisa'];
 
   const keyPoints = sentences
-    .filter(s => keywords.some(k => s.toLowerCase().includes(k)))
+    .filter((s) => keywords.some((k) => s.toLowerCase().includes(k)))
     .slice(0, 3)
-    .map(s => s.trim());
+    .map((s) => s.trim());
 
   return keyPoints;
 }
 
 function extractActionItems(texto: string): string[] {
   // Procurar por verbos imperativos comuns
-  const actionVerbs = [
-    'faça',
-    'evite',
-    'consulte',
-    'observe',
-    'mantenha',
-    'estabeleça',
-    'crie',
-    'prepare',
-    'organize',
-  ];
+  const actionVerbs = ['faça', 'evite', 'consulte', 'observe', 'mantenha', 'estabeleça', 'crie', 'prepare', 'organize'];
 
-  const sentences = texto.split(/[.!?]+/).filter(s => s.trim().length > 10);
+  const sentences = texto.split(/[.!?]+/).filter((s) => s.trim().length > 10);
 
   const actions = sentences
-    .filter(s => actionVerbs.some(v => s.toLowerCase().includes(v)))
+    .filter((s) => actionVerbs.some((v) => s.toLowerCase().includes(v)))
     .slice(0, 3)
-    .map(s => s.trim());
+    .map((s) => s.trim());
 
   return actions;
 }
@@ -341,11 +331,9 @@ function extractTitle(texto: string): string | null {
 function identifyCriticalItems(texto: string): string[] {
   const criticalKeywords = ['urgente', 'emergência', 'imediatamente', 'logo', 'antes'];
 
-  const sentences = texto.split(/[.!?]+/).filter(s => s.trim().length > 10);
+  const sentences = texto.split(/[.!?]+/).filter((s) => s.trim().length > 10);
 
-  return sentences
-    .filter(s => criticalKeywords.some(k => s.toLowerCase().includes(k)))
-    .map(s => s.trim());
+  return sentences.filter((s) => criticalKeywords.some((k) => s.toLowerCase().includes(k))).map((s) => s.trim());
 }
 
 /**
@@ -354,8 +342,8 @@ function identifyCriticalItems(texto: string): string[] {
  * Target: 60-70 = Plain English
  */
 function calculateReadabilityScore(texto: string): number {
-  const sentences = texto.split(/[.!?]+/).filter(s => s.trim().length > 0);
-  const words = texto.split(/\s+/).filter(w => w.length > 0);
+  const sentences = texto.split(/[.!?]+/).filter((s) => s.trim().length > 0);
+  const words = texto.split(/\s+/).filter((w) => w.length > 0);
   const syllables = words.reduce((sum, word) => sum + countSyllables(word), 0);
 
   if (sentences.length === 0 || words.length === 0) return 0;
@@ -417,7 +405,5 @@ export function validateChecklist(checklist: Checklist): boolean {
   // Todos os itens devem ter texto e começar com verbo
   const actionVerbs = /^(fazer|criar|preparar|organizar|comprar|levar|separar|verificar|conferir|lembrar)/i;
 
-  return checklist.items.every(
-    item => item.text && item.text.length > 0 && actionVerbs.test(item.text)
-  );
+  return checklist.items.every((item) => item.text && item.text.length > 0 && actionVerbs.test(item.text));
 }

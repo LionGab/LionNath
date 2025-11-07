@@ -29,18 +29,23 @@ import {
 ## Princípios Fundamentais
 
 ### 1. Empatia Primeiro
+
 Toda interação deve validar sentimentos antes de oferecer soluções.
 
 ### 2. Zero Julgamento
+
 Nunca comparar mães ou prescrever "a forma certa" de fazer as coisas.
 
 ### 3. Privacy-First
+
 Analytics sem PII. Dados anonimizados por padrão.
 
 ### 4. Agnóstico de IA
+
 Os módulos definem a lógica. Edge Functions fazem as chamadas ao provedor de IA (Gemini, Claude, etc).
 
 ### 5. Sempre Revisão Humana
+
 Copys e decisões críticas sempre requerem aprovação humana.
 
 ---
@@ -64,10 +69,7 @@ const contexto = createChatContext('user_123', {
 });
 
 // Processar mensagem
-const resposta = await chatEmpatico(
-  'Estou muito cansada e não sei se consigo cuidar do bebê',
-  contexto
-);
+const resposta = await chatEmpatico('Estou muito cansada e não sei se consigo cuidar do bebê', contexto);
 
 console.log(resposta.resposta); // Resposta empática da IA
 console.log(resposta.acoes); // Ações sugeridas
@@ -90,22 +92,14 @@ Sistema de detecção de sentimento e situações que requerem atenção especia
 ### Exemplo de Uso
 
 ```typescript
-import {
-  classificarSentimento,
-  detectarRisco,
-  acionarSOS
-} from '@/services/nathia';
+import { classificarSentimento, detectarRisco, acionarSOS } from '@/services/nathia';
 
 // Classificar sentimento
-const sentimento = await classificarSentimento(
-  'Estou tão feliz, meu bebê dormiu a noite toda!'
-);
+const sentimento = await classificarSentimento('Estou tão feliz, meu bebê dormiu a noite toda!');
 // { sentimento: "alegria", intensidade: 8, valence: "positive" }
 
 // Detectar risco
-const risco = await detectarRisco(
-  'Não aguento mais, quero que tudo acabe'
-);
+const risco = await detectarRisco('Não aguento mais, quero que tudo acabe');
 // { nivel: "risk", sinais: [...], confidence: 0.9 }
 
 // Acionar SOS se necessário
@@ -135,11 +129,7 @@ Análise de respostas e criação de experiência personalizada desde o início.
 ### Exemplo de Uso
 
 ```typescript
-import {
-  analisarRespostas,
-  gerarStarterPack,
-  getOnboardingQuestions
-} from '@/services/nathia';
+import { analisarRespostas, gerarStarterPack, getOnboardingQuestions } from '@/services/nathia';
 
 // Obter perguntas do onboarding
 const perguntas = getOnboardingQuestions();
@@ -174,12 +164,7 @@ Transformação de conteúdo complexo em formatos acessíveis.
 ### Exemplo de Uso
 
 ```typescript
-import {
-  resumirConteudo,
-  criarCincoMinutos,
-  gerarChecklist,
-  simplificarLinguagem
-} from '@/services/nathia';
+import { resumirConteudo, criarCincoMinutos, gerarChecklist, simplificarLinguagem } from '@/services/nathia';
 
 const artigo = `[Artigo longo sobre amamentação...]`;
 
@@ -218,16 +203,10 @@ Sistema de detecção e correção de conteúdo problemático.
 ### Exemplo de Uso
 
 ```typescript
-import {
-  analisarMensagem,
-  decidirAcao,
-  sugerirReescrita
-} from '@/services/nathia';
+import { analisarMensagem, decidirAcao, sugerirReescrita } from '@/services/nathia';
 
 // Análise completa
-const analise = await analisarMensagem(
-  'Você DEVERIA amamentar, mães de verdade fazem isso'
-);
+const analise = await analisarMensagem('Você DEVERIA amamentar, mães de verdade fazem isso');
 
 console.log(analise.judgement_score); // 0.8 (alto)
 console.log(analise.toxicity_score); // 0.3 (médio)
@@ -264,11 +243,7 @@ Algoritmo de recomendação de conteúdo, círculos e hábitos.
 ### Exemplo de Uso
 
 ```typescript
-import {
-  recomendarConteudo,
-  recomendarCirculo,
-  recomendarHabito
-} from '@/services/nathia';
+import { recomendarConteudo, recomendarCirculo, recomendarHabito } from '@/services/nathia';
 
 // Recomendar conteúdo
 const conteudos = await recomendarConteudo('user_123', {
@@ -315,17 +290,10 @@ Sistema de criação e acompanhamento de hábitos com mensagens motivacionais.
 ### Exemplo de Uso
 
 ```typescript
-import {
-  criarMicroObjetivo,
-  gerarMensagemMotivacional,
-  trackProgresso,
-  registrarCompletude
-} from '@/services/nathia';
+import { criarMicroObjetivo, gerarMensagemMotivacional, trackProgresso, registrarCompletude } from '@/services/nathia';
 
 // Criar micro-objetivo
-const micro = await criarMicroObjetivo(
-  'Quero fazer exercícios regularmente'
-);
+const micro = await criarMicroObjetivo('Quero fazer exercícios regularmente');
 
 console.log(micro.titulo); // "Começar com 5 minutos"
 console.log(micro.passos); // [passo 1, passo 2, ...]
@@ -362,17 +330,10 @@ Sistema de extração de insights mantendo privacidade (sem PII).
 ### Exemplo de Uso
 
 ```typescript
-import {
-  extrairRotulos,
-  anonimizar,
-  gerarMetricas,
-  validarConformidadeLGPD
-} from '@/services/nathia';
+import { extrairRotulos, anonimizar, gerarMetricas, validarConformidadeLGPD } from '@/services/nathia';
 
 // Extrair rótulos
-const labels = await extrairRotulos(
-  'Estou muito preocupada com o sono do meu bebê'
-);
+const labels = await extrairRotulos('Estou muito preocupada com o sono do meu bebê');
 
 console.log(labels.tema); // ["sono", "preocupacao"]
 console.log(labels.humor); // "negative"
@@ -419,18 +380,10 @@ Geração de textos para push, email e App Store (SEMPRE requer revisão humana)
 ### Exemplo de Uso
 
 ```typescript
-import {
-  gerarPushNotification,
-  gerarEmail,
-  gerarAppStoreCopy,
-  validarCopyBrand
-} from '@/services/nathia';
+import { gerarPushNotification, gerarEmail, gerarAppStoreCopy, validarCopyBrand } from '@/services/nathia';
 
 // Push notification
-const push = await gerarPushNotification(
-  { user_stage: 'mid', event: 'new_content' },
-  'content_alert'
-);
+const push = await gerarPushNotification({ user_stage: 'mid', event: 'new_content' }, 'content_alert');
 
 console.log(push.titulo); // "Novo conteúdo para você 🌟"
 console.log(push.corpo); // "Acabamos de publicar..."
@@ -523,10 +476,12 @@ Deno.serve(async (req) => {
   const result = await model.generateContent(prompt);
 
   // 3. Retorna resposta combinada
-  return new Response(JSON.stringify({
-    ...chatSetup,
-    resposta: result.response.text(),
-  }));
+  return new Response(
+    JSON.stringify({
+      ...chatSetup,
+      resposta: result.response.text(),
+    })
+  );
 });
 ```
 
@@ -551,11 +506,7 @@ console.log(status.version); // "1.0.0"
 Todos os módulos usam erros tipados:
 
 ```typescript
-import {
-  NathiaError,
-  ValidationError,
-  AIServiceError
-} from '@/services/nathia';
+import { NathiaError, ValidationError, AIServiceError } from '@/services/nathia';
 
 try {
   await chatEmpatico('', contexto);
@@ -580,18 +531,14 @@ import { classificarSentimento } from '@/services/nathia';
 
 describe('Triagem - Classificar Sentimento', () => {
   it('deve classificar sentimento positivo', async () => {
-    const resultado = await classificarSentimento(
-      'Estou tão feliz com meu bebê!'
-    );
+    const resultado = await classificarSentimento('Estou tão feliz com meu bebê!');
 
     expect(resultado.valence).toBe('positive');
     expect(resultado.intensidade).toBeGreaterThan(5);
   });
 
   it('deve rejeitar mensagem vazia', async () => {
-    await expect(
-      classificarSentimento('')
-    ).rejects.toThrow(ValidationError);
+    await expect(classificarSentimento('')).rejects.toThrow(ValidationError);
   });
 });
 ```
@@ -601,12 +548,14 @@ describe('Triagem - Classificar Sentimento', () => {
 ## Roadmap
 
 ### v1.1 (Próximo)
+
 - [ ] Cache de respostas frequentes
 - [ ] Suporte a múltiplos idiomas
 - [ ] A/B testing integrado
 - [ ] Métricas de qualidade de respostas
 
 ### v2.0 (Futuro)
+
 - [ ] Multi-modal (voz, imagem)
 - [ ] Personalização por perfil psicológico
 - [ ] Integração com wearables
@@ -642,6 +591,7 @@ Propriedade de Nossa Maternidade. Uso interno apenas.
 ## Suporte
 
 Para dúvidas sobre NAT-IA:
+
 - Documentação: Este README
 - Issues: GitHub Issues
 - Contato: equipe-tech@nossamaternidade.com.br

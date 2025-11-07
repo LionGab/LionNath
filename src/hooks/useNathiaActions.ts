@@ -19,10 +19,13 @@
  */
 
 import { useCallback, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NathiaAction } from '@/services/nathia-client';
 import { logger } from '@/lib/logger';
 import { Alert } from 'react-native';
+
+// Type-safe navigation helper
+type AppNavigation = NavigationProp<ParamListBase>;
 
 export interface UseNathiaActionsResult {
   processAction: (action: NathiaAction) => Promise<void>;
@@ -31,7 +34,7 @@ export interface UseNathiaActionsResult {
 }
 
 export function useNathiaActions(): UseNathiaActionsResult {
-  const navigation = useNavigation();
+  const navigation = useNavigation<AppNavigation>();
   const [isProcessing, setIsProcessing] = useState(false);
   const [lastProcessedAction, setLastProcessedAction] = useState<NathiaAction | null>(null);
 
@@ -80,9 +83,7 @@ export function useNathiaActions(): UseNathiaActionsResult {
         trackActionConversion(action);
       } catch (caughtError) {
         const error = caughtError instanceof Error ? caughtError : new Error(String(caughtError));
-
-        // Log estruturado com contexto detalhado da ação que falhou
-        logger.error('Erro ao processar action', error, { action });
+        logger.error('Erro ao processar action', { actionType: action.type }, error);
 
         Alert.alert(
           'Ops!',
@@ -117,8 +118,8 @@ export function useNathiaActions(): UseNathiaActionsResult {
 
     const targetScreen = screenMap[screenName] || screenName;
 
-    // @ts-ignore - Navigation typing pode variar
-    navigation.navigate(targetScreen, action.data);
+    // Type-safe navigation with dynamic screen names
+    (navigation.navigate as (screen: string, params?: any) => void)(targetScreen, action.data);
   };
 
   const handleJoinCircle = async (action: NathiaAction) => {
@@ -129,26 +130,21 @@ export function useNathiaActions(): UseNathiaActionsResult {
     }
 
     // Navega para detalhes do círculo
-    // @ts-ignore
-    navigation.navigate('CircleDetail', { circleId });
+    (navigation.navigate as (screen: string, params?: any) => void)('CircleDetail', { circleId });
 
     // Feedback visual
-    Alert.alert(
-      'Círculo de Apoio',
-      `Pronto! Agora você pode participar do círculo "${action.label}". Vamos lá?`,
-      [
-        {
-          text: 'Mais tarde',
-          style: 'cancel',
+    Alert.alert('Círculo de Apoio', `Pronto! Agora você pode participar do círculo "${action.label}". Vamos lá?`, [
+      {
+        text: 'Mais tarde',
+        style: 'cancel',
+      },
+      {
+        text: 'Participar',
+        onPress: () => {
+          // TODO: Integrar com join circle API
         },
-        {
-          text: 'Participar',
-          onPress: () => {
-            // TODO: Integrar com join circle API
-          },
-        },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleStartHabit = async (action: NathiaAction) => {
@@ -159,25 +155,20 @@ export function useNathiaActions(): UseNathiaActionsResult {
     }
 
     // Navega para criar/visualizar hábito
-    // @ts-ignore
-    navigation.navigate('HabitDetail', { habitId });
+    (navigation.navigate as (screen: string, params?: any) => void)('HabitDetail', { habitId });
 
-    Alert.alert(
-      'Novo Hábito',
-      `Que tal começar o hábito "${action.label}"? Pequenos passos fazem diferença!`,
-      [
-        {
-          text: 'Depois',
-          style: 'cancel',
+    Alert.alert('Novo Hábito', `Que tal começar o hábito "${action.label}"? Pequenos passos fazem diferença!`, [
+      {
+        text: 'Depois',
+        style: 'cancel',
+      },
+      {
+        text: 'Começar agora',
+        onPress: () => {
+          // TODO: Integrar com habits API
         },
-        {
-          text: 'Começar agora',
-          onPress: () => {
-            // TODO: Integrar com habits API
-          },
-        },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleShowContent = async (action: NathiaAction) => {
@@ -186,24 +177,19 @@ export function useNathiaActions(): UseNathiaActionsResult {
 
     if (contentId) {
       // Navega para conteúdo específico
-      // @ts-ignore
-      navigation.navigate('ContentDetail', { contentId });
+      (navigation.navigate as (screen: string, params?: any) => void)('ContentDetail', { contentId });
     } else if (url) {
       // Abre URL externa (vídeo, artigo, etc)
       // TODO: Integrar com WebView ou browser externo
-      Alert.alert(
-        'Conteúdo Externo',
-        `Deseja abrir "${action.label}"?`,
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          {
-            text: 'Abrir',
-            onPress: () => {
-              // Linking.openURL(url);
-            },
+      Alert.alert('Conteúdo Externo', `Deseja abrir "${action.label}"?`, [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Abrir',
+          onPress: () => {
+            // Linking.openURL(url);
           },
-        ]
-      );
+        },
+      ]);
     } else {
       throw new Error('contentId ou url não fornecido');
     }
@@ -211,8 +197,7 @@ export function useNathiaActions(): UseNathiaActionsResult {
 
   const handleSOS = async (action: NathiaAction) => {
     // Aciona modal de emergência
-    // @ts-ignore
-    navigation.navigate('SOSModal', {
+    (navigation.navigate as (screen: string, params?: any) => void)('SOSModal', {
       source: 'nathia-action',
       context: action.data,
     });

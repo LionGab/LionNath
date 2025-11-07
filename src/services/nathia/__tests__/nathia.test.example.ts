@@ -77,9 +77,7 @@ describe('Módulo 1: Chat Empático', () => {
     });
 
     it('deve rejeitar contexto sem user_id', async () => {
-      await expect(
-        chatEmpatico('teste', {} as any)
-      ).rejects.toThrow(ValidationError);
+      await expect(chatEmpatico('teste', {} as any)).rejects.toThrow(ValidationError);
     });
   });
 
@@ -112,9 +110,7 @@ describe('Módulo 1: Chat Empático', () => {
 describe('Módulo 2: Triagem Emocional & Risco', () => {
   describe('classificarSentimento', () => {
     it('deve detectar sentimento positivo', async () => {
-      const sentimento = await classificarSentimento(
-        'Estou muito feliz, meu bebê dormiu a noite toda!'
-      );
+      const sentimento = await classificarSentimento('Estou muito feliz, meu bebê dormiu a noite toda!');
 
       expect(sentimento.valence).toBe('positive');
       expect(sentimento.intensidade).toBeGreaterThan(5);
@@ -122,9 +118,7 @@ describe('Módulo 2: Triagem Emocional & Risco', () => {
     });
 
     it('deve detectar sentimento negativo', async () => {
-      const sentimento = await classificarSentimento(
-        'Estou muito triste e preocupada'
-      );
+      const sentimento = await classificarSentimento('Estou muito triste e preocupada');
 
       expect(sentimento.valence).toBe('negative');
     });
@@ -213,9 +207,7 @@ describe('Módulo 3: Onboarding Inteligente', () => {
     });
 
     it('deve retornar false para onboarding incompleto', () => {
-      const respostas = [
-        { question_id: 'stage', answer: 'Mid', timestamp: new Date() },
-      ];
+      const respostas = [{ question_id: 'stage', answer: 'Mid', timestamp: new Date() }];
 
       expect(isOnboardingComplete(respostas)).toBe(false);
     });
@@ -287,9 +279,7 @@ describe('Módulo 4: Curadoria de Conteúdo', () => {
 describe('Módulo 5: Moderação Assistida', () => {
   describe('analisarMensagem', () => {
     it('deve detectar julgamento alto', async () => {
-      const analise = await analisarMensagem(
-        'Você DEVERIA amamentar! Mães de verdade fazem isso'
-      );
+      const analise = await analisarMensagem('Você DEVERIA amamentar! Mães de verdade fazem isso');
 
       expect(analise.judgement_score).toBeGreaterThan(0.5);
       expect(analise.is_safe).toBe(false);
@@ -297,9 +287,7 @@ describe('Módulo 5: Moderação Assistida', () => {
     });
 
     it('deve aprovar mensagem segura', async () => {
-      const analise = await analisarMensagem(
-        'Amamentação funcionou bem para mim. Cada mãe sabe o que é melhor.'
-      );
+      const analise = await analisarMensagem('Amamentação funcionou bem para mim. Cada mãe sabe o que é melhor.');
 
       expect(analise.judgement_score).toBeLessThan(0.5);
       expect(analise.toxicity_score).toBeLessThan(0.5);
@@ -339,9 +327,7 @@ describe('Módulo 5: Moderação Assistida', () => {
 describe('Módulo 7: Hábitos & Coaching', () => {
   describe('criarMicroObjetivo', () => {
     it('deve criar micro-objetivo válido', async () => {
-      const micro = await criarMicroObjetivo(
-        'Quero começar a meditar'
-      );
+      const micro = await criarMicroObjetivo('Quero começar a meditar');
 
       expect(micro.titulo).toBeTruthy();
       expect(micro.passos.length).toBeGreaterThan(0);
@@ -431,10 +417,7 @@ describe('Módulo 8: Analytics', () => {
 describe('Módulo 9: Copys Operacionais', () => {
   describe('gerarPushNotification', () => {
     it('deve gerar push válida', async () => {
-      const push = await gerarPushNotification(
-        { user_stage: 'mid' },
-        'content_alert'
-      );
+      const push = await gerarPushNotification({ user_stage: 'mid' }, 'content_alert');
 
       expect(push.titulo).toBeTruthy();
       expect(push.corpo).toBeTruthy();
@@ -495,10 +478,7 @@ describe('Testes de Integração', () => {
     const userId = 'test_user_123';
 
     // 1. Triagem
-    const [sentimento, risco] = await Promise.all([
-      classificarSentimento(mensagem),
-      detectarRisco(mensagem),
-    ]);
+    const [sentimento, risco] = await Promise.all([classificarSentimento(mensagem), detectarRisco(mensagem)]);
 
     expect(sentimento).toBeDefined();
     expect(risco).toBeDefined();

@@ -3,6 +3,8 @@
  * Centralize parâmetros que podem ser ajustados sem modificar código
  */
 
+import { logger } from '@/utils/logger';
+
 export const NATHIA_CONFIG = {
   /**
    * Configurações de triagem de risco
@@ -82,12 +84,7 @@ export const NATHIA_CONFIG = {
       {
         id: 'support',
         question: 'Como é sua rede de apoio?',
-        options: [
-          'Tenho muito apoio',
-          'Tenho algum apoio',
-          'Apoio limitado',
-          'Me sinto sozinha',
-        ],
+        options: ['Tenho muito apoio', 'Tenho algum apoio', 'Apoio limitado', 'Me sinto sozinha'],
       },
       {
         id: 'goals',
@@ -263,8 +260,8 @@ export function validateConfig(): boolean {
     moderacao.auto_reject_threshold,
   ];
 
-  if (thresholds.some(t => t < 0 || t > 1)) {
-    console.error('NATHIA_CONFIG: Thresholds devem estar entre 0 e 1');
+  if (thresholds.some((t) => t < 0 || t > 1)) {
+    logger.error('NATHIA_CONFIG: Thresholds devem estar entre 0 e 1');
     return false;
   }
 
@@ -272,7 +269,7 @@ export function validateConfig(): boolean {
   const pesos = Object.values(recomendacoes.pesos);
   const soma = pesos.reduce((a, b) => a + b, 0);
   if (Math.abs(soma - 1.0) > 0.01) {
-    console.error('NATHIA_CONFIG: Pesos de recomendação devem somar 1.0');
+    logger.error('NATHIA_CONFIG: Pesos de recomendação devem somar 1.0');
     return false;
   }
 
@@ -282,19 +279,14 @@ export function validateConfig(): boolean {
 /**
  * Helper para obter configuração específica
  */
-export function getConfig<K extends keyof typeof NATHIA_CONFIG>(
-  key: K
-): typeof NATHIA_CONFIG[K] {
+export function getConfig<K extends keyof typeof NATHIA_CONFIG>(key: K): (typeof NATHIA_CONFIG)[K] {
   return NATHIA_CONFIG[key];
 }
 
 /**
  * Helper para atualizar configuração em runtime (use com cuidado!)
  */
-export function updateConfig(
-  path: string[],
-  value: any
-): void {
+export function updateConfig(path: string[], value: any): void {
   let obj: any = NATHIA_CONFIG;
   for (let i = 0; i < path.length - 1; i++) {
     obj = obj[path[i]];

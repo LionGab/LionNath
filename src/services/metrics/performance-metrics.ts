@@ -12,6 +12,7 @@
 
 import { supabase } from '../supabase';
 import type { LatencyMetric, TokenUsage, ErrorMetric, PerformanceMetrics } from './types';
+import { logger } from '@/utils/logger';
 
 // ============= LATÊNCIA =============
 
@@ -19,11 +20,7 @@ import type { LatencyMetric, TokenUsage, ErrorMetric, PerformanceMetrics } from 
  * Registra latência de um endpoint
  * SLO: p50 < 2500ms, p95 < 5000ms
  */
-export const trackLatencia = async (
-  endpoint: string,
-  latency_ms: number,
-  status_code: number = 200
-): Promise<void> => {
+export const trackLatencia = async (endpoint: string, latency_ms: number, status_code: number = 200): Promise<void> => {
   try {
     const metric: Partial<LatencyMetric> = {
       endpoint,
@@ -41,7 +38,7 @@ export const trackLatencia = async (
       await triggerLatencyAlert(endpoint, latency_ms);
     }
   } catch (error) {
-    console.error('Erro ao registrar latência:', error);
+    logger.error('Erro ao registrar latência:', error);
   }
 };
 
@@ -80,7 +77,7 @@ export const getLatencyPercentiles = async (
 
     return { p50, p95, p99 };
   } catch (error) {
-    console.error('Erro ao calcular percentis:', error);
+    logger.error('Erro ao calcular percentis:', error);
     return { p50: 0, p95: 0, p99: 0 };
   }
 };
@@ -88,7 +85,9 @@ export const getLatencyPercentiles = async (
 /**
  * Verifica se SLO de latência está sendo atendido
  */
-export const checkLatencySLO = async (periodo: string = '24h'): Promise<{
+export const checkLatencySLO = async (
+  periodo: string = '24h'
+): Promise<{
   p50: { atual: number; slo: number; ok: boolean };
   p95: { atual: number; slo: number; ok: boolean };
 }> => {
@@ -138,7 +137,7 @@ export const trackTokens = async (
 
     return cost_usd;
   } catch (error) {
-    console.error('Erro ao registrar tokens:', error);
+    logger.error('Erro ao registrar tokens:', error);
     return 0;
   }
 };
@@ -146,11 +145,7 @@ export const trackTokens = async (
 /**
  * Calcula custo baseado no modelo e tokens
  */
-const calculateCost = (
-  model: string,
-  input_tokens: number,
-  output_tokens: number
-): number => {
+const calculateCost = (model: string, input_tokens: number, output_tokens: number): number => {
   // Custos por 1K tokens (USD)
   const costs: Record<string, { input: number; output: number }> = {
     'gemini-2.0-flash': {
@@ -231,7 +226,7 @@ export const getTokenStats = async (
       breakdown_by_model,
     };
   } catch (error) {
-    console.error('Erro ao calcular estatísticas de tokens:', error);
+    logger.error('Erro ao calcular estatísticas de tokens:', error);
     return {
       total_input_tokens: 0,
       total_output_tokens: 0,
@@ -271,7 +266,7 @@ export const trackError = async (
     // Verificar taxa de erros
     await checkErrorRate();
   } catch (error) {
-    console.error('Erro ao registrar erro:', error);
+    logger.error('Erro ao registrar erro:', error);
   }
 };
 
@@ -296,7 +291,7 @@ export const getErrorRate = async (periodo: string = '24h'): Promise<number> => 
 
     return (erros / total) * 100;
   } catch (error) {
-    console.error('Erro ao calcular taxa de erros:', error);
+    logger.error('Erro ao calcular taxa de erros:', error);
     return 0;
   }
 };
@@ -336,7 +331,7 @@ export const getDisponibilidade = async (periodo: string = '30d'): Promise<numbe
 
     return (sucesso / total) * 100;
   } catch (error) {
-    console.error('Erro ao calcular disponibilidade:', error);
+    logger.error('Erro ao calcular disponibilidade:', error);
     return 100;
   }
 };
@@ -406,7 +401,7 @@ const triggerLatencyAlert = async (endpoint: string, latency_ms: number): Promis
     const { default: alerts } = await import('./alerts');
     await alerts.alertIfLatencySpike(endpoint, latency_ms);
   } catch (error) {
-    console.error('Erro ao disparar alerta de latência:', error);
+    logger.error('Erro ao disparar alerta de latência:', error);
   }
 };
 
@@ -418,6 +413,6 @@ const triggerErrorRateAlert = async (errorRate: number): Promise<void> => {
     const { default: alerts } = await import('./alerts');
     await alerts.alertIfErrorRateHigh(errorRate);
   } catch (error) {
-    console.error('Erro ao disparar alerta de erro:', error);
+    logger.error('Erro ao disparar alerta de erro:', error);
   }
 };

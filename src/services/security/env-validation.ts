@@ -10,11 +10,8 @@ import {
   SecurityHealthCheck,
   HealthCheckResult,
 } from './types';
-import {
-  REQUIRED_ENV_VARS,
-  OPTIONAL_ENV_VARS,
-  HEALTH_CHECK_CONFIG,
-} from './constants';
+import { REQUIRED_ENV_VARS, OPTIONAL_ENV_VARS, HEALTH_CHECK_CONFIG } from './constants';
+import { logger } from '@/utils/logger';
 
 /**
  * Valida todas as variáveis de ambiente
@@ -79,7 +76,8 @@ export function validateEnvironment(): EnvironmentValidationResult {
 function getEnvVar(name: string): string | undefined {
   // Browser
   if (typeof window !== 'undefined') {
-    return (window as any).__ENV__?.[name] || process.env[name];
+    const windowEnv = (window as Record<string, any>).__ENV__ as Record<string, string> | undefined;
+    return windowEnv?.[name] || process.env[name];
   }
 
   // Node.js
@@ -89,10 +87,7 @@ function getEnvVar(name: string): string | undefined {
 /**
  * Valida formato de variável específica
  */
-function validateEnvVarFormat(
-  name: string,
-  value: string
-): ValidationError | null {
+function validateEnvVarFormat(name: string, value: string): ValidationError | null {
   switch (name) {
     case 'SUPABASE_URL':
     case 'NEXT_PUBLIC_SUPABASE_URL':
@@ -515,12 +510,12 @@ export function validateOrThrow(): void {
 
   if (!validation.valid) {
     const report = generateEnvironmentReport();
-    console.error(report);
+    logger.error('Environment validation failed', { report });
     throw new Error('Environment validation failed');
   }
 
   // Mostrar warnings
   if (validation.warnings.length > 0) {
-    console.warn(generateEnvironmentReport());
+    logger.warn('Environment validation warnings', { report: generateEnvironmentReport() });
   }
 }

@@ -13,6 +13,7 @@
 import { supabase } from '../supabase';
 import { createHash } from 'crypto';
 import type { Experiment, ExperimentAssignment, ExperimentMetric } from './types';
+import { logger } from '@/utils/logger';
 
 // ============= GESTÃO DE EXPERIMENTOS =============
 
@@ -37,17 +38,13 @@ export const createExperiment = async (
       sample_size_per_variant,
     };
 
-    const { data, error } = await supabase
-      .from('nathia_experiments')
-      .insert(experiment)
-      .select()
-      .single();
+    const { data, error } = await supabase.from('nathia_experiments').insert(experiment).select().single();
 
     if (error) throw error;
 
     return data?.experiment_id || null;
   } catch (error) {
-    console.error('Erro ao criar experimento:', error);
+    logger.error('Erro ao criar experimento:', error);
     return null;
   }
 };
@@ -67,7 +64,7 @@ export const startExperiment = async (experiment_id: string): Promise<void> => {
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao iniciar experimento:', error);
+    logger.error('Erro ao iniciar experimento:', error);
   }
 };
 
@@ -83,7 +80,7 @@ export const pauseExperiment = async (experiment_id: string): Promise<void> => {
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao pausar experimento:', error);
+    logger.error('Erro ao pausar experimento:', error);
   }
 };
 
@@ -102,16 +99,14 @@ export const completeExperiment = async (experiment_id: string): Promise<void> =
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao finalizar experimento:', error);
+    logger.error('Erro ao finalizar experimento:', error);
   }
 };
 
 /**
  * Lista todos os experimentos
  */
-export const listExperiments = async (
-  status?: 'draft' | 'running' | 'paused' | 'completed'
-): Promise<Experiment[]> => {
+export const listExperiments = async (status?: 'draft' | 'running' | 'paused' | 'completed'): Promise<Experiment[]> => {
   try {
     let query = supabase.from('nathia_experiments').select('*').order('start_date', { ascending: false });
 
@@ -125,7 +120,7 @@ export const listExperiments = async (
 
     return data || [];
   } catch (error) {
-    console.error('Erro ao listar experimentos:', error);
+    logger.error('Erro ao listar experimentos:', error);
     return [];
   }
 };
@@ -150,7 +145,7 @@ export const assignVariant = async (
       .single();
 
     if (expError || !experiment) {
-      console.log(`Experimento ${experiment_name} não encontrado ou não está rodando`);
+      logger.info(`Experimento ${experiment_name} não encontrado ou não está rodando`);
       return null;
     }
 
@@ -179,15 +174,13 @@ export const assignVariant = async (
       assigned_at: new Date(),
     };
 
-    const { error: assignError } = await supabase
-      .from('nathia_experiment_assignments')
-      .insert(assignment);
+    const { error: assignError } = await supabase.from('nathia_experiment_assignments').insert(assignment);
 
     if (assignError) throw assignError;
 
     return variant as 'control' | 'variant';
   } catch (error) {
-    console.error('Erro ao atribuir variante:', error);
+    logger.error('Erro ao atribuir variante:', error);
     return null;
   }
 };
@@ -206,10 +199,7 @@ const selectVariant = (user_id_hash: string, variants: string[]): string => {
 /**
  * Retorna variante atual do usuário para um experimento
  */
-export const getUserVariant = async (
-  user_id: string,
-  experiment_name: string
-): Promise<string | null> => {
+export const getUserVariant = async (user_id: string, experiment_name: string): Promise<string | null> => {
   try {
     const user_id_hash = hashUserId(user_id);
 
@@ -232,7 +222,7 @@ export const getUserVariant = async (
 
     return data?.variant || null;
   } catch (error) {
-    console.error('Erro ao buscar variante do usuário:', error);
+    logger.error('Erro ao buscar variante do usuário:', error);
     return null;
   }
 };
@@ -262,7 +252,7 @@ export const trackExperimentMetric = async (
 
     if (error) throw error;
   } catch (error) {
-    console.error('Erro ao registrar métrica de experimento:', error);
+    logger.error('Erro ao registrar métrica de experimento:', error);
   }
 };
 
@@ -333,8 +323,7 @@ export const getExperimentResults = async (
       Object.entries(data.metrics).forEach(([metric_name, metric_data]) => {
         const values = metric_data.values;
         const mean = values.reduce((acc, v) => acc + v, 0) / values.length;
-        const variance =
-          values.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0) / values.length;
+        const variance = values.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0) / values.length;
         const stddev = Math.sqrt(variance);
 
         finalResults[variant].metrics[metric_name] = {
@@ -347,7 +336,7 @@ export const getExperimentResults = async (
 
     return finalResults;
   } catch (error) {
-    console.error('Erro ao calcular resultados do experimento:', error);
+    logger.error('Erro ao calcular resultados do experimento:', error);
     return {};
   }
 };
@@ -391,13 +380,10 @@ export const calculateSignificance = async (
     const improvement_percent = ((variant_mean - control_mean) / control_mean) * 100;
 
     // Teste t simplificado (para implementação completa, usar biblioteca estatística)
-    const pooled_stddev = Math.sqrt(
-      (Math.pow(controlMetric.stddev, 2) + Math.pow(variantMetric.stddev, 2)) / 2
-    );
+    const pooled_stddev = Math.sqrt((Math.pow(controlMetric.stddev, 2) + Math.pow(variantMetric.stddev, 2)) / 2);
 
     const t_statistic =
-      (variant_mean - control_mean) /
-      (pooled_stddev * Math.sqrt(1 / controlMetric.count + 1 / variantMetric.count));
+      (variant_mean - control_mean) / (pooled_stddev * Math.sqrt(1 / controlMetric.count + 1 / variantMetric.count));
 
     // P-value aproximado (simplificado)
     const p_value = approximatePValue(Math.abs(t_statistic));
@@ -414,7 +400,7 @@ export const calculateSignificance = async (
       confidence_level,
     };
   } catch (error) {
-    console.error('Erro ao calcular significância:', error);
+    logger.error('Erro ao calcular significância:', error);
     return {
       control_mean: 0,
       variant_mean: 0,
@@ -487,7 +473,7 @@ export const generateExperimentReport = async (
       recommendation,
     };
   } catch (error) {
-    console.error('Erro ao gerar relatório:', error);
+    logger.error('Erro ao gerar relatório:', error);
     return {
       experiment: null,
       results: {},

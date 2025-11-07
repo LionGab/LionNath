@@ -4,13 +4,7 @@
  * IMPORTANTE: Todos os copys SEMPRE requerem revisão humana
  */
 
-import {
-  PushNotification,
-  EmailContent,
-  AppStoreCopy,
-  ValidationError,
-  NathiaError,
-} from './types';
+import { PushNotification, EmailContent, AppStoreCopy, ValidationError, NathiaError } from './types';
 import { SYSTEM_PROMPTS } from './prompts';
 import { NATHIA_CONFIG } from './config';
 
@@ -132,9 +126,7 @@ export async function gerarAppStoreCopy(
 ): Promise<AppStoreCopy> {
   try {
     // Gerar copy baseado na feature
-    const { titulo, descricao, keywords, screenshots_suggestions } = generateAppStoreContent(
-      feature
-    );
+    const { titulo, descricao, keywords, screenshots_suggestions } = generateAppStoreContent(feature);
 
     // Preparar prompt para IA refinar
     const prompt = buildAppStorePrompt(feature);
@@ -220,10 +212,12 @@ export function gerarSubjectLineVariante(
     },
   };
 
-  return variants[template as keyof typeof variants]?.[variante] || {
-    subject: 'Nossa Maternidade',
-    hypothesis: 'Genérico',
-  };
+  return (
+    variants[template as keyof typeof variants]?.[variante] || {
+      subject: 'Nossa Maternidade',
+      hypothesis: 'Genérico',
+    }
+  );
 }
 
 /**
@@ -267,7 +261,7 @@ export function validarCopyBrand(copy: string): {
 
   // Verificar tamanho de frases
   const sentences = copy.split(/[.!?]+/);
-  const longSentences = sentences.filter(s => s.split(/\s+/).length > 25);
+  const longSentences = sentences.filter((s) => s.split(/\s+/).length > 25);
   if (longSentences.length > 0) {
     issues.push('Frases muito longas detectadas');
     suggestions.push('Quebre frases com mais de 20 palavras');
@@ -387,15 +381,7 @@ function generateAppStoreContent(feature: string): {
   keywords: string[];
   screenshots_suggestions: string[];
 } {
-  const baseKeywords = [
-    'maternidade',
-    'gravidez',
-    'pós-parto',
-    'mães',
-    'comunidade',
-    'suporte',
-    'bem-estar',
-  ];
+  const baseKeywords = ['maternidade', 'gravidez', 'pós-parto', 'mães', 'comunidade', 'suporte', 'bem-estar'];
 
   switch (feature) {
     case 'nathia_chat':
@@ -416,10 +402,7 @@ function generateAppStoreContent(feature: string): {
         descricao:
           'Conecte-se com outras mães em círculos temáticos. Compartilhe experiências, tire dúvidas e construa sua rede de apoio em um ambiente seguro e acolhedor.',
         keywords: [...baseKeywords, 'grupos', 'círculos', 'conexão', 'amizade'],
-        screenshots_suggestions: [
-          'Lista de círculos disponíveis',
-          'Conversa em círculo temático',
-        ],
+        screenshots_suggestions: ['Lista de círculos disponíveis', 'Conversa em círculo temático'],
       };
 
     case 'overall':
@@ -621,15 +604,11 @@ function validatePushLimits(titulo: string, corpo: string): void {
   const config = NATHIA_CONFIG.copys;
 
   if (titulo.length > config.push_titulo_max) {
-    throw new ValidationError(
-      `Título muito longo: ${titulo.length}/${config.push_titulo_max} caracteres`
-    );
+    throw new ValidationError(`Título muito longo: ${titulo.length}/${config.push_titulo_max} caracteres`);
   }
 
   if (corpo.length > config.push_corpo_max) {
-    throw new ValidationError(
-      `Corpo muito longo: ${corpo.length}/${config.push_corpo_max} caracteres`
-    );
+    throw new ValidationError(`Corpo muito longo: ${corpo.length}/${config.push_corpo_max} caracteres`);
   }
 }
 
@@ -637,8 +616,6 @@ function validateEmailSubject(subject: string): void {
   const config = NATHIA_CONFIG.copys;
 
   if (subject.length > config.email_subject_max) {
-    throw new ValidationError(
-      `Subject muito longo: ${subject.length}/${config.email_subject_max} caracteres`
-    );
+    throw new ValidationError(`Subject muito longo: ${subject.length}/${config.email_subject_max} caracteres`);
   }
 }

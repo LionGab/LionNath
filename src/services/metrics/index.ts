@@ -228,30 +228,22 @@ export const getSystemHealth = async (): Promise<{
   }
 
   if (dashboard.latencia_p95.status === 'critical') {
-    issues.push(
-      `Latência P95 crítica: ${dashboard.latencia_p95.valor}ms (SLO: 5000ms)`
-    );
+    issues.push(`Latência P95 crítica: ${dashboard.latencia_p95.valor}ms (SLO: 5000ms)`);
     score -= 20;
   }
 
   if (dashboard.taxa_erro.status !== 'ok') {
-    issues.push(
-      `Taxa de erro alta: ${dashboard.taxa_erro.valor.toFixed(2)}% (SLO: 1%)`
-    );
+    issues.push(`Taxa de erro alta: ${dashboard.taxa_erro.valor.toFixed(2)}% (SLO: 1%)`);
     score -= 15;
   }
 
   if (dashboard.disponibilidade.status === 'critical') {
-    issues.push(
-      `Disponibilidade baixa: ${dashboard.disponibilidade.valor.toFixed(2)}% (SLO: 99.5%)`
-    );
+    issues.push(`Disponibilidade baixa: ${dashboard.disponibilidade.valor.toFixed(2)}% (SLO: 99.5%)`);
     score -= 25;
   }
 
   if (dashboard.precision.status !== 'ok') {
-    issues.push(
-      `Precision de detecção baixa: ${dashboard.precision.valor.toFixed(2)}%`
-    );
+    issues.push(`Precision de detecção baixa: ${dashboard.precision.valor.toFixed(2)}%`);
     score -= 10;
   }
 

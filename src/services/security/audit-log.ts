@@ -3,20 +3,11 @@
  * LGPD Compliant - No PII in logs, only metadata
  */
 
-import {
-  AuditLogEntry,
-  AuditActionType,
-  AuditMetadata,
-  AuditFlag,
-  JsonValue,
-} from './types';
+import { AuditLogEntry, AuditActionType, AuditMetadata, AuditFlag, JsonValue } from './types';
 import { AUDIT_CONFIG } from './constants';
 import { sanitizarLogs } from './pii-protection';
-import {
-  createSecurityClient,
-  type AuditLogRow,
-  type SecuritySupabaseClient,
-} from './supabase-client';
+import { createSecurityClient, type AuditLogRow, type SecuritySupabaseClient } from './supabase-client';
+import { logger } from '@/utils/logger';
 
 const AUDIT_ACTION_VALUES = new Set<string>(Object.values(AuditActionType));
 const AUDIT_FLAG_VALUES = new Set<string>(Object.values(AuditFlag));
@@ -99,10 +90,7 @@ let flushTimer: NodeJS.Timeout | null = null;
 /**
  * Inicializa o audit logger
  */
-export function initializeAuditLogger(
-  supabaseUrl: string,
-  supabaseKey: string
-): void {
+export function initializeAuditLogger(supabaseUrl: string, supabaseKey: string): void {
   supabaseClient = createSecurityClient(supabaseUrl, supabaseKey);
 
   // Iniciar flush timer
@@ -135,7 +123,7 @@ export async function logAction(
     // Limitar tamanho dos metadados
     const metadataStr = JSON.stringify(sanitizedMetadata);
     if (metadataStr.length > AUDIT_CONFIG.MAX_METADATA_SIZE) {
-      console.warn('[AuditLog] Metadata too large, truncating');
+      logger.warn('AuditLog: Metadata too large, truncating', { size: metadataStr.length });
       sanitizedMetadata.truncated = true;
     }
 
@@ -162,7 +150,7 @@ export async function logAction(
       await flushLogs();
     }
   } catch (error) {
-    console.error('[AuditLog] Error logging action:', error);
+    logger.error('AuditLog: Error logging action', { error });
     // Não falhar a operação principal se log falhar
   }
 }
@@ -177,7 +165,7 @@ async function flushLogs(): Promise<void> {
   logBuffer = [];
 
   if (!supabaseClient) {
-    console.warn('[AuditLog] No Supabase client, logs discarded');
+    logger.warn('AuditLog: No Supabase client, logs discarded', { count: logsToFlush.length });
     return;
   }
 
@@ -198,17 +186,15 @@ async function flushLogs(): Promise<void> {
     }));
 
     // Inserir em batch
-    const { error } = await supabaseClient
-      .from('nathia_audit_logs')
-      .insert(records);
+    const { error } = await supabaseClient.from('nathia_audit_logs').insert(records);
 
     if (error) {
-      console.error('[AuditLog] Error flushing logs:', error);
+      logger.error('AuditLog: Error flushing logs', { error, count: records.length });
       // Re-adicionar logs ao buffer para tentar novamente
       logBuffer.unshift(...logsToFlush);
     }
   } catch (error) {
-    console.error('[AuditLog] Fatal error flushing logs:', error);
+    logger.error('AuditLog: Fatal error flushing logs', { error });
   }
 }
 
@@ -221,9 +207,7 @@ function startFlushTimer(): void {
   }
 
   flushTimer = setInterval(() => {
-    flushLogs().catch((err) =>
-      console.error('[AuditLog] Auto-flush error:', err)
-    );
+    flushLogs().catch((err) => logger.error('AuditLog: Auto-flush error', { error: err }));
   }, AUDIT_CONFIG.FLUSH_INTERVAL_MS);
 }
 
@@ -243,11 +227,7 @@ export async function stopAuditLogger(): Promise<void> {
 /**
  * Helper: Log de login
  */
-export async function logLogin(
-  userId: string,
-  success: boolean,
-  metadata?: Partial<AuditMetadata>
-): Promise<void> {
+export async function logLogin(userId: string, success: boolean, metadata?: Partial<AuditMetadata>): Promise<void> {
   await logAction(AuditActionType.USER_LOGIN, {
     userId,
     endpoint: 'auth:login',
@@ -259,10 +239,7 @@ export async function logLogin(
 /**
  * Helper: Log de logout
  */
-export async function logLogout(
-  userId: string,
-  metadata?: Partial<AuditMetadata>
-): Promise<void> {
+export async function logLogout(userId: string, metadata?: Partial<AuditMetadata>): Promise<void> {
   await logAction(AuditActionType.USER_LOGOUT, {
     userId,
     endpoint: 'auth:logout',
@@ -437,9 +414,7 @@ export async function getAuditLogs(
 
     if (error) throw error;
 
-    const rows = (data || [])
-      .map(parseAuditLogRow)
-      .filter((row): row is AuditLogRow => row !== null);
+    const rows = (data || []).map(parseAuditLogRow).filter((row): row is AuditLogRow => row !== null);
 
     return rows.map((row) => ({
       id: row.id,
@@ -456,7 +431,7 @@ export async function getAuditLogs(
       flags: row.flags || [],
     }));
   } catch (error) {
-    console.error('[AuditLog] Error fetching logs:', error);
+    logger.error('AuditLog: Error fetching logs', { error, userId });
     return [];
   }
 }
@@ -489,9 +464,7 @@ export async function getAuditStats(
 
     if (error) throw error;
 
-    const rows = (data || [])
-      .map(parseAuditLogRow)
-      .filter((row): row is AuditLogRow => row !== null);
+    const rows = (data || []).map(parseAuditLogRow).filter((row): row is AuditLogRow => row !== null);
 
     const stats = {
       totalActions: rows.length,
@@ -506,8 +479,7 @@ export async function getAuditStats(
 
     for (const log of rows) {
       // Count by type
-      stats.actionsByType[log.action_type] =
-        (stats.actionsByType[log.action_type] || 0) + 1;
+      stats.actionsByType[log.action_type] = (stats.actionsByType[log.action_type] || 0) + 1;
 
       // Count flagged
       if (log.flags && log.flags.length > 0) {
@@ -532,7 +504,7 @@ export async function getAuditStats(
 
     return stats;
   } catch (error) {
-    console.error('[AuditLog] Error fetching stats:', error);
+    logger.error('AuditLog: Error fetching stats', { error, userId });
     throw error;
   }
 }
@@ -558,7 +530,7 @@ export async function cleanupOldLogs(): Promise<number> {
 
     return count || 0;
   } catch (error) {
-    console.error('[AuditLog] Error cleaning up old logs:', error);
+    logger.error('AuditLog: Error cleaning up old logs', { error });
     return 0;
   }
 }
@@ -566,10 +538,7 @@ export async function cleanupOldLogs(): Promise<number> {
 /**
  * Exportar logs para compliance (LGPD)
  */
-export async function exportLogsForCompliance(
-  userId: string,
-  format: 'json' | 'csv' = 'json'
-): Promise<string> {
+export async function exportLogsForCompliance(userId: string, format: 'json' | 'csv' = 'json'): Promise<string> {
   const logs = await getAuditLogs(userId, { limit: 10000 });
 
   if (format === 'json') {
@@ -577,22 +546,10 @@ export async function exportLogsForCompliance(
   }
 
   // CSV format
-  const headers = [
-    'timestamp',
-    'action_type',
-    'endpoint',
-    'success',
-    'flags',
-  ].join(',');
+  const headers = ['timestamp', 'action_type', 'endpoint', 'success', 'flags'].join(',');
 
   const rows = logs.map((log) =>
-    [
-      log.timestamp.toISOString(),
-      log.actionType,
-      log.endpoint,
-      log.success,
-      log.flags?.join(';') || '',
-    ].join(',')
+    [log.timestamp.toISOString(), log.actionType, log.endpoint, log.success, log.flags?.join(';') || ''].join(',')
   );
 
   return [headers, ...rows].join('\n');

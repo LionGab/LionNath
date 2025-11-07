@@ -3,15 +3,10 @@
  * Interface para conversas acolhedoras e úteis com mães
  */
 
-import {
-  ChatContext,
-  ChatResponse,
-  SuggestedAction,
-  ValidationError,
-  NathiaError,
-} from './types';
+import { ChatContext, ChatResponse, SuggestedAction, ValidationError, NathiaError } from './types';
 import { SYSTEM_PROMPTS } from './prompts';
 import { NATHIA_CONFIG } from './config';
+import { logger } from '@/utils/logger';
 
 /**
  * Interface do chat empático da NAT-IA
@@ -31,15 +26,12 @@ import { NATHIA_CONFIG } from './config';
  *   }
  * );
  *
- * console.log(resposta.resposta); // Mensagem empática
- * console.log(resposta.acoes); // [{ type: "support", label: "Ver recursos" }]
- * console.log(resposta.next_step); // "Que tal ver artigos sobre autocuidado?"
+ * logger.info(resposta.resposta); // Mensagem empática
+ * logger.info(resposta.acoes); // [{ type: "support", label: "Ver recursos" }]
+ * logger.info(resposta.next_step); // "Que tal ver artigos sobre autocuidado?"
  * ```
  */
-export async function chatEmpatico(
-  mensagem: string,
-  contexto: ChatContext
-): Promise<ChatResponse> {
+export async function chatEmpatico(mensagem: string, contexto: ChatContext): Promise<ChatResponse> {
   // Validação
   validateChatInput(mensagem, contexto);
 
@@ -59,11 +51,7 @@ export async function chatEmpatico(
       sentiment_detected: undefined, // Opcional: pode ser populado por triagem
     };
   } catch (error) {
-    throw new NathiaError(
-      'Erro ao processar chat',
-      'CHAT_ERROR',
-      { error, mensagem: mensagem.substring(0, 100) }
-    );
+    throw new NathiaError('Erro ao processar chat', 'CHAT_ERROR', { error, mensagem: mensagem.substring(0, 100) });
   }
 }
 
@@ -71,10 +59,7 @@ export async function chatEmpatico(
  * Constrói o prompt completo para a IA
  * Inclui system prompt + contexto + mensagem
  */
-export function buildChatPrompt(
-  mensagem: string,
-  conversationContext: string
-): string {
+export function buildChatPrompt(mensagem: string, conversationContext: string): string {
   const systemPrompt = SYSTEM_PROMPTS.CHAT_EMPATICO;
 
   return `${systemPrompt}
@@ -111,7 +96,7 @@ function buildConversationContext(contexto: ChatContext): string {
   if (contexto.conversation_history?.length) {
     const recentHistory = contexto.conversation_history
       .slice(-3)
-      .map(msg => `${msg.role}: ${msg.content}`)
+      .map((msg) => `${msg.role}: ${msg.content}`)
       .join('\n');
     parts.push(`\nHistórico recente:\n${recentHistory}`);
   }
@@ -123,10 +108,7 @@ function buildConversationContext(contexto: ChatContext): string {
  * Infere ações sugeridas baseado no conteúdo da mensagem
  * Isso é uma heurística simples - a IA pode refinar
  */
-function inferSuggestedActions(
-  mensagem: string,
-  contexto: ChatContext
-): SuggestedAction[] {
+function inferSuggestedActions(mensagem: string, contexto: ChatContext): SuggestedAction[] {
   const actions: SuggestedAction[] = [];
   const lowerMsg = mensagem.toLowerCase();
 
@@ -160,11 +142,7 @@ function inferSuggestedActions(
   }
 
   // Necessidade de suporte urgente
-  if (
-    lowerMsg.includes('ajuda') ||
-    lowerMsg.includes('não aguento') ||
-    lowerMsg.includes('emergência')
-  ) {
+  if (lowerMsg.includes('ajuda') || lowerMsg.includes('não aguento') || lowerMsg.includes('emergência')) {
     actions.push({
       type: 'support',
       label: 'Ver recursos de apoio',
@@ -250,11 +228,7 @@ function validateChatInput(mensagem: string, contexto: ChatContext): void {
 /**
  * Adiciona mensagem ao histórico de conversa
  */
-export function addToHistory(
-  contexto: ChatContext,
-  role: 'user' | 'assistant',
-  content: string
-): ChatContext {
+export function addToHistory(contexto: ChatContext, role: 'user' | 'assistant', content: string): ChatContext {
   const newMessage = {
     role,
     content,
@@ -263,20 +237,14 @@ export function addToHistory(
 
   return {
     ...contexto,
-    conversation_history: [
-      ...(contexto.conversation_history || []),
-      newMessage,
-    ],
+    conversation_history: [...(contexto.conversation_history || []), newMessage],
   };
 }
 
 /**
  * Cria novo contexto de chat
  */
-export function createChatContext(
-  user_id: string,
-  initial_data?: Partial<ChatContext>
-): ChatContext {
+export function createChatContext(user_id: string, initial_data?: Partial<ChatContext>): ChatContext {
   return {
     user_id,
     conversation_history: [],
@@ -295,10 +263,7 @@ function generateSessionId(): string {
 /**
  * Trunca histórico para manter apenas as mensagens mais recentes
  */
-export function truncateHistory(
-  contexto: ChatContext,
-  maxMessages: number = 20
-): ChatContext {
+export function truncateHistory(contexto: ChatContext, maxMessages: number = 20): ChatContext {
   if (!contexto.conversation_history) return contexto;
 
   return {

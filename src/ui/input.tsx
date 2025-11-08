@@ -1,13 +1,5 @@
 import React, { forwardRef, useMemo } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TextInputProps,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { StyleSheet, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
 
 export interface InputProps extends Omit<TextInputProps, 'style' | 'placeholderTextColor'> {
@@ -32,10 +24,7 @@ export const Input = forwardRef<TextInput, InputProps>(
       [editable, errorText, textInputProps.multiline]
     );
 
-    const helperStyle = useMemo(
-      () => [styles.helper, errorText ? styles.helperError : undefined],
-      [errorText]
-    );
+    const helperStyle = useMemo(() => [styles.helper, errorText ? styles.helperError : undefined], [errorText]);
 
     return (
       <View style={[styles.container, containerStyle]}>
@@ -50,9 +39,7 @@ export const Input = forwardRef<TextInput, InputProps>(
           testID={testID}
           {...textInputProps}
         />
-        {helperText || errorText ? (
-          <Text style={helperStyle}>{errorText ? errorText : helperText}</Text>
-        ) : null}
+        {helperText || errorText ? <Text style={helperStyle}>{errorText ? errorText : helperText}</Text> : null}
       </View>
     );
   }
@@ -101,5 +88,3 @@ const styles = StyleSheet.create({
     color: tokens.palette.feedback.danger,
   } as TextStyle,
 });
-
-

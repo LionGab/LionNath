@@ -18,17 +18,14 @@ export function ProgressIndicator({
   total,
   variant = 'dots',
   showLabel = true,
-  testID
+  testID,
 }: ProgressIndicatorProps) {
   const progress = current / total;
 
   if (variant === 'bar') {
     return (
       <View style={styles.container} testID={testID}>
-        <ProgressBar
-          progress={progress}
-          label={showLabel ? `${current} de ${total}` : undefined}
-        />
+        <ProgressBar progress={progress} label={showLabel ? `${current} de ${total}` : undefined} />
       </View>
     );
   }

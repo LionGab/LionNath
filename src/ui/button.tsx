@@ -91,9 +91,7 @@ export function Button({
         <View style={[styles.content, pressed && !disabled && !loading && styles.contentPressed]}>
           {leftIcon}
           {loading ? (
-            <ActivityIndicator
-              color={variant === 'primary' ? tokens.palette.surface : tokens.palette.text}
-            />
+            <ActivityIndicator color={variant === 'primary' ? tokens.palette.surface : tokens.palette.text} />
           ) : (
             <Text style={computedTextStyle}>{label}</Text>
           )}
@@ -158,5 +156,3 @@ const styles = StyleSheet.create({
     color: tokens.palette.text,
   } as TextStyle,
 });
-
-

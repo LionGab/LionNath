@@ -33,10 +33,7 @@ export function Toggle({
     []
   );
 
-  const thumbColor = useMemo(
-    () => (value ? tokens.palette.surface : tokens.palette.neutrals[100]),
-    [value]
-  );
+  const thumbColor = useMemo(() => (value ? tokens.palette.surface : tokens.palette.neutrals[100]), [value]);
 
   return (
     <View style={[styles.container, style]}>
@@ -87,5 +84,3 @@ const styles = StyleSheet.create({
     color: tokens.palette.neutrals[600],
   } as TextStyle,
 });
-
-

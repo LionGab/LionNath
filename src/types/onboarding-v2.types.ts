@@ -4,11 +4,11 @@
  */
 
 export type OnboardingV2Step =
-  | 'block1_identity'         // Apresentação & Identidade
-  | 'block2_emotions'          // Autocuidado & Emoções
-  | 'block3_challenges'        // Desafios & Necessidades
-  | 'block4_support'           // Rede de Apoio
-  | 'block5_expectations'      // Expectativas & Preferências
+  | 'block1_identity' // Apresentação & Identidade
+  | 'block2_emotions' // Autocuidado & Emoções
+  | 'block3_challenges' // Desafios & Necessidades
+  | 'block4_support' // Rede de Apoio
+  | 'block5_expectations' // Expectativas & Preferências
   | 'complete';
 
 export type MaternalStage = 'tentante' | 'gestante' | 'puerpera_0_3m' | 'puerpera_3_12m' | 'mae_estabelecida';
@@ -30,7 +30,7 @@ export interface OnboardingV2Data {
 
   // Block 2: Autocuidado & Emoções
   self_care_frequency?: SelfCareFrequency;
-  emotional_state?: EmotionalState[];  // Multi-select
+  emotional_state?: EmotionalState[]; // Multi-select
   stress_level?: number; // 1-10
   sleep_quality?: SleepQuality;
   energy_level?: number; // 1-10

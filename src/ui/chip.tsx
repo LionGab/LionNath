@@ -16,11 +16,7 @@ export function Chip({ label, selected = false, accessibilityLabel, testID, onPr
     <Pressable
       {...pressableProps}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.base,
-        selected ? styles.selected : styles.unselected,
-        pressed && styles.pressed,
-      ]}
+      style={({ pressed }) => [styles.base, selected ? styles.selected : styles.unselected, pressed && styles.pressed]}
       accessibilityRole="radio"
       accessibilityState={{ selected }}
       accessibilityLabel={accessibilityLabel}
@@ -70,5 +66,3 @@ const styles = StyleSheet.create({
     color: tokens.palette.primary,
   } as TextStyle,
 });
-
-

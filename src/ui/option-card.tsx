@@ -41,11 +41,7 @@ export function OptionCard({
       testID={testID}
     >
       <View style={[styles.iconContainer, selected && styles.iconContainerSelected]}>
-        <Icon
-          name={icon}
-          size={28}
-          color={selected ? tokens.palette.primary : tokens.palette.neutrals[600]}
-        />
+        <Icon name={icon} size={28} color={selected ? tokens.palette.primary : tokens.palette.neutrals[600]} />
       </View>
       <Text style={[styles.label, selected && styles.labelSelected]}>{label}</Text>
     </Pressable>

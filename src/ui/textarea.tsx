@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TextInputProps,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { Platform, StyleSheet, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
 
 export interface TextAreaProps extends Omit<TextInputProps, 'multiline' | 'numberOfLines'> {

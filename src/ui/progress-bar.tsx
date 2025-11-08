@@ -61,5 +61,3 @@ const styles = StyleSheet.create({
     fontWeight: tokens.typography.caption.fontWeight,
   } as TextStyle,
 });
-
-

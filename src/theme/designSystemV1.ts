@@ -88,12 +88,12 @@ export interface GradientTokens {
 }
 
 export interface ShadowToken {
-  shadowColor: string;
-  shadowOffset: { width: number; height: number };
-  shadowOpacity: number;
-  shadowRadius: number;
-  elevation: number;
-  boxShadow: string;
+  shadowColor?: string;
+  shadowOffset?: { width: number; height: number };
+  shadowOpacity?: number;
+  shadowRadius?: number;
+  elevation?: number;
+  boxShadow?: string;
 }
 
 export interface ThemeShadows {

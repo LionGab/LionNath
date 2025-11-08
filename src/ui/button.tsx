@@ -12,11 +12,12 @@ import {
 } from 'react-native';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
 
-type ButtonVariant = 'primary' | 'ghost';
+type ButtonVariant = 'primary' | 'ghost' | 'outline';
 type ButtonSize = 'md' | 'lg';
 
 export interface ButtonProps extends Omit<PressableProps, 'style'> {
-  label: string;
+  label?: string;
+  children?: React.ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;
@@ -26,7 +27,7 @@ export interface ButtonProps extends Omit<PressableProps, 'style'> {
   textStyle?: TextStyle;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  accessibilityLabel: string;
+  accessibilityLabel?: string;
   accessibilityHint?: string;
   testID?: string;
 }
@@ -35,6 +36,7 @@ const tokens = nossaMaternidadeDesignTokens;
 
 export function Button({
   label,
+  children,
   variant = 'primary',
   size = 'md',
   loading = false,
@@ -49,9 +51,14 @@ export function Button({
   testID,
   onPress,
   ...pressableProps
-}: ButtonProps): JSX.Element {
+}: ButtonProps): React.ReactElement {
+  const buttonText = label || children;
+
   const computedContainerStyle = useMemo(() => {
-    const variantStyle = variant === 'primary' ? styles.primary : styles.ghost;
+    let variantStyle = styles.primary;
+    if (variant === 'ghost') variantStyle = styles.ghost;
+    if (variant === 'outline') variantStyle = styles.outline;
+
     const sizeStyle = size === 'lg' ? styles.sizeLg : styles.sizeMd;
     return [
       styles.base,
@@ -64,7 +71,10 @@ export function Button({
   }, [variant, size, loading, disabled, fullWidth, style]);
 
   const computedTextStyle = useMemo(() => {
-    const variantStyle = variant === 'primary' ? styles.textPrimary : styles.textGhost;
+    let variantStyle = styles.textPrimary;
+    if (variant === 'ghost') variantStyle = styles.textGhost;
+    if (variant === 'outline') variantStyle = styles.textOutline;
+
     return [styles.textBase, variantStyle, textStyle];
   }, [variant, textStyle]);
 
@@ -93,7 +103,11 @@ export function Button({
           {loading ? (
             <ActivityIndicator color={variant === 'primary' ? tokens.palette.surface : tokens.palette.text} />
           ) : (
-            <Text style={computedTextStyle}>{label}</Text>
+            typeof buttonText === 'string' ? (
+              <Text style={computedTextStyle}>{buttonText}</Text>
+            ) : (
+              buttonText
+            )
           )}
           {rightIcon}
         </View>
@@ -120,6 +134,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: tokens.palette.neutrals[300],
+  } as ViewStyle,
+  outline: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: tokens.palette.primary,
   } as ViewStyle,
   sizeMd: {
     paddingVertical: tokens.spacing.md,
@@ -154,5 +173,8 @@ const styles = StyleSheet.create({
   } as TextStyle,
   textGhost: {
     color: tokens.palette.text,
+  } as TextStyle,
+  textOutline: {
+    color: tokens.palette.primary,
   } as TextStyle,
 });

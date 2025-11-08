@@ -37,13 +37,19 @@ export function Block4Support({ onNext, onBack }: Block4SupportProps) {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.keyboardView}>
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           <ProgressIndicator current={4} total={5} variant="dots" testID="progress_4_5" />
 
           <View style={styles.header}>
             <Text style={styles.title}>Você tem uma rede de apoio?</Text>
-            <Text style={styles.subtitle}>Ninguém deveria viver a maternidade sozinha. Me conta um pouco sobre o seu círculo. 🤝</Text>
+            <Text style={styles.subtitle}>
+              Ninguém deveria viver a maternidade sozinha. Me conta um pouco sobre o seu círculo. 🤝
+            </Text>
           </View>
 
           {/* Nível de Apoio */}
@@ -86,14 +92,25 @@ export function Block4Support({ onNext, onBack }: Block4SupportProps) {
               Saiba que você não está sozinha. Estamos aqui para te apoiar nessa jornada.
             </Text>
           </View>
-
         </ScrollView>
 
         <View style={styles.footer}>
-          <Button onPress={onBack} variant="outline" accessibilityLabel="Voltar" testID="back_btn" style={styles.backButton}>
+          <Button
+            onPress={onBack}
+            variant="outline"
+            accessibilityLabel="Voltar"
+            testID="back_btn"
+            style={styles.backButton}
+          >
             Voltar
           </Button>
-          <Button onPress={onNext} disabled={!isStepValid()} accessibilityLabel="Continuar" testID="next_btn" style={styles.nextButton}>
+          <Button
+            onPress={onNext}
+            disabled={!isStepValid()}
+            accessibilityLabel="Continuar"
+            testID="next_btn"
+            style={styles.nextButton}
+          >
             Continuar
           </Button>
         </View>
@@ -106,18 +123,54 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: tokens.palette.background } as ViewStyle,
   keyboardView: { flex: 1 } as ViewStyle,
   scrollView: { flex: 1 } as ViewStyle,
-  scrollContent: { paddingHorizontal: tokens.spacing.lg, paddingBottom: tokens.spacing['5xl'], gap: tokens.spacing.lg } as ViewStyle,
+  scrollContent: {
+    paddingHorizontal: tokens.spacing.lg,
+    paddingBottom: tokens.spacing['5xl'],
+    gap: tokens.spacing.lg,
+  } as ViewStyle,
   header: { gap: tokens.spacing.sm, marginBottom: tokens.spacing.md } as ViewStyle,
-  title: { fontSize: tokens.typography.headlineLg.fontSize, fontWeight: '600', color: tokens.palette.text, textAlign: 'center' } as TextStyle,
-  subtitle: { fontSize: tokens.typography.bodyMd.fontSize, color: tokens.palette.neutrals[700], textAlign: 'center' } as TextStyle,
+  title: {
+    fontSize: tokens.typography.headlineLg.fontSize,
+    fontWeight: '600',
+    color: tokens.palette.text,
+    textAlign: 'center',
+  } as TextStyle,
+  subtitle: {
+    fontSize: tokens.typography.bodyMd.fontSize,
+    color: tokens.palette.neutrals[700],
+    textAlign: 'center',
+  } as TextStyle,
   section: { gap: tokens.spacing.sm } as ViewStyle,
-  sectionLabel: { fontSize: tokens.typography.bodyMd.fontSize, fontWeight: '500', color: tokens.palette.text } as TextStyle,
+  sectionLabel: {
+    fontSize: tokens.typography.bodyMd.fontSize,
+    fontWeight: '500',
+    color: tokens.palette.text,
+  } as TextStyle,
   required: { color: tokens.palette.feedback.danger } as TextStyle,
   chipsContainer: { gap: tokens.spacing.xs } as ViewStyle,
-  messageContainer: { marginTop: tokens.spacing.lg, padding: tokens.spacing.lg, borderRadius: tokens.radius.md, backgroundColor: `${tokens.palette.primary}10`, alignItems: 'center', gap: tokens.spacing.sm } as ViewStyle,
+  messageContainer: {
+    marginTop: tokens.spacing.lg,
+    padding: tokens.spacing.lg,
+    borderRadius: tokens.radius.md,
+    backgroundColor: `${tokens.palette.primary}10`,
+    alignItems: 'center',
+    gap: tokens.spacing.sm,
+  } as ViewStyle,
   messageEmoji: { fontSize: 40 } as TextStyle,
-  messageText: { fontSize: tokens.typography.bodyMd.fontSize, color: tokens.palette.text, textAlign: 'center', lineHeight: tokens.typography.bodyMd.lineHeight * 1.4 } as TextStyle,
-  footer: { flexDirection: 'row', padding: tokens.spacing.lg, backgroundColor: tokens.palette.background, borderTopWidth: 1, borderTopColor: tokens.palette.neutrals[200], gap: tokens.spacing.md } as ViewStyle,
+  messageText: {
+    fontSize: tokens.typography.bodyMd.fontSize,
+    color: tokens.palette.text,
+    textAlign: 'center',
+    lineHeight: tokens.typography.bodyMd.lineHeight * 1.4,
+  } as TextStyle,
+  footer: {
+    flexDirection: 'row',
+    padding: tokens.spacing.lg,
+    backgroundColor: tokens.palette.background,
+    borderTopWidth: 1,
+    borderTopColor: tokens.palette.neutrals[200],
+    gap: tokens.spacing.md,
+  } as ViewStyle,
   backButton: { flex: 1 } as ViewStyle,
   nextButton: { flex: 2 } as ViewStyle,
 });

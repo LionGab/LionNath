@@ -12,3 +12,15 @@ export type { ToggleProps } from './toggle';
 
 export { ProgressBar } from './progress-bar';
 export type { ProgressBarProps } from './progress-bar';
+
+export { ProgressIndicator } from './progress-indicator';
+export type { ProgressIndicatorProps } from './progress-indicator';
+
+export { OptionCard } from './option-card';
+export type { OptionCardProps } from './option-card';
+
+export { SliderInput } from './slider-input';
+export type { SliderInputProps } from './slider-input';
+
+export { TextArea } from './textarea';
+export type { TextAreaProps } from './textarea';

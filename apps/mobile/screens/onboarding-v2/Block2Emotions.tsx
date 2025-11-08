@@ -29,7 +29,7 @@ export function Block2Emotions({ onNext, onBack }: Block2EmotionsProps) {
 
   const handleEmotionToggle = (emotion: EmotionalState) => {
     const newStates = emotionalStates.includes(emotion)
-      ? emotionalStates.filter(e => e !== emotion)
+      ? emotionalStates.filter((e) => e !== emotion)
       : [...emotionalStates, emotion];
 
     setEmotionalStates(newStates);
@@ -59,15 +59,20 @@ export function Block2Emotions({ onNext, onBack }: Block2EmotionsProps) {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.keyboardView}>
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Progress */}
           <ProgressIndicator current={2} total={5} variant="dots" testID="progress_2_5" />
 
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.title}>Como você está se sentindo hoje?</Text>
-            <Text style={styles.subtitle}>Eu sei que a maternidade pode ser intensa — mas também cheia de amor. 💙</Text>
+            <Text style={styles.subtitle}>
+              Eu sei que a maternidade pode ser intensa — mas também cheia de amor. 💙
+            </Text>
           </View>
 
           {/* Autocuidado */}
@@ -155,15 +160,26 @@ export function Block2Emotions({ onNext, onBack }: Block2EmotionsProps) {
               testID="energy_slider"
             />
           </View>
-
         </ScrollView>
 
         {/* Footer com botões */}
         <View style={styles.footer}>
-          <Button onPress={onBack} variant="outline" accessibilityLabel="Voltar" testID="back_btn" style={styles.backButton}>
+          <Button
+            onPress={onBack}
+            variant="outline"
+            accessibilityLabel="Voltar"
+            testID="back_btn"
+            style={styles.backButton}
+          >
             Voltar
           </Button>
-          <Button onPress={onNext} disabled={!isStepValid()} accessibilityLabel="Continuar" testID="next_btn" style={styles.nextButton}>
+          <Button
+            onPress={onNext}
+            disabled={!isStepValid()}
+            accessibilityLabel="Continuar"
+            testID="next_btn"
+            style={styles.nextButton}
+          >
             Continuar
           </Button>
         </View>
@@ -176,17 +192,43 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: tokens.palette.background } as ViewStyle,
   keyboardView: { flex: 1 } as ViewStyle,
   scrollView: { flex: 1 } as ViewStyle,
-  scrollContent: { paddingHorizontal: tokens.spacing.lg, paddingBottom: tokens.spacing['5xl'], gap: tokens.spacing.lg } as ViewStyle,
+  scrollContent: {
+    paddingHorizontal: tokens.spacing.lg,
+    paddingBottom: tokens.spacing['5xl'],
+    gap: tokens.spacing.lg,
+  } as ViewStyle,
   header: { gap: tokens.spacing.sm, marginBottom: tokens.spacing.md } as ViewStyle,
-  title: { fontSize: tokens.typography.headlineLg.fontSize, lineHeight: tokens.typography.headlineLg.lineHeight, fontWeight: '600', color: tokens.palette.text, textAlign: 'center' } as TextStyle,
-  subtitle: { fontSize: tokens.typography.bodyMd.fontSize, lineHeight: tokens.typography.bodyMd.lineHeight, color: tokens.palette.neutrals[700], textAlign: 'center' } as TextStyle,
+  title: {
+    fontSize: tokens.typography.headlineLg.fontSize,
+    lineHeight: tokens.typography.headlineLg.lineHeight,
+    fontWeight: '600',
+    color: tokens.palette.text,
+    textAlign: 'center',
+  } as TextStyle,
+  subtitle: {
+    fontSize: tokens.typography.bodyMd.fontSize,
+    lineHeight: tokens.typography.bodyMd.lineHeight,
+    color: tokens.palette.neutrals[700],
+    textAlign: 'center',
+  } as TextStyle,
   section: { gap: tokens.spacing.sm } as ViewStyle,
-  sectionLabel: { fontSize: tokens.typography.bodyMd.fontSize, fontWeight: '500', color: tokens.palette.text } as TextStyle,
+  sectionLabel: {
+    fontSize: tokens.typography.bodyMd.fontSize,
+    fontWeight: '500',
+    color: tokens.palette.text,
+  } as TextStyle,
   required: { color: tokens.palette.feedback.danger } as TextStyle,
   helper: { fontSize: tokens.typography.bodySm.fontSize, color: tokens.palette.neutrals[600] } as TextStyle,
   chipsContainer: { gap: tokens.spacing.xs } as ViewStyle,
   emotionsGrid: { gap: tokens.spacing.xs } as ViewStyle,
-  footer: { flexDirection: 'row', padding: tokens.spacing.lg, backgroundColor: tokens.palette.background, borderTopWidth: 1, borderTopColor: tokens.palette.neutrals[200], gap: tokens.spacing.md } as ViewStyle,
+  footer: {
+    flexDirection: 'row',
+    padding: tokens.spacing.lg,
+    backgroundColor: tokens.palette.background,
+    borderTopWidth: 1,
+    borderTopColor: tokens.palette.neutrals[200],
+    gap: tokens.spacing.md,
+  } as ViewStyle,
   backButton: { flex: 1 } as ViewStyle,
   nextButton: { flex: 2 } as ViewStyle,
 });

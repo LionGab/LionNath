@@ -4,7 +4,17 @@
  */
 
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextStyle, View, ViewStyle, ActivityIndicator } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextStyle,
+  View,
+  ViewStyle,
+  ActivityIndicator,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
 import { Button, ProgressIndicator, Chip, TextArea } from '@/ui';
@@ -27,13 +37,15 @@ export function Block5Expectations({ onComplete, onBack }: Block5ExpectationsPro
   const [broughtYouHere, setBroughtYouHere] = useState(data.what_brought_you_here || '');
 
   const handleGoalToggle = (goal: string) => {
-    const newGoals = goals.includes(goal) ? goals.filter(g => g !== goal) : [...goals, goal];
+    const newGoals = goals.includes(goal) ? goals.filter((g) => g !== goal) : [...goals, goal];
     setGoals(newGoals);
     updateData({ main_goals: newGoals });
   };
 
   const handleContentToggle = (content: string) => {
-    const newPrefs = contentPrefs.includes(content) ? contentPrefs.filter(c => c !== content) : [...contentPrefs, content];
+    const newPrefs = contentPrefs.includes(content)
+      ? contentPrefs.filter((c) => c !== content)
+      : [...contentPrefs, content];
     setContentPrefs(newPrefs);
     updateData({ content_preferences: newPrefs });
   };
@@ -58,8 +70,12 @@ export function Block5Expectations({ onComplete, onBack }: Block5ExpectationsPro
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.keyboardView}>
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           <ProgressIndicator current={5} total={5} variant="bar" testID="progress_5_5" />
 
           <View style={styles.header}>
@@ -149,11 +165,17 @@ export function Block5Expectations({ onComplete, onBack }: Block5ExpectationsPro
               Lembre-se: você pode atualizar essas informações a qualquer momento.
             </Text>
           </View>
-
         </ScrollView>
 
         <View style={styles.footer}>
-          <Button onPress={onBack} variant="outline" disabled={saving} accessibilityLabel="Voltar" testID="back_btn" style={styles.backButton}>
+          <Button
+            onPress={onBack}
+            variant="outline"
+            disabled={saving}
+            accessibilityLabel="Voltar"
+            testID="back_btn"
+            style={styles.backButton}
+          >
             Voltar
           </Button>
           <Button
@@ -175,20 +197,63 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: tokens.palette.background } as ViewStyle,
   keyboardView: { flex: 1 } as ViewStyle,
   scrollView: { flex: 1 } as ViewStyle,
-  scrollContent: { paddingHorizontal: tokens.spacing.lg, paddingBottom: tokens.spacing['5xl'], gap: tokens.spacing.lg } as ViewStyle,
+  scrollContent: {
+    paddingHorizontal: tokens.spacing.lg,
+    paddingBottom: tokens.spacing['5xl'],
+    gap: tokens.spacing.lg,
+  } as ViewStyle,
   header: { gap: tokens.spacing.sm, marginBottom: tokens.spacing.md } as ViewStyle,
-  title: { fontSize: tokens.typography.headlineLg.fontSize, fontWeight: '600', color: tokens.palette.text, textAlign: 'center' } as TextStyle,
-  subtitle: { fontSize: tokens.typography.bodyMd.fontSize, color: tokens.palette.neutrals[700], textAlign: 'center', lineHeight: tokens.typography.bodyMd.lineHeight * 1.4 } as TextStyle,
+  title: {
+    fontSize: tokens.typography.headlineLg.fontSize,
+    fontWeight: '600',
+    color: tokens.palette.text,
+    textAlign: 'center',
+  } as TextStyle,
+  subtitle: {
+    fontSize: tokens.typography.bodyMd.fontSize,
+    color: tokens.palette.neutrals[700],
+    textAlign: 'center',
+    lineHeight: tokens.typography.bodyMd.lineHeight * 1.4,
+  } as TextStyle,
   section: { gap: tokens.spacing.sm } as ViewStyle,
-  sectionLabel: { fontSize: tokens.typography.bodyMd.fontSize, fontWeight: '500', color: tokens.palette.text } as TextStyle,
+  sectionLabel: {
+    fontSize: tokens.typography.bodyMd.fontSize,
+    fontWeight: '500',
+    color: tokens.palette.text,
+  } as TextStyle,
   required: { color: tokens.palette.feedback.danger } as TextStyle,
   helper: { fontSize: tokens.typography.bodySm.fontSize, color: tokens.palette.neutrals[600] } as TextStyle,
   chipsContainer: { gap: tokens.spacing.xs } as ViewStyle,
-  finalMessage: { marginTop: tokens.spacing.xl, padding: tokens.spacing.xl, borderRadius: tokens.radius.lg, backgroundColor: `${tokens.palette.accent}10`, alignItems: 'center', gap: tokens.spacing.md, ...tokens.shadow.soft } as ViewStyle,
+  finalMessage: {
+    marginTop: tokens.spacing.xl,
+    padding: tokens.spacing.xl,
+    borderRadius: tokens.radius.lg,
+    backgroundColor: `${tokens.palette.accent}10`,
+    alignItems: 'center',
+    gap: tokens.spacing.md,
+    ...tokens.shadow.soft,
+  } as ViewStyle,
   finalEmoji: { fontSize: 50 } as TextStyle,
-  finalText: { fontSize: tokens.typography.bodyLg.fontSize, fontWeight: '500', color: tokens.palette.text, textAlign: 'center', lineHeight: tokens.typography.bodyLg.lineHeight * 1.4 } as TextStyle,
-  finalSubtext: { fontSize: tokens.typography.bodySm.fontSize, color: tokens.palette.neutrals[600], textAlign: 'center' } as TextStyle,
-  footer: { flexDirection: 'row', padding: tokens.spacing.lg, backgroundColor: tokens.palette.background, borderTopWidth: 1, borderTopColor: tokens.palette.neutrals[200], gap: tokens.spacing.md } as ViewStyle,
+  finalText: {
+    fontSize: tokens.typography.bodyLg.fontSize,
+    fontWeight: '500',
+    color: tokens.palette.text,
+    textAlign: 'center',
+    lineHeight: tokens.typography.bodyLg.lineHeight * 1.4,
+  } as TextStyle,
+  finalSubtext: {
+    fontSize: tokens.typography.bodySm.fontSize,
+    color: tokens.palette.neutrals[600],
+    textAlign: 'center',
+  } as TextStyle,
+  footer: {
+    flexDirection: 'row',
+    padding: tokens.spacing.lg,
+    backgroundColor: tokens.palette.background,
+    borderTopWidth: 1,
+    borderTopColor: tokens.palette.neutrals[200],
+    gap: tokens.spacing.md,
+  } as ViewStyle,
   backButton: { flex: 1 } as ViewStyle,
   finishButton: { flex: 2 } as ViewStyle,
 });

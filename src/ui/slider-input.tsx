@@ -69,7 +69,7 @@ export function SliderInput({
 
       <View style={styles.sliderContainer}>
         <Slider
-          style={styles.slider}
+          style={styles.slider as any}
           minimumValue={min}
           maximumValue={max}
           value={currentValue}

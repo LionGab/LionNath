@@ -97,7 +97,7 @@ export function useOnboardingV2(userId?: string): UseOnboardingV2Return {
         const serverData = await getOnboardingData(userId);
         if (serverData && serverData.completed_at) {
           // Dados do servidor têm prioridade se onboarding foi completado
-          setData(serverData as Partial<OnboardingV2Data>);
+          setData(serverData as unknown as Partial<OnboardingV2Data>);
           setCurrentStep('complete');
         }
       }
@@ -147,10 +147,7 @@ export function useOnboardingV2(userId?: string): UseOnboardingV2Return {
     // Validar step atual
     const validation = validateOnboardingV2Block(currentStep, data);
     if (!validation.isValid) {
-      Alert.alert(
-        'Campos obrigatórios',
-        `Por favor, preencha os campos necessários para continuar.`
-      );
+      Alert.alert('Campos obrigatórios', `Por favor, preencha os campos necessários para continuar.`);
       return;
     }
 
@@ -177,10 +174,7 @@ export function useOnboardingV2(userId?: string): UseOnboardingV2Return {
     // Validar step final
     const validation = validateOnboardingV2Block(currentStep, data);
     if (!validation.isValid) {
-      Alert.alert(
-        'Campos obrigatórios',
-        'Por favor, preencha todos os campos necessários para finalizar.'
-      );
+      Alert.alert('Campos obrigatórios', 'Por favor, preencha todos os campos necessários para finalizar.');
       return false;
     }
 

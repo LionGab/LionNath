@@ -4,16 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
 import { Chip, Input, Button } from '@/ui';

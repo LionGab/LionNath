@@ -45,6 +45,7 @@
     "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^19.4.0",
     "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-community/slider": "^5.1.1",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/stack": "^6.3.20",

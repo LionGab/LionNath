@@ -37,47 +37,29 @@ export function OnboardingV2Navigator({ onComplete }: OnboardingV2NavigatorProps
       initialRouteName="Block1Identity"
     >
       <Stack.Screen name="Block1Identity">
-        {({ navigation }) => (
-          <Block1Identity
-            onNext={() => navigation.navigate('Block2Emotions')}
-          />
-        )}
+        {({ navigation }) => <Block1Identity onNext={() => navigation.navigate('Block2Emotions')} />}
       </Stack.Screen>
 
       <Stack.Screen name="Block2Emotions">
         {({ navigation }) => (
-          <Block2Emotions
-            onNext={() => navigation.navigate('Block3Challenges')}
-            onBack={() => navigation.goBack()}
-          />
+          <Block2Emotions onNext={() => navigation.navigate('Block3Challenges')} onBack={() => navigation.goBack()} />
         )}
       </Stack.Screen>
 
       <Stack.Screen name="Block3Challenges">
         {({ navigation }) => (
-          <Block3Challenges
-            onNext={() => navigation.navigate('Block4Support')}
-            onBack={() => navigation.goBack()}
-          />
+          <Block3Challenges onNext={() => navigation.navigate('Block4Support')} onBack={() => navigation.goBack()} />
         )}
       </Stack.Screen>
 
       <Stack.Screen name="Block4Support">
         {({ navigation }) => (
-          <Block4Support
-            onNext={() => navigation.navigate('Block5Expectations')}
-            onBack={() => navigation.goBack()}
-          />
+          <Block4Support onNext={() => navigation.navigate('Block5Expectations')} onBack={() => navigation.goBack()} />
         )}
       </Stack.Screen>
 
       <Stack.Screen name="Block5Expectations">
-        {({ navigation }) => (
-          <Block5Expectations
-            onComplete={onComplete}
-            onBack={() => navigation.goBack()}
-          />
-        )}
+        {({ navigation }) => <Block5Expectations onComplete={onComplete} onBack={() => navigation.goBack()} />}
       </Stack.Screen>
     </Stack.Navigator>
   );

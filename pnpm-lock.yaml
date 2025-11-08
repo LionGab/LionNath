@@ -35,6 +35,9 @@ importers:
       '@react-native-async-storage/async-storage':
         specifier: 1.23.1
         version: 1.23.1(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@13.6.9)(@types/react@19.1.17)(react@19.1.0))
+      '@react-native-community/slider':
+        specifier: ^5.1.1
+        version: 5.1.1
       '@react-navigation/bottom-tabs':
         specifier: ^6.5.11
         version: 6.6.1(@react-navigation/native@6.1.18(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@13.6.9)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@13.6.9)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native-screens@4.16.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@13.6.9)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@13.6.9)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -125,6 +128,9 @@ importers:
       '@react-native-async-storage/async-storage':
         specifier: 2.2.0
         version: 2.2.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@13.6.9)(@types/react@19.1.17)(react@19.1.0))
+      '@react-native-community/slider':
+        specifier: ^5.1.1
+        version: 5.1.1
       '@react-native-voice/voice':
         specifier: ^3.2.4
         version: 3.2.4(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@13.6.9)(@types/react@19.1.17)(react@19.1.0))
@@ -1648,6 +1654,9 @@ packages:
     resolution: {integrity: sha512-hFJL4cgLPxncJJd/epQ4dHnMg5Jy/7Q56jFvA3MHViuKpzzfTCJCB+pGY54maZbtym53UJON9WTGpM3S81UfjQ==}
     engines: {node: '>=18'}
     hasBin: true
+
+  '@react-native-community/slider@5.1.1':
+    resolution: {integrity: sha512-W98If/LnTaziU3/0h5+G1LvJaRhMc6iLQBte6UWa4WBIHDMaDPglNBIFKcCXc9Dxp83W+f+5Wv22Olq9M2HJYA==}
 
   '@react-native-voice/voice@3.2.4':
     resolution: {integrity: sha512-4i3IpB/W5VxCI7BQZO5Nr2VB0ecx0SLvkln2Gy29cAQKqgBl+1ZsCwUBChwHlPbmja6vA3tp/+2ADQGwB1OhHg==}
@@ -8684,6 +8693,8 @@ snapshots:
       - supports-color
       - utf-8-validate
     optional: true
+
+  '@react-native-community/slider@5.1.1': {}
 
   '@react-native-voice/voice@3.2.4(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@13.6.9)(@types/react@19.1.17)(react@19.1.0))':
     dependencies:

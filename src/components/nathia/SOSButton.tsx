@@ -88,11 +88,9 @@ export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {
 
     logger.info('Human Support Requested');
 
-    Alert.alert(
-      'Suporte Humano',
-      'Estamos te conectando com nossa equipe. Em breve alguém entrará em contato.',
-      [{ text: 'OK' }]
-    );
+    Alert.alert('Suporte Humano', 'Estamos te conectando com nossa equipe. Em breve alguém entrará em contato.', [
+      { text: 'OK' },
+    ]);
   };
 
   return (
@@ -125,10 +123,7 @@ export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {
         onRequestClose={() => setModalVisible(false)}
       >
         <Pressable
-          style={[
-            styles.modalOverlay,
-            { backgroundColor: palette.overlays.scrim },
-          ]}
+          style={[styles.modalOverlay, { backgroundColor: palette.overlays.scrim }]}
           onPress={() => setModalVisible(false)}
         >
           <Pressable
@@ -187,20 +182,8 @@ export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {
               >
                 <Text style={styles.optionIcon}>📞</Text>
                 <View style={styles.optionTextContainer}>
-                  <Text
-                    style={[
-                      styles.optionTitle,
-                      { fontSize: typography.bodyLg.fontSize },
-                    ]}
-                  >
-                    CVV - 188
-                  </Text>
-                  <Text
-                    style={[
-                      styles.optionDescription,
-                      { fontSize: typography.bodySm.fontSize },
-                    ]}
-                  >
+                  <Text style={[styles.optionTitle, { fontSize: typography.bodyLg.fontSize }]}>CVV - 188</Text>
+                  <Text style={[styles.optionDescription, { fontSize: typography.bodySm.fontSize }]}>
                     Centro de Valorização da Vida - Apoio emocional e prevenção do suicídio
                   </Text>
                 </View>
@@ -221,20 +204,8 @@ export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {
               >
                 <Text style={styles.optionIcon}>🚑</Text>
                 <View style={styles.optionTextContainer}>
-                  <Text
-                    style={[
-                      styles.optionTitle,
-                      { fontSize: typography.bodyLg.fontSize },
-                    ]}
-                  >
-                    SAMU - 192
-                  </Text>
-                  <Text
-                    style={[
-                      styles.optionDescription,
-                      { fontSize: typography.bodySm.fontSize },
-                    ]}
-                  >
+                  <Text style={[styles.optionTitle, { fontSize: typography.bodyLg.fontSize }]}>SAMU - 192</Text>
+                  <Text style={[styles.optionDescription, { fontSize: typography.bodySm.fontSize }]}>
                     Emergência médica - Atendimento urgente
                   </Text>
                 </View>
@@ -255,20 +226,10 @@ export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {
               >
                 <Text style={styles.optionIcon}>💙</Text>
                 <View style={styles.optionTextContainer}>
-                  <Text
-                    style={[
-                      styles.optionTitle,
-                      { fontSize: typography.bodyLg.fontSize },
-                    ]}
-                  >
+                  <Text style={[styles.optionTitle, { fontSize: typography.bodyLg.fontSize }]}>
                     Quero conversar com alguém
                   </Text>
-                  <Text
-                    style={[
-                      styles.optionDescription,
-                      { fontSize: typography.bodySm.fontSize },
-                    ]}
-                  >
+                  <Text style={[styles.optionDescription, { fontSize: typography.bodySm.fontSize }]}>
                     Nossa equipe te acompanhará neste momento
                   </Text>
                 </View>

@@ -11,16 +11,19 @@ Sistema de "memória artificial" para o Claude manter contexto entre sessões.
 ### **Nova Sessão:**
 
 Diga ao Claude:
+
 ```
 "Leia a memória"
 ```
 
 Ou:
+
 ```
 "Carrega o contexto de .claude/memory/"
 ```
 
 Claude lê automaticamente e sabe:
+
 - O que foi feito
 - O que está pendente
 - Próximos passos
@@ -34,6 +37,7 @@ cat .claude/memory/RESUMO-ULTRA-COMPACTO.md
 ```
 
 Mostra:
+
 - Score geral
 - Problemas críticos
 - Próximas ações
@@ -63,11 +67,13 @@ cat .claude/memory/scripts/fix-database.sql
 ## 🔄 QUANDO COMPACTAR
 
 **Compactar contexto quando:**
+
 - Conversa muito longa (>100 mensagens)
 - Claude avisa que está perto do limite
 - Quer "resetar" e começar limpo
 
 **Como:**
+
 ```
 "Compacta o contexto agora"
 ```
@@ -78,13 +84,13 @@ Claude salva tudo e continua só com essencial.
 
 ## 📊 ARQUIVOS IMPORTANTES
 
-| Arquivo | Quando Usar |
-|---------|-------------|
+| Arquivo                    | Quando Usar        |
+| -------------------------- | ------------------ |
 | `RESUMO-ULTRA-COMPACTO.md` | Visão geral rápida |
-| `session-context.md` | Contexto detalhado |
-| `priority-actions.md` | O que fazer agora |
-| `checklists/phase-1.md` | Checklist atual |
-| `scripts/*.sh` | Scripts prontos |
+| `session-context.md`       | Contexto detalhado |
+| `priority-actions.md`      | O que fazer agora  |
+| `checklists/phase-1.md`    | Checklist atual    |
+| `scripts/*.sh`             | Scripts prontos    |
 
 ---
 

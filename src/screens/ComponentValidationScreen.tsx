@@ -640,4 +640,3 @@ const styles = StyleSheet.create({
     fontSize: getResponsiveValue(13, 14, 15),
   },
 });
-

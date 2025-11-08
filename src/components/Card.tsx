@@ -203,4 +203,3 @@ const styles = StyleSheet.create({
 
 // Memoizar componente para evitar re-renders desnecessários
 export const Card = React.memo(CardComponent);
-

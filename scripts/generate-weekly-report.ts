@@ -191,7 +191,7 @@ async function calcularTendencias(): Promise<Record<string, string>> {
 /**
  * Gera principais destaques positivos
  */
-function gerarDestaques(metrics: any, tendencias: any): string[] => {
+function gerarDestaques(metrics: any, tendencias: any): string[] {
   const destaques: string[] = [];
 
   if (metrics.quality.utilidade >= 85) {
@@ -220,7 +220,7 @@ function gerarDestaques(metrics: any, tendencias: any): string[] => {
 /**
  * Gera insights automáticos
  */
-function gerarInsights(metrics: any, tendencias: any, custos: any): string[] => {
+function gerarInsights(metrics: any, tendencias: any, custos: any): string[] {
   const insights: string[] = [];
 
   // Insight de qualidade
@@ -232,9 +232,7 @@ function gerarInsights(metrics: any, tendencias: any, custos: any): string[] => 
 
   // Insight de performance
   if (metrics.performance.latencia_p95_ms > 5000) {
-    insights.push(
-      `⚠️ Latência P95 violando SLO (${metrics.performance.latencia_p95_ms}ms). Investigar gargalos.`
-    );
+    insights.push(`⚠️ Latência P95 violando SLO (${metrics.performance.latencia_p95_ms}ms). Investigar gargalos.`);
   }
 
   // Insight de custo
@@ -262,44 +260,37 @@ function gerarInsights(metrics: any, tendencias: any, custos: any): string[] => 
 }
 
 /**
- * Gera recomendações acionáveis
+ * Gera recomendações concretas
  */
-function gerarRecomendacoes(metrics: any, custos: any, health: any): string[] => {
+function gerarRecomendacoes(metrics: any, custos: any, health: any): string[] {
   const recomendacoes: string[] = [];
 
-  // Recomendações de qualidade
+  if (metrics.quality.utilidade < 80) {
+    recomendacoes.push('Criar squad dedicado para treinar prompts e exemplos de acolhimento.');
+  }
+
   if (metrics.quality.deflexao < 60) {
-    recomendacoes.push(
-      '1. Melhorar prompts para aumentar deflexão (meta: 60%)'
-    );
+    recomendacoes.push('1. Melhorar prompts para aumentar deflexão (meta: 60%)');
   }
 
   if (metrics.quality.conversao < 35) {
-    recomendacoes.push(
-      '2. Otimizar CTAs e fluxos de conversão (meta: 35%)'
-    );
+    recomendacoes.push('2. Otimizar CTAs e fluxos de conversão (meta: 35%)');
   }
 
   // Recomendações de custo
   if (custos.otimizacoes.length > 0) {
     const top = custos.otimizacoes[0];
-    recomendacoes.push(
-      `3. ${top.recomendacao} (economia: $${top.economia_estimada_usd_mes.toFixed(2)}/mês)`
-    );
+    recomendacoes.push(`3. ${top.recomendacao} (economia: $${top.economia_estimada_usd_mes.toFixed(2)}/mês)`);
   }
 
   // Recomendações de performance
   if (metrics.performance.latencia_p95_ms > 5000) {
-    recomendacoes.push(
-      '4. Implementar cache de contexto para reduzir latência'
-    );
+    recomendacoes.push('4. Implementar cache de contexto para reduzir latência');
   }
 
   // Recomendações de segurança
   if (metrics.safety.recall < 85) {
-    recomendacoes.push(
-      '5. Aumentar sensibilidade de detecção de riscos (recall < 85%)'
-    );
+    recomendacoes.push('5. Aumentar sensibilidade de detecção de riscos (recall < 85%)');
   }
 
   return recomendacoes;
@@ -359,7 +350,10 @@ Tempo Médio Sessão:    ${report.uso.tempo_sessao_medio.toFixed(1)} min
 Retenção D7:           ${report.uso.retencao_d7.toFixed(1)}%
 
 Temas Principais:
-${report.uso.temas_principais.slice(0, 5).map((t, i) => `   ${i + 1}. ${t.tema} (${t.count})`).join('\n')}
+${report.uso.temas_principais
+  .slice(0, 5)
+  .map((t, i) => `   ${i + 1}. ${t.tema} (${t.count})`)
+  .join('\n')}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 💰 CUSTOS

@@ -640,4 +640,3 @@ const getStyles = () => ({
 const styles = getStyles();
 
 export default OnboardingScreen;
-

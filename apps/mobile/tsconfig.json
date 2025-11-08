@@ -8,11 +8,11 @@
     "moduleResolution": "bundler",
 
     // ✅ STRICT MODE - Habilitando progressivamente
-    "strict": false,  // TODO: habilitar após Fase 2
-    "noImplicitAny": true,  // ✅ Habilitado agora (Fase 1)
-    "strictNullChecks": false,  // TODO: habilitar na Fase 2
-    "strictFunctionTypes": false,  // TODO: habilitar na Fase 3
-    "strictPropertyInitialization": false,  // TODO: habilitar na Fase 3
+    "strict": false, // TODO: habilitar após Fase 2
+    "noImplicitAny": true, // ✅ Habilitado agora (Fase 1)
+    "strictNullChecks": false, // TODO: habilitar na Fase 2
+    "strictFunctionTypes": false, // TODO: habilitar na Fase 3
+    "strictPropertyInitialization": false, // TODO: habilitar na Fase 3
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,

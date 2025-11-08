@@ -52,6 +52,7 @@ import {
   ValidationError,
   NathiaError,
 } from '../index';
+import type { Checklist, ModerationAnalysis } from '../types';
 
 // ============= MÓDULO 1: CHAT =============
 
@@ -250,7 +251,7 @@ describe('Módulo 4: Curadoria de Conteúdo', () => {
 
   describe('validateChecklist', () => {
     it('deve validar checklist bem formada', () => {
-      const checklist = {
+      const checklist: Checklist = {
         title: 'Mala da Maternidade',
         items: [
           { text: 'Separar documentos', is_critical: true, order: 1 },
@@ -263,7 +264,7 @@ describe('Módulo 4: Curadoria de Conteúdo', () => {
     });
 
     it('deve rejeitar checklist sem título', () => {
-      const checklist = {
+      const checklist: Checklist = {
         title: '',
         items: [],
         estimated_completion_time: '30 min',
@@ -297,7 +298,7 @@ describe('Módulo 5: Moderação Assistida', () => {
 
   describe('decidirAcao', () => {
     it('deve recomendar reject para scores altos', () => {
-      const analise = {
+      const analise: ModerationAnalysis = {
         judgement_score: 0.9,
         toxicity_score: 0.8,
         is_safe: false,
@@ -309,7 +310,7 @@ describe('Módulo 5: Moderação Assistida', () => {
     });
 
     it('deve recomendar approve para scores baixos', () => {
-      const analise = {
+      const analise: ModerationAnalysis = {
         judgement_score: 0.1,
         toxicity_score: 0.1,
         is_safe: true,

@@ -11,4 +11,6 @@ coverage/
 android/
 ios/
 web-build/
+.claude/
+supabase/functions/**
 

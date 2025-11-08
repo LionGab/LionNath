@@ -5,11 +5,13 @@ Edge Functions do Supabase para o sistema NAT-IA, assistente empática para gest
 ## Funções Disponíveis
 
 ### 1. **nathia-chat** - Chat Principal
+
 Assistente conversacional com acolhimento emocional.
 
 **Endpoint:** `POST /nathia-chat`
 
 **Request:**
+
 ```json
 {
   "user_id": "uuid",
@@ -23,6 +25,7 @@ Assistente conversacional com acolhimento emocional.
 ```
 
 **Response:**
+
 ```json
 {
   "reply": "Resposta empática...",
@@ -59,11 +62,13 @@ Assistente conversacional com acolhimento emocional.
 ---
 
 ### 2. **nathia-curadoria** - Curadoria de Conteúdo
+
 Simplifica e adapta conteúdo educacional.
 
 **Endpoint:** `POST /nathia-curadoria`
 
 **Request:**
+
 ```json
 {
   "user_id": "uuid",
@@ -74,20 +79,18 @@ Simplifica e adapta conteúdo educacional.
 ```
 
 **Tipos disponíveis:**
+
 - `resumo`: Resumo em linguagem simples (150-200 palavras)
 - `5min`: Leitura rápida estruturada em seções
 - `checklist`: Lista acionável com dicas
 
 **Response (tipo: resumo):**
+
 ```json
 {
   "titulo": "Alimentação Saudável na Gravidez",
   "resumo": "Durante a gravidez...",
-  "pontos_principais": [
-    "Coma pequenas porções",
-    "Hidrate-se bem",
-    "Evite alimentos crus"
-  ],
+  "pontos_principais": ["Coma pequenas porções", "Hidrate-se bem", "Evite alimentos crus"],
   "relevancia": "Por que isso importa...",
   "risco": false,
   "cached": false,
@@ -106,11 +109,13 @@ Simplifica e adapta conteúdo educacional.
 ---
 
 ### 3. **nathia-moderacao** - Moderação Assistida
+
 Classifica mensagens e sugere edições gentis.
 
 **Endpoint:** `POST /nathia-moderacao`
 
 **Request:**
+
 ```json
 {
   "message_id": "msg-123",
@@ -123,6 +128,7 @@ Classifica mensagens e sugere edições gentis.
 ```
 
 **Response:**
+
 ```json
 {
   "labels": ["ok"],
@@ -138,6 +144,7 @@ Classifica mensagens e sugere edições gentis.
 ```
 
 **Labels possíveis:**
+
 - `ok`: Apropriada
 - `julgamento`: Contém julgamento
 - `toxidade`: Ofensiva
@@ -152,11 +159,13 @@ Classifica mensagens e sugere edições gentis.
 ---
 
 ### 4. **nathia-onboarding** - Onboarding Inteligente
+
 Analisa respostas de onboarding e extrai perfil.
 
 **Endpoint:** `POST /nathia-onboarding`
 
 **Request:**
+
 ```json
 {
   "user_id": "uuid",
@@ -174,6 +183,7 @@ Analisa respostas de onboarding e extrai perfil.
 ```
 
 **Response:**
+
 ```json
 {
   "stage": "gestante",
@@ -193,11 +203,13 @@ Analisa respostas de onboarding e extrai perfil.
 ---
 
 ### 5. **nathia-recs** - Recomendações
+
 Gera recomendações personalizadas baseadas em histórico.
 
 **Endpoint:** `POST /nathia-recs`
 
 **Request:**
+
 ```json
 {
   "user_id": "uuid",
@@ -209,6 +221,7 @@ Gera recomendações personalizadas baseadas em histórico.
 ```
 
 **Response:**
+
 ```json
 {
   "conteudo": [
@@ -247,17 +260,28 @@ npm install -g supabase
 
 ### 2. Configurar Variáveis de Ambiente
 
-Copie `.env.example` para `.env.local`:
+Copie `.env.example` para `.env`:
 
 ```bash
-cp supabase/functions/.env.example supabase/functions/.env.local
+cp supabase/functions/.env.example supabase/functions/.env
 ```
 
 Preencha as variáveis:
+
+**Supabase:**
 - `SUPABASE_URL`: URL do seu projeto Supabase
 - `SUPABASE_ANON_KEY`: Chave anônima
 - `SUPABASE_SERVICE_ROLE_KEY`: Chave de serviço
-- `GEMINI_API_KEY`: API Key do Google AI Studio
+
+**AI API Keys (Edge Functions only - não expor no app):**
+- `GEMINI_API_KEY`: Google AI Studio (https://makersuite.google.com/app/apikey)
+- `CLAUDE_API_KEY`: Anthropic (https://console.anthropic.com/account/keys)
+- `OPENAI_API_KEY`: OpenAI (https://platform.openai.com/api-keys)
+- `PERPLEXITY_API_KEY`: Perplexity AI (https://www.perplexity.ai/settings/api)
+
+⚠️ **IMPORTANTE:** Nunca commite o arquivo `.env` no Git. Ele já está no `.gitignore`.
+
+📚 **Para detalhes completos sobre secrets**, veja: [docs/SECRETS.md](../../docs/SECRETS.md)
 
 ### 3. Testar Localmente
 
@@ -281,15 +305,29 @@ curl -X POST http://localhost:54321/functions/v1/nathia-chat \
 ### 4. Deploy para Produção
 
 ```bash
+# Login no Supabase
+supabase login
+
+# Linkar projeto local
+supabase link --project-ref your-project-ref
+
+# Configurar secrets de IA (Edge Functions only)
+supabase secrets set GEMINI_API_KEY=your-gemini-key
+supabase secrets set CLAUDE_API_KEY=your-claude-key
+supabase secrets set OPENAI_API_KEY=your-openai-key
+supabase secrets set PERPLEXITY_API_KEY=your-perplexity-key
+
+# Configurar Supabase keys (se necessário)
+supabase secrets set SUPABASE_SERVICE_ROLE_KEY=your-key
+
+# Verificar secrets
+supabase secrets list
+
 # Deploy todas as funções
 supabase functions deploy
 
-# Deploy função específica
+# OU deploy função específica
 supabase functions deploy nathia-chat
-
-# Configurar secrets
-supabase secrets set GEMINI_API_KEY=your-key
-supabase secrets set SUPABASE_SERVICE_ROLE_KEY=your-key
 ```
 
 ---
@@ -465,11 +503,13 @@ Verifique CORS headers e credenciais Supabase.
 ## Custos Estimados
 
 ### Gemini 2.0 Flash (Free tier generoso)
+
 - **Input:** $0.075 / 1M tokens
 - **Output:** $0.30 / 1M tokens
 - **Estimativa:** ~$5-10/mês para 1000 usuários ativos
 
 ### Supabase Edge Functions
+
 - **Invocações:** Grátis até 500k/mês
 - **Compute:** Grátis até 400k GB-s/mês
 
@@ -490,6 +530,7 @@ Verifique CORS headers e credenciais Supabase.
 ## Suporte
 
 Para dúvidas ou problemas:
+
 1. Verifique logs: `supabase functions logs <nome>`
 2. Revise documentação do Gemini: https://ai.google.dev/
 3. Consulte docs do Supabase: https://supabase.com/docs

@@ -58,15 +58,7 @@ import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidad
 
 export default function NathiaChat() {
   const { context } = useNathiaContext();
-  const {
-    messages,
-    loading,
-    error,
-    sendMessage,
-    isTyping,
-    suggestedReplies,
-    contextUpdate,
-  } = useNathia({
+  const { messages, loading, error, sendMessage, isTyping, suggestedReplies, contextUpdate } = useNathia({
     userId: context?.userId || '',
     stage: context?.stage,
     pregnancyWeek: context?.pregnancyWeek,
@@ -220,16 +212,8 @@ export default function NathiaChat() {
   }, [contextUpdate?.riskLevel]);
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: palette.background }]}
-      edges={['top']}
-    >
-      <Toast
-        type={toastType}
-        message={toastMessage}
-        visible={toastVisible}
-        onDismiss={handleToastClose}
-      />
+    <SafeAreaView style={[styles.container, { backgroundColor: palette.background }]} edges={['top']}>
+      <Toast type={toastType} message={toastMessage} visible={toastVisible} onDismiss={handleToastClose} />
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -247,12 +231,7 @@ export default function NathiaChat() {
           ]}
         >
           <View style={styles.headerLeft}>
-            <View
-              style={[
-                styles.avatar,
-                { backgroundColor: palette.primary, borderRadius: radius.sm },
-              ]}
-            >
+            <View style={[styles.avatar, { backgroundColor: palette.primary, borderRadius: radius.sm }]}>
               <Text style={styles.avatarText}>N</Text>
             </View>
             <View>
@@ -328,11 +307,7 @@ export default function NathiaChat() {
           data={messages}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <ChatMessage
-              message={item}
-              onActionPress={processAction}
-              onFeedback={handleFeedback}
-            />
+            <ChatMessage message={item} onActionPress={processAction} onFeedback={handleFeedback} />
           )}
           contentContainerStyle={styles.messagesList}
           ListEmptyComponent={() => (
@@ -373,17 +348,8 @@ export default function NathiaChat() {
 
         {/* Quick Replies */}
         {!loading && messages.length > 0 && hasSuggestions && (
-          <Card
-            variant="flat"
-            padding="sm"
-            style={styles.suggestionsCard}
-            contentStyle={styles.suggestionsContent}
-          >
-            <QuickReplies
-              suggestions={displayedSuggestions}
-              onSelect={handleQuickReply}
-              disabled={loading}
-            />
+          <Card variant="flat" padding="sm" style={styles.suggestionsCard} contentStyle={styles.suggestionsContent}>
+            <QuickReplies suggestions={displayedSuggestions} onSelect={handleQuickReply} disabled={loading} />
           </Card>
         )}
 
@@ -431,20 +397,8 @@ export default function NathiaChat() {
 
         {/* Error Message */}
         {error && (
-          <View
-            style={[
-              styles.errorBanner,
-              { backgroundColor: palette.feedback.danger },
-            ]}
-          >
-            <Text
-              style={[
-                styles.errorText,
-                { fontSize: typography.bodySm.fontSize },
-              ]}
-            >
-              {error}
-            </Text>
+          <View style={[styles.errorBanner, { backgroundColor: palette.feedback.danger }]}>
+            <Text style={[styles.errorText, { fontSize: typography.bodySm.fontSize }]}>{error}</Text>
           </View>
         )}
       </KeyboardAvoidingView>

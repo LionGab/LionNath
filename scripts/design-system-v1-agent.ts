@@ -20,9 +20,7 @@ function ensureDir(path: string): void {
 function buildPaletteTable(): string {
   const entries = Object.entries(nossaMaternidadeDesignTokens.palette.neutrals);
   const header = '| Stop | Hex |\n| --- | --- |';
-  const rows = entries
-    .map(([stop, value]) => `| ${stop} | ${value} |`)
-    .join('\n');
+  const rows = entries.map(([stop, value]) => `| ${stop} | ${value} |`).join('\n');
   return `${header}\n${rows}`;
 }
 
@@ -58,7 +56,8 @@ function main(): void {
   ensureDir(promptDir);
   ensureDir(reportsDir);
 
-  const promptContent = `# Agent Design System v1 — Nossa Maternidade\n\n` +
+  const promptContent =
+    `# Agent Design System v1 — Nossa Maternidade\n\n` +
     `## Contexto Emocional\n` +
     `- Sensações alvo: acolhimento, segurança, não julgamento, cuidado\n` +
     `- Linguagem visual: mobile-first, tons pastéis (#6DA9E4, #FF8BA3, #FFF8F3, #DCEBFA, #6A5450)\n` +
@@ -97,7 +96,8 @@ function main(): void {
   const promptPath = join(promptDir, 'agent-design-system-v1.md');
   writeFileSync(promptPath, `${promptContent}\n`, 'utf-8');
 
-  const reportContent = `# 📦 Design System v1 — Tokens Atuais\n\n` +
+  const reportContent =
+    `# 📦 Design System v1 — Tokens Atuais\n\n` +
     `## 🎨 Paleta Central\n` +
     `- Primary: ${nossaMaternidadeDesignTokens.palette.primary}\n` +
     `- Accent: ${nossaMaternidadeDesignTokens.palette.accent}\n` +
@@ -127,5 +127,3 @@ function main(): void {
 }
 
 main();
-
-

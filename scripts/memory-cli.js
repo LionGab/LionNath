@@ -17,7 +17,7 @@ const COMMANDS = [
   'update',
   'export',
   'stats',
-  'help'
+  'help',
 ];
 
 function ensureMemoryDir() {
@@ -37,7 +37,7 @@ function readJson(fileName) {
   try {
     return JSON.parse(raw);
   } catch (error) {
-    throw new Error(`Falha ao parsear JSON (${fileName}): ${(error).message}`);
+    throw new Error(`Falha ao parsear JSON (${fileName}): ${error.message}`);
   }
 }
 
@@ -99,11 +99,14 @@ function cmdStatus() {
   const todos = readJson('todo_history.json');
 
   const totalScreens = Object.keys(context.current_state.screens).length;
-  const migratedScreens = Object.values(context.current_state.screens)
-    .filter((screen) => screen.status === 'refactored').length;
+  const migratedScreens = Object.values(context.current_state.screens).filter(
+    (screen) => screen.status === 'refactored'
+  ).length;
 
   printHeader('Status Geral');
-  console.log(`Progresso de telas: ${(migratedScreens / totalScreens * 100).toFixed(1)}% (${migratedScreens}/${totalScreens})`);
+  console.log(
+    `Progresso de telas: ${((migratedScreens / totalScreens) * 100).toFixed(1)}% (${migratedScreens}/${totalScreens})`
+  );
   console.log(`Sprint atual: ${todos.current_sprint}`);
   console.log(`Período: ${todos.sprint_start_date} → ${todos.sprint_end_date}`);
 
@@ -134,7 +137,9 @@ function cmdDecisions(options) {
 
   printHeader('Decisões Estratégicas');
   list.forEach((decision) => {
-    console.log(`- [${decision.id}] ${decision.date} | ${decision.category} | impacto ${decision.impact} | ${decision.status}`);
+    console.log(
+      `- [${decision.id}] ${decision.date} | ${decision.category} | impacto ${decision.impact} | ${decision.status}`
+    );
     console.log(`  ${decision.decision}`);
     if (decision.rationale) {
       console.log(`  → Motivo: ${decision.rationale}`);
@@ -243,7 +248,7 @@ function cmdUpdate() {
     `## 🔄 Atualização Manual - ${timestamp}`,
     '',
     'Atualização manual registrada via CLI de memória.',
-    ''
+    '',
   ].join(os.EOL);
 
   fs.appendFileSync(logPath, entry, 'utf8');
@@ -262,7 +267,7 @@ function cmdExport() {
 
   const result = spawnSync('tar', ['-czf', archivePath, '.'], {
     cwd: MEMORY_DIR,
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
 
   if (result.status !== 0) {

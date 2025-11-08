@@ -104,9 +104,7 @@ export function checkSafety(text: string): SafetyCheck {
   const lowerText = text.toLowerCase();
 
   // Verifica risco crítico (emergência)
-  const criticalMatches = CRITICAL_KEYWORDS.filter(keyword =>
-    lowerText.includes(keyword)
-  );
+  const criticalMatches = CRITICAL_KEYWORDS.filter((keyword) => lowerText.includes(keyword));
 
   if (criticalMatches.length > 0) {
     return {
@@ -114,15 +112,12 @@ export function checkSafety(text: string): SafetyCheck {
       reasons: criticalMatches,
       shouldEscalate: true,
       emergencyContact: true,
-      suggestedAction:
-        'URGENTE: Procure atendimento médico imediatamente ou ligue para emergência (192/SAMU).',
+      suggestedAction: 'URGENTE: Procure atendimento médico imediatamente ou ligue para emergência (192/SAMU).',
     };
   }
 
   // Verifica saúde mental crítica
-  const mentalHealthMatches = MENTAL_HEALTH_KEYWORDS.filter(keyword =>
-    lowerText.includes(keyword)
-  );
+  const mentalHealthMatches = MENTAL_HEALTH_KEYWORDS.filter((keyword) => lowerText.includes(keyword));
 
   if (mentalHealthMatches.length > 0) {
     return {
@@ -136,17 +131,14 @@ export function checkSafety(text: string): SafetyCheck {
   }
 
   // Verifica sintomas de alerta
-  const warningMatches = WARNING_KEYWORDS.filter(keyword =>
-    lowerText.includes(keyword)
-  );
+  const warningMatches = WARNING_KEYWORDS.filter((keyword) => lowerText.includes(keyword));
 
   if (warningMatches.length >= 2) {
     return {
       level: 'warning',
       reasons: warningMatches,
       shouldEscalate: true,
-      suggestedAction:
-        'Recomendo agendar consulta com seu médico em breve para avaliar esses sintomas.',
+      suggestedAction: 'Recomendo agendar consulta com seu médico em breve para avaliar esses sintomas.',
     };
   }
 
@@ -155,23 +147,19 @@ export function checkSafety(text: string): SafetyCheck {
       level: 'caution',
       reasons: warningMatches,
       shouldEscalate: false,
-      suggestedAction:
-        'Fique atenta a esses sintomas. Se piorarem ou persistirem, consulte seu médico.',
+      suggestedAction: 'Fique atenta a esses sintomas. Se piorarem ou persistirem, consulte seu médico.',
     };
   }
 
   // Verifica questões emocionais
-  const cautionMatches = CAUTION_KEYWORDS.filter(keyword =>
-    lowerText.includes(keyword)
-  );
+  const cautionMatches = CAUTION_KEYWORDS.filter((keyword) => lowerText.includes(keyword));
 
   if (cautionMatches.length >= 3) {
     return {
       level: 'caution',
       reasons: cautionMatches,
       shouldEscalate: false,
-      suggestedAction:
-        'Percebo que você está passando por um momento difícil. Conversar com outras mães pode ajudar.',
+      suggestedAction: 'Percebo que você está passando por um momento difícil. Conversar com outras mães pode ajudar.',
     };
   }
 
@@ -212,7 +200,7 @@ export function extractSymptoms(text: string): string[] {
   ];
 
   const lowerText = text.toLowerCase();
-  return symptoms.filter(symptom => lowerText.includes(symptom));
+  return symptoms.filter((symptom) => lowerText.includes(symptom));
 }
 
 /**
@@ -238,7 +226,7 @@ export function isMedicalQuestion(text: string): boolean {
     /preciso ir/i,
   ];
 
-  return medicalQuestionPatterns.some(pattern => pattern.test(text));
+  return medicalQuestionPatterns.some((pattern) => pattern.test(text));
 }
 
 /**
@@ -270,10 +258,7 @@ export function needsImmediateAction(safety: SafetyCheck): boolean {
 /**
  * Sugere recursos de apoio baseado no contexto
  */
-export function suggestSupportResources(
-  safety: SafetyCheck,
-  symptoms: string[]
-): string[] {
+export function suggestSupportResources(safety: SafetyCheck, symptoms: string[]): string[] {
   const resources: string[] = [];
 
   if (safety.level === 'urgent' && safety.emergencyContact) {
@@ -281,16 +266,16 @@ export function suggestSupportResources(
     resources.push('📞 CVV (apoio emocional): 188');
   }
 
-  if (symptoms.some(s => ['náusea', 'enjoo', 'vômito'].includes(s))) {
+  if (symptoms.some((s) => ['náusea', 'enjoo', 'vômito'].includes(s))) {
     resources.push('💡 Dica: Conteúdo sobre "Náuseas na Gravidez"');
   }
 
-  if (symptoms.some(s => ['insônia', 'cansaço', 'fadiga'].includes(s))) {
+  if (symptoms.some((s) => ['insônia', 'cansaço', 'fadiga'].includes(s))) {
     resources.push('💡 Dica: Conteúdo sobre "Sono e Descanso"');
   }
 
   const emotionalKeywords = ['ansiosa', 'triste', 'preocupada', 'medo'];
-  if (safety.reasons.some(r => emotionalKeywords.includes(r))) {
+  if (safety.reasons.some((r) => emotionalKeywords.includes(r))) {
     resources.push('💬 Que tal conversar com outras mães no Círculo de Apoio?');
   }
 

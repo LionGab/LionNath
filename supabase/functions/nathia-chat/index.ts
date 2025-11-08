@@ -277,13 +277,11 @@ function buildClaudeMessages(request: ChatRequest, history: ClaudeMessage[]): Cl
   const messages: ClaudeMessage[] = [...history];
 
   const previous = request.context?.previousMessages ?? [];
-  previous
-    .slice(-6)
-    .forEach((msg) => {
-      if (msg.content && msg.content.trim().length > 0) {
-        messages.push(toClaudeMessage(msg.role, msg.content));
-      }
-    });
+  previous.slice(-6).forEach((msg) => {
+    if (msg.content && msg.content.trim().length > 0) {
+      messages.push(toClaudeMessage(msg.role, msg.content));
+    }
+  });
 
   messages.push(toClaudeMessage('user', buildUserPrompt(request)));
 
@@ -295,9 +293,7 @@ function normalizeStringArray(value?: unknown): string[] {
     return [];
   }
 
-  return value
-    .map((item) => (typeof item === 'string' ? item.trim() : ''))
-    .filter((item) => item.length > 0);
+  return value.map((item) => (typeof item === 'string' ? item.trim() : '')).filter((item) => item.length > 0);
 }
 
 function sanitizeClaudeResponse(raw: ClaudeStructuredResponse): SanitizedClaudeResponse {
@@ -316,8 +312,8 @@ function sanitizeClaudeResponse(raw: ClaudeStructuredResponse): SanitizedClaudeR
         typeof recommendations.habit === 'string' && recommendations.habit.trim().length > 0
           ? recommendations.habit.trim()
           : recommendations.habit === null
-          ? null
-          : undefined,
+            ? null
+            : undefined,
     },
     safetyNotes: normalizeStringArray(raw.safety_notes),
   };
@@ -400,7 +396,10 @@ function parseClaudeResponse(raw: string): ClaudeStructuredResponse {
   return JSON.parse(sanitized) as ClaudeStructuredResponse;
 }
 
-async function callClaude(apiKey: string, messages: ClaudeMessage[]): Promise<{ data: ClaudeStructuredResponse; usage: ClaudeUsage }> {
+async function callClaude(
+  apiKey: string,
+  messages: ClaudeMessage[]
+): Promise<{ data: ClaudeStructuredResponse; usage: ClaudeUsage }> {
   const body = {
     model: CLAUDE_MODEL,
     max_tokens: 1024,
@@ -451,8 +450,8 @@ async function callClaude(apiKey: string, messages: ClaudeMessage[]): Promise<{ 
       typeof data.usage?.total_tokens === 'number'
         ? data.usage.total_tokens
         : typeof data.usage?.input_tokens === 'number' && typeof data.usage?.output_tokens === 'number'
-        ? data.usage.input_tokens + data.usage.output_tokens
-        : undefined,
+          ? data.usage.input_tokens + data.usage.output_tokens
+          : undefined,
   };
 
   return {
@@ -478,7 +477,7 @@ serve(async (req: Request) => {
   if (corsResponse) return corsResponse;
 
   if (req.method !== 'POST') {
-    const headers = new Headers({ ...corsHeaders, 'Content-Type': 'application/json', 'Allow': 'POST' });
+    const headers = new Headers({ ...corsHeaders, 'Content-Type': 'application/json', Allow: 'POST' });
     return new Response(JSON.stringify({ error: 'Método não suportado' }), { status: 405, headers });
   }
 
@@ -555,11 +554,16 @@ serve(async (req: Request) => {
     const structured = sanitizeClaudeResponse(claudeResult.data);
 
     const disclaimerFromSafety = getMedicalDisclaimer(safety.level);
-    const fallbackDisclaimer = medicalQuestion ? 'ℹ️ Estas informações não substituem orientação médica profissional.' : '';
+    const fallbackDisclaimer = medicalQuestion
+      ? 'ℹ️ Estas informações não substituem orientação médica profissional.'
+      : '';
     const disclaimer = (disclaimerFromSafety || fallbackDisclaimer).trim();
     const supportResources = suggestSupportResources(safety, symptoms);
 
-    let finalReply = structured.reply.length > 0 ? structured.reply : 'Estou aqui com você, mas preciso de um tempinho para responder melhor. Pode tentar novamente em instantes? 💙';
+    let finalReply =
+      structured.reply.length > 0
+        ? structured.reply
+        : 'Estou aqui com você, mas preciso de um tempinho para responder melhor. Pode tentar novamente em instantes? 💙';
 
     if (disclaimer) {
       finalReply = `${finalReply}\n\n${disclaimer}`;

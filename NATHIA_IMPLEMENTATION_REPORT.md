@@ -23,9 +23,11 @@ Implementação bem-sucedida dos 9 módulos principais da NAT-IA como biblioteca
 ## Módulos Implementados
 
 ### 1. Chat Empático (`chat.ts`)
+
 **308 linhas | 100% implementado**
 
 #### Funcionalidades
+
 ✅ Interface `chatEmpatico(mensagem, contexto)` → `{resposta, ações}`
 ✅ System prompt otimizado para acolhimento
 ✅ Sugestão automática de próximo passo
@@ -33,15 +35,14 @@ Implementação bem-sucedida dos 9 módulos principais da NAT-IA como biblioteca
 ✅ Inferência de ações baseada em heurísticas
 
 #### Exemplo de Uso
+
 ```typescript
-const resposta = await chatEmpatico(
-  "Estou muito cansada",
-  { user_id: "123", current_mood: "worried" }
-);
+const resposta = await chatEmpatico('Estou muito cansada', { user_id: '123', current_mood: 'worried' });
 // { resposta: "...", acoes: [...], next_step: "..." }
 ```
 
 #### Integrações
+
 - Triagem de risco (para detecção preventiva)
 - Recomendações (ações sugeridas)
 - Analytics (rótulos de interação)
@@ -49,9 +50,11 @@ const resposta = await chatEmpatico(
 ---
 
 ### 2. Triagem Emocional & Risco (`triagem.ts`)
+
 **387 linhas | 100% implementado**
 
 #### Funcionalidades
+
 ✅ `classificarSentimento()` → intensidade 0-10 + valência
 ✅ `detectarRisco()` → nível ok/watch/risk + confidence
 ✅ `acionarSOS()` → protocolo emergencial
@@ -59,28 +62,32 @@ const resposta = await chatEmpatico(
 ✅ Recursos CVV, SAMU, Ligue 180
 
 #### Exemplo de Uso
+
 ```typescript
-const risco = await detectarRisco("Não aguento mais");
+const risco = await detectarRisco('Não aguento mais');
 // { nivel: "risk", sinais: [...], confidence: 0.9 }
 
-if (risco.nivel === "risk") {
-  await acionarSOS("user_id", { riskAssessment: risco });
+if (risco.nivel === 'risk') {
+  await acionarSOS('user_id', { riskAssessment: risco });
   // Exibe CVV 188, SAMU 192
 }
 ```
 
 #### Palavras-chave de Risco Alto
+
 - "quero morrer", "penso em suicídio"
 - "vou fazer mal", "machucar o bebê"
 - "não aguento mais viver"
-- + 8 configuráveis em `config.ts`
+- - 8 configuráveis em `config.ts`
 
 ---
 
 ### 3. Onboarding Inteligente (`onboarding.ts`)
+
 **476 linhas | 100% implementado**
 
 #### Funcionalidades
+
 ✅ `analisarRespostas()` → perfil + confidence score
 ✅ `gerarStarterPack()` → grupos + conteúdo + objetivo
 ✅ 4 perguntas essenciais pré-definidas
@@ -88,10 +95,11 @@ if (risco.nivel === "risk") {
 ✅ Mensagem de boas-vindas personalizada
 
 #### Exemplo de Uso
+
 ```typescript
 const analise = await analisarRespostas([
-  { question_id: "stage", answer: "Segundo trimestre" },
-  { question_id: "concerns", answer: "Sono,Saúde" }
+  { question_id: 'stage', answer: 'Segundo trimestre' },
+  { question_id: 'concerns', answer: 'Sono,Saúde' },
 ]);
 
 const pack = await gerarStarterPack(analise.perfil);
@@ -99,6 +107,7 @@ const pack = await gerarStarterPack(analise.perfil);
 ```
 
 #### Perguntas Essenciais
+
 1. **Stage:** Em que momento você está?
 2. **Concerns:** Principais preocupações? (multi-select)
 3. **Support:** Como é sua rede de apoio?
@@ -107,9 +116,11 @@ const pack = await gerarStarterPack(analise.perfil);
 ---
 
 ### 4. Curadoria de Conteúdo (`curadoria.ts`)
+
 **423 linhas | 100% implementado**
 
 #### Funcionalidades
+
 ✅ `resumirConteudo()` → 5 linhas + key points
 ✅ `criarCincoMinutos()` → 5 bullets práticos
 ✅ `gerarChecklist()` → máx 6 itens acionáveis
@@ -117,6 +128,7 @@ const pack = await gerarStarterPack(analise.perfil);
 ✅ Extração de citações e termos técnicos
 
 #### Exemplo de Uso
+
 ```typescript
 const resumo = await resumirConteudo(artigoLongo);
 // { resumo: "5 linhas...", reading_time_minutes: 2 }
@@ -129,6 +141,7 @@ const checklist = await gerarChecklist(artigoLongo);
 ```
 
 #### Métricas de Qualidade
+
 - **Readability Score:** Flesch Reading Ease 60-70 (Plain English)
 - **Contagem de sílabas:** Adaptado para português
 - **Palavras por minuto:** 200 (configurável)
@@ -136,9 +149,11 @@ const checklist = await gerarChecklist(artigoLongo);
 ---
 
 ### 5. Moderação Assistida (`moderacao.ts`)
+
 **447 linhas | 100% implementado**
 
 #### Funcionalidades
+
 ✅ `detectarJulgamento()` → score 0-1
 ✅ `detectarToxidade()` → score 0-1
 ✅ `sugerirReescrita()` → versão gentil
@@ -146,10 +161,9 @@ const checklist = await gerarChecklist(artigoLongo);
 ✅ `decidirAcao()` → approve/review/reject
 
 #### Exemplo de Uso
+
 ```typescript
-const analise = await analisarMensagem(
-  "Você DEVERIA amamentar exclusivamente!"
-);
+const analise = await analisarMensagem('Você DEVERIA amamentar exclusivamente!');
 // {
 //   judgement_score: 0.85,
 //   toxicity_score: 0.4,
@@ -163,12 +177,15 @@ const acao = decidirAcao(analise);
 ```
 
 #### Padrões Detectados
+
 **Julgamento:**
+
 - Should statements: "deveria", "deve", "tem que"
 - Comparações: "melhor mãe", "mãe de verdade"
 - Prescrições: "errado", "certo", "adequado"
 
 **Toxicidade:**
+
 - Palavras ofensivas
 - Ataques pessoais
 - Negações extremas
@@ -177,9 +194,11 @@ const acao = decidirAcao(analise);
 ---
 
 ### 6. Recomendações Personalizadas (`recomendacoes.ts`)
+
 **510 linhas | 100% implementado**
 
 #### Funcionalidades
+
 ✅ `recomendarConteudo()` → top 5 + justificativa
 ✅ `recomendarCirculo()` → top 3 + match scores
 ✅ `recomendarHabito()` → 1 hábito + micro-objetivos
@@ -187,20 +206,22 @@ const acao = decidirAcao(analise);
 ✅ Re-ranking com feedback
 
 #### Exemplo de Uso
+
 ```typescript
-const conteudos = await recomendarConteudo("user_id", {
-  current_stage: "mid",
-  recent_activity: ["sono", "amamentacao"]
+const conteudos = await recomendarConteudo('user_id', {
+  current_stage: 'mid',
+  recent_activity: ['sono', 'amamentacao'],
 });
 // { itens: [top 5], justificativa: "...", algorithm_version: "1.0.0" }
 
-const habito = await recomendarHabito("user_id", {
-  goals: ["saude_mental"]
+const habito = await recomendarHabito('user_id', {
+  goals: ['saude_mental'],
 });
 // { habito: {...}, micro_objetivos: [...], justificativa: "..." }
 ```
 
 #### Algoritmo de Matching
+
 - **Stage match:** 40% do peso
 - **Interest match:** 30%
 - **Recent activity:** 20%
@@ -210,9 +231,11 @@ const habito = await recomendarHabito("user_id", {
 ---
 
 ### 7. Hábitos & Coaching (`habitos.ts`)
+
 **455 linhas | 100% implementado**
 
 #### Funcionalidades
+
 ✅ `criarMicroObjetivo()` → 3-5 passos + prazo
 ✅ `gerarMensagemMotivacional()` → NÃO comparativa
 ✅ `gerarLembreteGentil()` → tom empático
@@ -220,13 +243,12 @@ const habito = await recomendarHabito("user_id", {
 ✅ Identificação de barreiras
 
 #### Exemplo de Uso
+
 ```typescript
-const micro = await criarMicroObjetivo(
-  "Quero fazer exercícios regularmente"
-);
+const micro = await criarMicroObjetivo('Quero fazer exercícios regularmente');
 // { titulo: "Começar com 5 minutos", passos: [...], prazo_dias: 7 }
 
-const progresso = await trackProgresso("user_id", "habit_id");
+const progresso = await trackProgresso('user_id', 'habit_id');
 // { streak: 3, completude: 45%, total_completions: 12 }
 
 const msg = gerarMensagemMotivacional(progresso);
@@ -238,15 +260,18 @@ const msg = gerarMensagemMotivacional(progresso);
 ```
 
 #### Princípio Fundamental
+
 **NUNCA COMPARAR MÃES**
 Todas as mensagens motivacionais focam no progresso individual, não em comparações com outras usuárias.
 
 ---
 
 ### 8. Analytics (`analytics.ts`)
+
 **547 linhas | 100% implementado**
 
 #### Funcionalidades
+
 ✅ `extrairRotulos()` → tema + humor + fase + urgência
 ✅ `anonimizar()` → remove TODO PII
 ✅ `gerarMetricas()` → topics_freq + sentiment + engagement
@@ -254,14 +279,15 @@ Todas as mensagens motivacionais focam no progresso individual, não em compara�
 ✅ `validarConformidadeLGPD()` → compliance check
 
 #### Exemplo de Uso
+
 ```typescript
 const labels = await extrairRotulos(mensagem);
 // { tema: ["sono", "preocupacao"], humor: "negative", fase: "postpartum" }
 
 const dadosSeguros = anonimizar({
-  user_id: "123",
-  name: "Maria",
-  message: "..."
+  user_id: '123',
+  name: 'Maria',
+  message: '...',
 });
 // Remove: user_id, name, email, phone, CPF, IP
 // Mantém: metadados estruturados
@@ -271,6 +297,7 @@ const validacao = validarConformidadeLGPD(dados);
 ```
 
 #### Campos Bloqueados (PII)
+
 - user_id, name, email, phone
 - cpf, ip, address, location, device_id
 - Qualquer padrão de email/telefone em strings
@@ -278,9 +305,11 @@ const validacao = validarConformidadeLGPD(dados);
 ---
 
 ### 9. Copys Operacionais (`copys.ts`)
+
 **644 linhas | 100% implementado**
 
 #### Funcionalidades
+
 ✅ `gerarPushNotification()` → titulo (40) + corpo (120)
 ✅ `gerarEmail()` → subject + html + text
 ✅ `gerarAppStoreCopy()` → titulo + desc + keywords
@@ -288,11 +317,9 @@ const validacao = validarConformidadeLGPD(dados);
 ✅ `validarCopyBrand()` → diretrizes da marca
 
 #### Exemplo de Uso
+
 ```typescript
-const push = await gerarPushNotification(
-  { event: "new_content" },
-  "content_alert"
-);
+const push = await gerarPushNotification({ event: 'new_content' }, 'content_alert');
 // {
 //   titulo: "Novo conteúdo para você 🌟",
 //   corpo: "...",
@@ -304,6 +331,7 @@ const validacao = validarCopyBrand(copy);
 ```
 
 #### Validações de Brand
+
 - Tom julgamental (deveria, deve)
 - Comparações (melhor mãe, mãe de verdade)
 - Alarmismo (urgente, perigo, nunca)
@@ -315,13 +343,17 @@ const validacao = validarCopyBrand(copy);
 ## Arquivos de Suporte
 
 ### `types.ts` (307 linhas)
+
 Todos os tipos TypeScript:
+
 - 40+ interfaces exportadas
 - 3 classes de erro customizadas
 - 100% type-safe
 
 ### `config.ts` (308 linhas)
+
 Configurações centralizadas:
+
 - Keywords de risco (configuráveis)
 - Thresholds de moderação
 - Pesos do algoritmo de recomendação
@@ -329,13 +361,17 @@ Configurações centralizadas:
 - Validação automática
 
 ### `prompts.ts` (317 linhas)
+
 System prompts reutilizáveis:
+
 - 15+ prompts otimizados
 - Recursos de apoio (CVV, SAMU, etc)
 - Mensagens de erro padronizadas
 
 ### `index.ts` (274 linhas)
+
 Exportação unificada:
+
 - Todos os módulos
 - Todos os tipos
 - Config e prompts
@@ -347,7 +383,9 @@ Exportação unificada:
 ## Documentação
 
 ### `README.md` (17.425 caracteres)
+
 Documentação completa:
+
 - Visão geral dos 9 módulos
 - Exemplos de uso básico
 - Princípios fundamentais
@@ -356,7 +394,9 @@ Documentação completa:
 - Roadmap
 
 ### `EXAMPLES.md` (19.310 caracteres)
+
 Exemplos práticos detalhados:
+
 - 9 cenários reais completos
 - Fluxos de integração
 - Testes
@@ -367,26 +407,31 @@ Exemplos práticos detalhados:
 ## Princípios de Design Implementados
 
 ### 1. Empatia Primeiro ❤️
+
 - System prompts otimizados para acolhimento
 - Validação emocional antes de informação
 - Tom sempre caloroso e não julgamental
 
 ### 2. Zero Julgamento 🚫
+
 - Detecção automática de linguagem prescritiva
 - Reescrita sugerida para tom empático
 - Mensagens motivacionais NÃO comparativas
 
 ### 3. Privacy-First 🔒
+
 - Anonimização automática
 - Validação de conformidade LGPD/GDPR
 - NUNCA armazenar PII em analytics
 
 ### 4. Agnóstico de IA 🤖
+
 - Lógica separada de chamadas de IA
 - Edge Functions fazem integração
 - Fácil trocar provedor (Gemini ↔ Claude)
 
 ### 5. Revisão Humana 👤
+
 - Copys SEMPRE requerem aprovação
 - Decisões críticas vão para moderadoras
 - Transparência em rationale
@@ -415,14 +460,17 @@ Deno.serve(async (req) => {
   const result = await model.generateContent(prompt);
 
   // 3. Combinar resposta
-  return new Response(JSON.stringify({
-    ...setup,
-    resposta: result.response.text()
-  }));
+  return new Response(
+    JSON.stringify({
+      ...setup,
+      resposta: result.response.text(),
+    })
+  );
 });
 ```
 
 ### Vantagens da Arquitetura
+
 ✅ **Testável:** Lógica pode ser testada sem chamar IA
 ✅ **Flexível:** Trocar provedor sem mudar código principal
 ✅ **Rápido:** Heurísticas rodam instantaneamente
@@ -444,7 +492,7 @@ NATHIA_CONFIG.triagem = {
   threshold_risco_alto: 0.7,
   threshold_observacao: 0.4,
   intensidade_alerta: 8, // 0-10
-}
+};
 ```
 
 ### Moderação
@@ -455,7 +503,7 @@ NATHIA_CONFIG.moderacao = {
   toxicity_threshold: 0.3,
   auto_approve_threshold: 0.2, // < 0.2 = auto-aprovar
   auto_reject_threshold: 0.8, // > 0.8 = auto-rejeitar
-}
+};
 ```
 
 ### Recomendações
@@ -472,7 +520,7 @@ NATHIA_CONFIG.recomendacoes = {
     trending: 0.1,
   },
   min_match_score: 0.5,
-}
+};
 ```
 
 ---
@@ -480,6 +528,7 @@ NATHIA_CONFIG.recomendacoes = {
 ## Testes Sugeridos
 
 ### Unitários
+
 ```typescript
 // chat.test.ts
 describe('Chat Empático', () => {
@@ -498,11 +547,14 @@ describe('Chat Empático', () => {
 ```
 
 ### Integração
+
 ```typescript
 // onboarding.integration.test.ts
 describe('Fluxo Onboarding Completo', () => {
   it('deve criar starter pack personalizado', async () => {
-    const respostas = [/* respostas mock */];
+    const respostas = [
+      /* respostas mock */
+    ];
     const analise = await analisarRespostas(respostas);
     const pack = await gerarStarterPack(analise.perfil);
 
@@ -514,6 +566,7 @@ describe('Fluxo Onboarding Completo', () => {
 ```
 
 ### E2E
+
 ```typescript
 // nathia.e2e.test.ts
 describe('NAT-IA E2E', () => {
@@ -565,6 +618,7 @@ console.log(status);
 ## Próximos Passos
 
 ### Implementação Imediata
+
 1. ✅ Criar Edge Functions para cada módulo
 2. ✅ Integrar com Supabase para dados
 3. ✅ Conectar ao Gemini API
@@ -572,6 +626,7 @@ console.log(status);
 5. ✅ Implementar analytics dashboard
 
 ### Fase 2 (v1.1)
+
 - [ ] Cache de respostas frequentes
 - [ ] Rate limiting por usuária
 - [ ] Métricas de qualidade de respostas
@@ -579,6 +634,7 @@ console.log(status);
 - [ ] Feedback loop automático
 
 ### Fase 3 (v2.0)
+
 - [ ] Suporte multi-idioma (EN, ES)
 - [ ] Multi-modal (voz, imagem)
 - [ ] Personalização avançada
@@ -590,6 +646,7 @@ console.log(status);
 ## Métricas de Qualidade
 
 ### Código
+
 - ✅ TypeScript strict mode
 - ✅ 100% type-safe
 - ✅ JSDoc em todas as funções públicas
@@ -597,12 +654,14 @@ console.log(status);
 - ✅ Validação de entrada consistente
 
 ### Documentação
+
 - ✅ README completo (17KB)
 - ✅ Exemplos práticos (19KB)
 - ✅ Comentários inline
 - ✅ Tipos auto-documentados
 
 ### Arquitetura
+
 - ✅ Modular (9 módulos independentes)
 - ✅ Agnóstico de IA
 - ✅ Configurável

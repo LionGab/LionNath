@@ -1,14 +1,13 @@
 /**
- * Risk Analyzer - Análise de risco emocional usando Claude API
+ * Risk Analyzer - Análise híbrida de risco emocional
  *
- * Sistema paralelo de análise de risco para detectar crises emocionais
+ * Combina Edge Function segura (Gemini + Claude) com heurísticas locais
+ * para detectar crises emocionais sem expor API keys no cliente.
  */
 
-import axios from 'axios';
 import { getRiskLevel } from './guardrails';
 
-const CLAUDE_API_KEY = process.env.EXPO_PUBLIC_CLAUDE_API_KEY || '';
-const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
+const RISK_CLASSIFIER_FUNCTION = 'risk-classifier';
 
 export interface RiskAnalysis {
   level: number; // 0-10
@@ -18,121 +17,43 @@ export interface RiskAnalysis {
   reasoning: string;
 }
 
-/**
- * System prompt para Claude especializado em saúde mental materna
- */
-const RISK_ANALYSIS_SYSTEM_PROMPT = `Você é especialista em saúde mental materna com foco em detecção de crise.
+type RiskClassifierAction = 'none' | 'consult_doctor' | 'call_samu' | 'call_cvv';
 
-Analise a mensagem e retorne APENAS JSON válido com análise de risco.
-
-NÍVEIS:
-- 0-2: Desabafo normal/saudável
-- 3-4: Estresse elevado mas manejável
-- 5-6: Sobrecarga significativa, monitorar
-- 7-8: Sinais de depressão/ansiedade clínica
-- 9-10: CRISE - suicídio, psicose, risco de harm
-
-FLAGS (use APENAS se houver evidência clara):
-- suicidal_ideation: Ideação suicida ou pensamentos de morte
-- harm_to_baby: Pensamentos de machucar o bebê
-- psychosis: Psicose ou alucinações
-- self_harm: Pensamentos de auto-agressão
-- severe_depression: Depressão severa (não conseguir cuidar do bebê)
-- ppd: Sinais de depressão pós-parto
-- burnout: Burnout materno
-- normal_stress: Estresse normal da maternidade
-
-RECURSOS (recomende baseado em urgência):
-- cvv: Centro de Valorização da Vida (188)
-- caps: Centro de Atenção Psicossocial
-- emergency: Emergência médica (SAMU 192)
-- therapy: Terapia psicológica
-
-Seja preciso mas sensível. Não inferir demais. Isso pode salvar vidas.
-
-Retorne JSON no formato:
-{
-  "level": número (0-10),
-  "flags": ["flag1", "flag2"],
-  "requires_intervention": boolean,
-  "suggested_resources": ["recurso1", "recurso2"],
-  "reasoning": "explicação breve"
-}`;
+interface RiskClassifierResponse {
+  medicalRisk: number;
+  psychologicalRisk: number;
+  urgencyKeywords: string[];
+  recommendedAction: RiskClassifierAction;
+  confidence: number;
+}
 
 /**
- * Analisa risco emocional da mensagem usando Claude API
+ * Analisa risco emocional da mensagem usando Edge Function segura
  */
-export async function analyzeRisk(message: string): Promise<RiskAnalysis> {
+export async function analyzeRisk(message: string, userId?: string): Promise<RiskAnalysis> {
+  const fallback = fallbackRiskAnalysis(message);
+
   try {
-    if (!CLAUDE_API_KEY) {
-      console.warn('CLAUDE_API_KEY não configurada, usando fallback');
-      return fallbackRiskAnalysis(message);
-    }
-
-    const response = await axios.post(
-      CLAUDE_API_URL,
-      {
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 1024,
-        temperature: 0.3, // Consistência
-        system: RISK_ANALYSIS_SYSTEM_PROMPT,
-        messages: [
-          {
-            role: 'user',
-            content: `Analise esta mensagem de uma mãe buscando apoio emocional:\n\n"${message}"`,
-          },
-        ],
+    const { supabase } = await import('@/services/supabase');
+    const { data, error } = await supabase.functions.invoke<RiskClassifierResponse>(RISK_CLASSIFIER_FUNCTION, {
+      body: {
+        message,
+        userId,
       },
-      {
-        headers: {
-          'x-api-key': CLAUDE_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'Content-Type': 'application/json',
-        },
-        timeout: 5000, // 5 segundos timeout
+    });
+
+    if (error || !data) {
+      if (error) {
+        console.error('Risk classifier invocation failed:', error);
       }
-    );
-
-    const content = response.data.content[0].text;
-
-    // Tentar extrair JSON da resposta
-    let analysis: RiskAnalysis;
-    try {
-      // Procurar JSON no texto
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        analysis = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('JSON não encontrado na resposta');
-      }
-    } catch (parseError) {
-      console.error('Erro ao parsear resposta Claude:', parseError);
-      // Usar fallback se não conseguir parsear
-      return fallbackRiskAnalysis(message);
+      return fallback;
     }
 
-    // Validar estrutura
-    if (
-      typeof analysis.level !== 'number' ||
-      !Array.isArray(analysis.flags) ||
-      typeof analysis.requires_intervention !== 'boolean'
-    ) {
-      return fallbackRiskAnalysis(message);
-    }
-
-    // Garantir que level está entre 0-10
-    analysis.level = Math.max(0, Math.min(10, analysis.level));
-
-    // Garantir requires_intervention se level >= 9
-    if (analysis.level >= 9) {
-      analysis.requires_intervention = true;
-    }
-
-    return analysis;
+    const edgeAnalysis = mapClassificationToRiskAnalysis(data, fallback);
+    return mergeRiskAnalyses(fallback, edgeAnalysis);
   } catch (error: any) {
-    console.error('Erro ao analisar risco com Claude:', error);
-    // Usar fallback em caso de erro
-    return fallbackRiskAnalysis(message);
+    console.error('Risk analysis edge invocation error:', error);
+    return fallback;
   }
 }
 
@@ -232,6 +153,93 @@ export function fallbackRiskAnalysis(message: string): RiskAnalysis {
     suggested_resources: suggestedResources.length > 0 ? suggestedResources : [],
     reasoning: `Análise baseada em detecção de padrões: nível ${level} detectado${flags.length > 0 ? ` com flags: ${flags.join(', ')}` : ''}.`,
   };
+}
+
+function mapClassificationToRiskAnalysis(classification: RiskClassifierResponse, baseline: RiskAnalysis): RiskAnalysis {
+  const level = Math.round(Math.max(classification.medicalRisk, classification.psychologicalRisk));
+  const flags = new Set(baseline.flags);
+
+  if (classification.medicalRisk >= 7) {
+    flags.add('medical_emergency');
+  } else if (classification.medicalRisk >= 4) {
+    flags.add('medical_attention');
+  }
+
+  if (classification.psychologicalRisk >= 8) {
+    flags.add('psychological_crisis');
+  } else if (classification.psychologicalRisk >= 5) {
+    flags.add('psychological_distress');
+  }
+
+  for (const keyword of classification.urgencyKeywords) {
+    const normalized = normalizeKeyword(keyword);
+    if (normalized.includes('suicid') || normalized.includes('morrer') || normalized.includes('me matar')) {
+      flags.add('suicidal_ideation');
+    }
+    if (normalized.includes('machucar') && normalized.includes('bebe')) {
+      flags.add('harm_to_baby');
+    }
+    if (normalized.includes('dor') || normalized.includes('sangr') || normalized.includes('desmaio')) {
+      flags.add('acute_pain');
+    }
+  }
+
+  const suggestedResources = new Set(baseline.suggested_resources);
+  switch (classification.recommendedAction) {
+    case 'call_samu':
+      suggestedResources.add('emergency');
+      break;
+    case 'call_cvv':
+      suggestedResources.add('cvv');
+      break;
+    case 'consult_doctor':
+      suggestedResources.add('therapy');
+      suggestedResources.add('medical_followup');
+      break;
+    default:
+      break;
+  }
+
+  const requiresIntervention =
+    level >= 8 ||
+    classification.recommendedAction === 'call_samu' ||
+    classification.recommendedAction === 'call_cvv' ||
+    baseline.requires_intervention;
+
+  const reasoningParts = [
+    `Edge classifier: médico ${classification.medicalRisk.toFixed(1)}, psicológico ${classification.psychologicalRisk.toFixed(
+      1
+    )}, ação "${classification.recommendedAction}"`,
+  ];
+  if (classification.urgencyKeywords.length > 0) {
+    reasoningParts.push(`Palavras-chave críticas: ${classification.urgencyKeywords.join(', ')}`);
+  }
+  reasoningParts.push(baseline.reasoning);
+
+  return {
+    level,
+    flags: Array.from(flags),
+    requires_intervention: requiresIntervention,
+    suggested_resources: Array.from(suggestedResources),
+    reasoning: reasoningParts.join(' | '),
+  };
+}
+
+function mergeRiskAnalyses(base: RiskAnalysis, edge: RiskAnalysis): RiskAnalysis {
+  return {
+    level: Math.max(base.level, edge.level),
+    flags: Array.from(new Set([...base.flags, ...edge.flags])),
+    requires_intervention: base.requires_intervention || edge.requires_intervention,
+    suggested_resources: Array.from(new Set([...base.suggested_resources, ...edge.suggested_resources])),
+    reasoning: `Análise híbrida → ${edge.reasoning}`,
+  };
+}
+
+function normalizeKeyword(keyword: string): string {
+  return keyword
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 }
 
 /**

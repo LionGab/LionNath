@@ -380,4 +380,3 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.bold as any,
   },
 });
-

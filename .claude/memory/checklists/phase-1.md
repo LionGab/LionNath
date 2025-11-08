@@ -8,11 +8,13 @@
 ## 🔐 API KEYS (2-4h)
 
 - [ ] **Verificar histórico Git**
+
   ```bash
   git log --all --full-history -- .env
   ```
 
 - [ ] **Se encontrado, limpar histórico**
+
   ```bash
   bfg --delete-files .env
   git reflog expire --expire=now --all
@@ -34,6 +36,7 @@
   - [ ] Nova Supabase Anon Key
 
 - [ ] **Configurar Edge Functions**
+
   ```bash
   cd supabase/functions
   cp .env.example .env
@@ -41,6 +44,7 @@
   ```
 
 - [ ] **Atualizar .env do projeto**
+
   ```env
   EXPO_PUBLIC_SUPABASE_URL=...
   EXPO_PUBLIC_SUPABASE_ANON_KEY=<nova>
@@ -71,6 +75,7 @@
   - Executar
 
 - [ ] **Validar correções**
+
   ```sql
   -- Verificar FKs
   SELECT conname FROM pg_constraint
@@ -87,6 +92,7 @@
 ## ⚙️ CONFIGURAÇÕES (30min)
 
 - [ ] **Habilitar JWT em moderacao**
+
   ```toml
   # supabase/config.toml
   [functions.nathia-moderacao]
@@ -105,6 +111,7 @@
 ## 🧪 TESTES (1h)
 
 - [ ] **Iniciar dev server**
+
   ```bash
   pnpm dev
   ```
@@ -115,6 +122,7 @@
   - [ ] Conferir que não há erro de API key
 
 - [ ] **Testar Edge Functions diretamente**
+
   ```bash
   curl -X POST https://mnszbkeuerjcevjvdqme.supabase.co/functions/v1/nathia-chat \
     -H "Authorization: Bearer $ANON_KEY" \

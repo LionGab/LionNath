@@ -51,6 +51,7 @@ scripts/
 **Arquivo:** `src/services/security/pii-protection.ts`
 
 #### Funcionalidades:
+
 - ✅ Detecção e anonimização de CPF (com validação de dígito verificador)
 - ✅ Detecção de telefones brasileiros (DDD + número)
 - ✅ Detecção de emails
@@ -62,17 +63,19 @@ scripts/
 - ✅ Detecção heurística de nomes completos
 
 #### Regex Patterns Brasileiros:
+
 ```typescript
-CPF: /\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g
-PHONE: /(?:\+55\s?)?(?:\(?\d{2}\)?\s?)?\d{4,5}-?\d{4}\b/g
-EMAIL: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g
+CPF: /\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g;
+PHONE: /(?:\+55\s?)?(?:\(?\d{2}\)?\s?)?\d{4,5}-?\d{4}\b/g;
+EMAIL: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
 ```
 
 #### Exemplo de Uso:
+
 ```typescript
 import { anonimizarMensagem } from '@/services/security';
 
-const mensagem = "Meu CPF é 123.456.789-10";
+const mensagem = 'Meu CPF é 123.456.789-10';
 const result = anonimizarMensagem(mensagem);
 // result.sanitized = "Meu CPF é [CPF-REMOVIDO]"
 // result.hasPII = true
@@ -87,22 +90,24 @@ const result = anonimizarMensagem(mensagem);
 
 #### Limites Configurados:
 
-| Endpoint | Limite | Janela | Bloqueio |
-|----------|--------|--------|----------|
-| `chat:message` | 20 req | 1 hora | 30 min |
-| `content:curation` | 100 req | 1 hora | 15 min |
-| `voice:interaction` | 15 req | 1 hora | 30 min |
-| `auth:login` | 5 req | 15 min | 1 hora |
-| `api:general` | 200 req | 1 hora | 10 min |
-| `data:export` | 3 req | 24 horas | 24 horas |
+| Endpoint            | Limite  | Janela   | Bloqueio |
+| ------------------- | ------- | -------- | -------- |
+| `chat:message`      | 20 req  | 1 hora   | 30 min   |
+| `content:curation`  | 100 req | 1 hora   | 15 min   |
+| `voice:interaction` | 15 req  | 1 hora   | 30 min   |
+| `auth:login`        | 5 req   | 15 min   | 1 hora   |
+| `api:general`       | 200 req | 1 hora   | 10 min   |
+| `data:export`       | 3 req   | 24 horas | 24 horas |
 
 #### Algoritmo: Sliding Window
+
 - ✅ Mantém timestamps de todas as requisições
 - ✅ Janela deslizante (não reset fixo)
 - ✅ Bloqueio temporário após exceder limite
 - ✅ Storage: Supabase + fallback em memória
 
 #### Exemplo de Uso:
+
 ```typescript
 import { checkRateLimit } from '@/services/security';
 
@@ -110,7 +115,7 @@ const result = await checkRateLimit(userId, 'chat:message');
 if (!result.allowed) {
   return res.status(429).json({
     error: 'Rate limit exceeded',
-    retryAfter: result.retryAfter
+    retryAfter: result.retryAfter,
   });
 }
 ```
@@ -149,6 +154,7 @@ if (!result.allowed) {
    - Máximo: 5000 caracteres
 
 #### Whitelist Médica:
+
 ```typescript
 // Termos médicos que NÃO devem ser bloqueados
 const MEDICAL_TERMS = [
@@ -159,6 +165,7 @@ const MEDICAL_TERMS = [
 ```
 
 #### Exemplo de Uso:
+
 ```typescript
 import { validarConteudo } from '@/services/security';
 
@@ -177,33 +184,37 @@ if (!result.allowed) {
 
 #### Categorias de Risco:
 
-| Categoria | Score | Urgência | Ação |
-|-----------|-------|----------|------|
-| Ideação Suicida | 95 | EMERGENCY | Contato imediato |
-| Psicose Pós-Parto | 95 | EMERGENCY | Contato imediato |
-| Autoagressão | 90 | URGENT | Escalar moderador |
-| Violência/Abuso | 85 | URGENT | Escalar moderador |
-| Depressão Severa | 75 | ELEVATED | Flag para revisão |
-| Ataque de Pânico | 70 | ELEVATED | Monitorar |
+| Categoria         | Score | Urgência  | Ação              |
+| ----------------- | ----- | --------- | ----------------- |
+| Ideação Suicida   | 95    | EMERGENCY | Contato imediato  |
+| Psicose Pós-Parto | 95    | EMERGENCY | Contato imediato  |
+| Autoagressão      | 90    | URGENT    | Escalar moderador |
+| Violência/Abuso   | 85    | URGENT    | Escalar moderador |
+| Depressão Severa  | 75    | ELEVATED  | Flag para revisão |
+| Ataque de Pânico  | 70    | ELEVATED  | Monitorar         |
 
 #### Palavras-chave de Risco:
 
 **Autoagressão:**
+
 - "me matar", "suicídio", "acabar com tudo"
 - "não aguento mais", "quero morrer"
 - "me cortar", "machucar a mim"
 
 **Psicose Pós-Parto (CRÍTICO):**
+
 - "machucar o bebê", "vozes mandando"
 - "não reconheço meu bebê", "sou uma ameaça"
 - "não sou a mãe", "perigo para o bebê"
 
 **Violência:**
+
 - "ele me bate", "sofro violência"
 - "me agride", "abuso físico"
 - "estupro", "ameaça de morte"
 
 #### Recursos de Emergência:
+
 ```typescript
 const EMERGENCY_RESOURCES = {
   CVV: { phone: '188', available: '24/7' },
@@ -214,6 +225,7 @@ const EMERGENCY_RESOURCES = {
 ```
 
 #### Exemplo de Uso:
+
 ```typescript
 import { analisarRisco, gerarRespostaDeRisco } from '@/services/security';
 
@@ -234,23 +246,35 @@ if (risk.urgency === UrgencyLevel.EMERGENCY) {
 **Arquivo:** `src/services/security/audit-log.ts`
 
 #### Características:
+
 - ✅ **Sem PII nos logs** (apenas metadados)
 - ✅ Batch processing (flush a cada 5 segundos ou 100 logs)
 - ✅ Retenção: 90 dias (LGPD compliance)
 - ✅ Campos: timestamp, user_id, action_type, endpoint, flags
 
 #### Tipos de Ação:
+
 ```typescript
 enum AuditActionType {
-  USER_LOGIN, USER_LOGOUT, USER_REGISTER,
-  CHAT_MESSAGE, CHAT_RESPONSE, VOICE_INTERACTION,
-  CONTENT_FLAGGED, CONTENT_BLOCKED, RISK_DETECTED,
-  DATA_ACCESS, DATA_EXPORT, DATA_DELETE,
-  RATE_LIMIT_HIT, SECURITY_ALERT
+  USER_LOGIN,
+  USER_LOGOUT,
+  USER_REGISTER,
+  CHAT_MESSAGE,
+  CHAT_RESPONSE,
+  VOICE_INTERACTION,
+  CONTENT_FLAGGED,
+  CONTENT_BLOCKED,
+  RISK_DETECTED,
+  DATA_ACCESS,
+  DATA_EXPORT,
+  DATA_DELETE,
+  RATE_LIMIT_HIT,
+  SECURITY_ALERT,
 }
 ```
 
 #### Exemplo de Uso:
+
 ```typescript
 import { logChatMessage, logRiskDetected } from '@/services/security';
 
@@ -259,7 +283,7 @@ await logChatMessage(userId, {
   messageLength: 150,
   riskScore: 45,
   piiDetected: false,
-  latencyMs: 234
+  latencyMs: 234,
 });
 ```
 
@@ -270,6 +294,7 @@ await logChatMessage(userId, {
 **Arquivo:** `src/services/security/encryption.ts`
 
 #### Especificações:
+
 - **Algoritmo:** AES-256-GCM
 - **Key Length:** 256 bits
 - **IV Length:** 128 bits
@@ -277,6 +302,7 @@ await logChatMessage(userId, {
 - **Rotação de Chaves:** A cada 90 dias
 
 #### Funcionalidades:
+
 - ✅ Criptografia end-to-end de mensagens sensíveis
 - ✅ Chave única por usuária
 - ✅ Armazenamento seguro de chaves (com KMS em produção)
@@ -284,6 +310,7 @@ await logChatMessage(userId, {
 - ✅ Hash SHA-256 para integridade
 
 #### Exemplo de Uso:
+
 ```typescript
 import { encryptMessage, decryptMessage } from '@/services/security';
 
@@ -292,12 +319,7 @@ const encrypted = await encryptMessage(userId, 'mensagem sensível');
 // { encrypted, iv, authTag, keyId }
 
 // Descriptografar
-const decrypted = await decryptMessage(
-  userId,
-  encrypted.encrypted,
-  encrypted.iv,
-  encrypted.keyId
-);
+const decrypted = await decryptMessage(userId, encrypted.encrypted, encrypted.iv, encrypted.keyId);
 ```
 
 ---
@@ -307,6 +329,7 @@ const decrypted = await decryptMessage(
 **Arquivo:** `src/services/security/env-validation.ts`
 
 #### Variáveis Obrigatórias:
+
 ```
 SUPABASE_URL
 SUPABASE_ANON_KEY
@@ -316,6 +339,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 ```
 
 #### Variáveis Opcionais:
+
 ```
 REDIS_URL (fallback: Supabase)
 SENTRY_DSN (error tracking)
@@ -324,6 +348,7 @@ ENABLE_ENCRYPTION (true/false)
 ```
 
 #### Health Check:
+
 ```typescript
 import { securityHealthCheck } from '@/services/security';
 
@@ -401,15 +426,15 @@ npx ts-node scripts/test-security.ts
 import { anonimizarMensagem } from '@/services/security';
 
 // Teste 1: CPF
-const result1 = anonimizarMensagem("Meu CPF é 123.456.789-10");
+const result1 = anonimizarMensagem('Meu CPF é 123.456.789-10');
 console.log(result1.sanitized); // "Meu CPF é [CPF-REMOVIDO]"
 
 // Teste 2: Telefone
-const result2 = anonimizarMensagem("Me liga (11) 98765-4321");
+const result2 = anonimizarMensagem('Me liga (11) 98765-4321');
 console.log(result2.sanitized); // "Me liga [TELEFONE-REMOVIDO]"
 
 // Teste 3: Email
-const result3 = anonimizarMensagem("Email: teste@exemplo.com");
+const result3 = anonimizarMensagem('Email: teste@exemplo.com');
 console.log(result3.sanitized); // "Email: [EMAIL-REMOVIDO]"
 ```
 
@@ -437,11 +462,11 @@ for (let i = 0; i < 25; i++) {
 import { validarConteudo } from '@/services/security';
 
 // Teste 1: Conteúdo válido
-const valid = validarConteudo("Preciso de ajuda com amamentação");
+const valid = validarConteudo('Preciso de ajuda com amamentação');
 console.log(valid.allowed); // true
 
 // Teste 2: Spam
-const spam = validarConteudo("COMPRE AGORA! Clique aqui!");
+const spam = validarConteudo('COMPRE AGORA! Clique aqui!');
 console.log(spam.allowed); // false
 console.log(spam.reasons); // [{ type: 'spam', ... }]
 ```
@@ -452,7 +477,7 @@ console.log(spam.reasons); // [{ type: 'spam', ... }]
 import { analisarRisco, gerarRespostaDeRisco } from '@/services/security';
 
 // Teste 1: Risco crítico
-const risk = analisarRisco("Quero me matar, não aguento mais");
+const risk = analisarRisco('Quero me matar, não aguento mais');
 console.log(risk.level); // 'critical'
 console.log(risk.urgency); // 'emergency'
 
@@ -467,19 +492,14 @@ console.log(resposta.bloqueiaInteracao); // true
 import { encryptMessage, decryptMessage } from '@/services/security';
 
 const userId = 'test-user';
-const mensagem = "Mensagem confidencial";
+const mensagem = 'Mensagem confidencial';
 
 // Criptografar
 const encrypted = await encryptMessage(userId, mensagem);
 console.log(encrypted.encrypted); // String base64
 
 // Descriptografar
-const decrypted = await decryptMessage(
-  userId,
-  encrypted.encrypted,
-  encrypted.iv,
-  encrypted.keyId
-);
+const decrypted = await decryptMessage(userId, encrypted.encrypted, encrypted.iv, encrypted.keyId);
 console.log(decrypted.decrypted); // "Mensagem confidencial"
 ```
 
@@ -563,17 +583,20 @@ console.log(report);
 ## 🚀 Próximos Passos
 
 ### Fase 1: Implementação Básica ✅ (CONCLUÍDO)
+
 - [x] Todos os módulos de segurança
 - [x] Políticas RLS
 - [x] Suite de testes
 
 ### Fase 2: Integrações
+
 - [ ] Integrar com NAT-IA chat endpoint
 - [ ] Integrar com voice interaction
 - [ ] Integrar com curadoria de conteúdo
 - [ ] Dashboard de moderação
 
 ### Fase 3: LGPD Full Compliance
+
 - [ ] Termo de consentimento
 - [ ] Política de privacidade
 - [ ] Endpoint de exportação de dados
@@ -581,6 +604,7 @@ console.log(report);
 - [ ] Designar DPO
 
 ### Fase 4: Produção
+
 - [ ] Migrar para KMS (AWS/Google Cloud)
 - [ ] Setup Redis para rate limiting
 - [ ] Configurar Sentry para monitoramento

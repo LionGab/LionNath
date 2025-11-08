@@ -26,6 +26,7 @@ Sistema completo de IA conversacional empática para o app Nossa Maternidade foi
 ### ✅ Implementadas (5 funções)
 
 #### 1.1. nathia-chat - Chat Principal
+
 **Caminho**: `supabase/functions/nathia-chat/index.ts`
 
 - Sistema de conversação empática
@@ -37,6 +38,7 @@ Sistema completo de IA conversacional empática para o app Nossa Maternidade foi
 - **Latência**: <2.5s p50
 
 **Input**:
+
 ```json
 {
   "user_id": "uuid",
@@ -46,6 +48,7 @@ Sistema completo de IA conversacional empática para o app Nossa Maternidade foi
 ```
 
 **Output**:
+
 ```json
 {
   "reply": "Resposta empática...",
@@ -59,6 +62,7 @@ Sistema completo de IA conversacional empática para o app Nossa Maternidade foi
 ---
 
 #### 1.2. nathia-curadoria - Curadoria de Conteúdo
+
 **Caminho**: `supabase/functions/nathia-curadoria/index.ts`
 
 - 3 tipos: resumo, 5min, checklist
@@ -70,6 +74,7 @@ Sistema completo de IA conversacional empática para o app Nossa Maternidade foi
 ---
 
 #### 1.3. nathia-moderacao - Moderação Assistida
+
 **Caminho**: `supabase/functions/nathia-moderacao/index.ts`
 
 - Classifica: julgamento, toxidade, sensível
@@ -80,6 +85,7 @@ Sistema completo de IA conversacional empática para o app Nossa Maternidade foi
 ---
 
 #### 1.4. nathia-onboarding - Onboarding Inteligente
+
 **Caminho**: `supabase/functions/nathia-onboarding/index.ts`
 
 - Analisa 4-6 respostas
@@ -90,6 +96,7 @@ Sistema completo de IA conversacional empática para o app Nossa Maternidade foi
 ---
 
 #### 1.5. nathia-recs - Recomendações
+
 **Caminho**: `supabase/functions/nathia-recs/index.ts`
 
 - Análise de histórico (7 dias)
@@ -126,43 +133,52 @@ Sistema completo de IA conversacional empática para o app Nossa Maternidade foi
 **Caminho**: `src/services/nathia/`
 
 #### 2.1. chat.ts
+
 Interface: `chatEmpático(mensagem, contexto) → {resposta, ações}`
 
 #### 2.2. triagem.ts
+
 - `classificarSentimento()` → sentimento + intensidade
 - `detectarRisco()` → nivel + sinais
 - `acionarSOS()` → moderação + CVV/SAMU
 
 #### 2.3. onboarding.ts
+
 - `analisarRespostas()` → stage, concerns, perfil
 - `gerarStarterPack()` → grupos, conteúdo, objetivo
 
 #### 2.4. curadoria.ts
+
 - `resumirConteudo()` → 5 linhas
 - `criarCincoMinutos()` → 5 bullets
 - `gerarChecklist()` → max 6 itens
 
 #### 2.5. moderacao.ts
+
 - `detectarJulgamento()` → score 0-1
 - `sugerirReescrita()` → mensagem gentil
 - `gerarRationale()` → explicação
 
 #### 2.6. recomendacoes.ts
+
 - `recomendarConteudo()` → itens + justificativa
 - `recomendarCirculo()` → match_score
 - `recomendarHabito()` → micro_objetivos
 
 #### 2.7. habitos.ts
+
 - `criarMicroObjetivo()` → passos + prazo
 - `gerarMensagemMotivacional()` → NÃO comparativa
 - `trackProgresso()` → streak + completude
 
 #### 2.8. analytics.ts (sem PII)
+
 - `extrairRotulos()` → tema, humor, fase
 - `anonimizar()` → remove PII
 - `gerarMetricas()` → agregados
 
 #### 2.9. copys.ts
+
 - `gerarPushNotification()` → titulo + corpo
 - `gerarEmail()` → subject + html
 - `gerarAppStoreCopy()` → [REVISAR_HUMANO: true]
@@ -183,35 +199,43 @@ Interface: `chatEmpático(mensagem, contexto) → {resposta, ações}`
 **Caminho**: `src/services/security/`
 
 #### 3.1. pii-protection.ts
+
 - `anonimizarMensagem()` → remove CPF, telefone, etc
 - Regex patterns brasileiros
 
 #### 3.2. rate-limiter.ts
+
 - Sliding window algorithm
 - 20 req/h chat, 100 req/h curadoria
 
 #### 3.3. content-policy.ts
+
 - Detecta spam, comercial, ódio
 - Regras de comunidade
 
 #### 3.4. risk-detection.ts
+
 - Autoagressão, crise, pânico
 - Escalação automática
 
 #### 3.5. audit-log.ts
+
 - Apenas metadados (sem conteúdo)
 - Retenção: 90 dias
 
 #### 3.6. RLS Policies (SQL)
+
 - `nathia_conversations` - user isolado
 - `nathia_moderation_queue` - apenas moderadores
 - `nathia_analytics` - agregado, sem PII
 
 #### 3.7. encryption.ts
+
 - E2E para mensagens sensíveis
 - Chave única por usuária
 
 #### 3.8. Environment validation
+
 - Valida env vars no startup
 - Health check endpoint
 
@@ -231,16 +255,20 @@ Interface: `chatEmpático(mensagem, contexto) → {resposta, ações}`
 **Caminho**: `src/`
 
 #### Serviços (1)
+
 - `services/nathia-client.ts` - Cliente HTTP completo
 
 #### Hooks (2)
+
 - `hooks/useNathia.ts` - Hook principal de chat
 - `hooks/useNathiaActions.ts` - Processamento de actions
 
 #### Contextos (1)
+
 - `contexts/NathiaContext.tsx` - Contexto global
 
 #### Componentes (5)
+
 - `components/nathia/ChatMessage.tsx` - Mensagem individual
 - `components/nathia/SOSButton.tsx` - Botão emergência
 - `components/nathia/QuickReplies.tsx` - Sugestões rápidas
@@ -248,11 +276,13 @@ Interface: `chatEmpático(mensagem, contexto) → {resposta, ações}`
 - `components/nathia/RecommendationCard.tsx` - Card recomendação
 
 #### Telas (3)
+
 - `screens/NathiaChat.tsx` - Chat principal
 - `screens/NathiaOnboarding.tsx` - Onboarding + Starter Pack
 - `screens/NathiaRecommendations.tsx` - Recomendações
 
 #### Testes (3)
+
 - `tests/nathia/nathia-client.test.ts`
 - `tests/nathia/useNathia.test.ts`
 - `tests/nathia/ChatMessage.test.tsx`
@@ -275,37 +305,44 @@ Interface: `chatEmpático(mensagem, contexto) → {resposta, ações}`
 **Caminho**: `src/services/metrics/`
 
 #### 5.1. quality-metrics.ts
+
 - Utilidade (≥85% thumbs up)
 - Deflexão (≥60%)
 - CSAT (≥4.5/5)
 - Conversão (≥35%)
 
 #### 5.2. performance-metrics.ts
+
 - Latência P50 (<2.5s), P95 (<5s)
 - Taxa de erro (<1%)
 - Tokens/Custo
 
 #### 5.3. safety-metrics.ts
+
 - Riscos detectados (Precision ≥90%, Recall ≥85%)
 - Moderação manual (<10min)
 - Eventos SOS
 
 #### 5.4. usage-analytics.ts (sem PII)
+
 - Temas frequentes
 - Tendência de sentimento
 - Horários de pico
 - Fase usuárias
 
 #### 5.5. cost-tracker.ts
+
 - Custo por modelo
 - Estimativa mensal ($35-45/mês)
 - Sugestões de economia (-30%)
 
 #### 5.6. alerts.ts
+
 - Quality drop, latency spike, cost spike
 - Slack, Email, SMS
 
 #### 5.7. ab-testing.ts
+
 - Criar experimentos
 - Análise estatística (teste t, p-value)
 - Recomendações automáticas
@@ -334,10 +371,12 @@ Interface: `chatEmpático(mensagem, contexto) → {resposta, ações}`
 ### ✅ Criadas (10 documentos, ~10,000 linhas)
 
 #### Edge Functions
+
 - `supabase/functions/README.md` - Visão geral + exemplos
 - `supabase/functions/DEPLOYMENT.md` - Guia de deploy
 
 #### Cliente React Native
+
 - `docs/NATHIA_INTEGRATION_GUIDE.md` - Guia completo
 - `docs/NATHIA_QUICK_START.md` - Setup rápido
 - `docs/NATHIA_ARCHITECTURE.md` - Arquitetura detalhada
@@ -345,12 +384,15 @@ Interface: `chatEmpático(mensagem, contexto) → {resposta, ações}`
 - `src/components/nathia/README.md` - Componentes
 
 #### Métricas
+
 - `docs/metricas-nathia.md` - Sistema de métricas
 
 #### Segurança
+
 - `docs/SECURITY_NATHIA.md` - Checklist LGPD
 
 #### Este Documento
+
 - `NATHIA_COMPLETE_SYSTEM.md` - Resumo executivo
 
 ---
@@ -460,17 +502,20 @@ Interface: `chatEmpático(mensagem, contexto) → {resposta, ações}`
 ### Detecção de Risco ✅
 
 **4 Níveis**:
+
 - `safe` - Conversa normal
 - `caution` - Menciona sintomas leves
 - `warning` - Sintomas preocupantes, sugerir médico
 - `urgent` - Emergência, exibir SOS imediatamente
 
 **Palavras-chave**:
+
 - Emergência médica: sangramento intenso, contrações regulares, etc
 - Saúde mental: pensamentos suicidas, pânico, etc
 - Violência: abuso, violência doméstica
 
 **Escalação**:
+
 - `urgent` → SOS automático + fila moderação
 - `warning` → Sugestão de recurso + disclaimer
 - `caution` → Disclaimer + continue conversando
@@ -481,26 +526,27 @@ Interface: `chatEmpático(mensagem, contexto) → {resposta, ações}`
 
 ### SLOs (Service Level Objectives)
 
-| Métrica | Target | Status |
-|---------|--------|--------|
-| Latência P50 | <2.5s | ✅ Configurado |
-| Latência P95 | <5s | ✅ Configurado |
-| Taxa de Erro | <1% | ✅ Monitorado |
-| Disponibilidade | ≥99.5% | ✅ Monitorado |
+| Métrica         | Target | Status         |
+| --------------- | ------ | -------------- |
+| Latência P50    | <2.5s  | ✅ Configurado |
+| Latência P95    | <5s    | ✅ Configurado |
+| Taxa de Erro    | <1%    | ✅ Monitorado  |
+| Disponibilidade | ≥99.5% | ✅ Monitorado  |
 
 ### Custos Estimados
 
 **Cenário: 1000 usuárias, 5 msg/usuária/mês**
 
-| Componente | Custo/Mês |
-|------------|-----------|
-| Gemini 2.0 Flash | $2-9 |
-| Supabase Pro | $25 |
-| Sentry | $5 |
-| Outros | $5 |
-| **TOTAL** | **$35-45/mês** |
+| Componente       | Custo/Mês      |
+| ---------------- | -------------- |
+| Gemini 2.0 Flash | $2-9           |
+| Supabase Pro     | $25            |
+| Sentry           | $5             |
+| Outros           | $5             |
+| **TOTAL**        | **$35-45/mês** |
 
 **Otimizações possíveis (-30%)**:
+
 - Cache de contexto Gemini (-$15/mês)
 - Otimizar prompts (-$8/mês)
 - Rate limiting inteligente (-$5/mês)
@@ -509,13 +555,13 @@ Interface: `chatEmpático(mensagem, contexto) → {resposta, ações}`
 
 ## Qualidade e Metas
 
-| Métrica | Meta | Como Medir |
-|---------|------|------------|
-| **Utilidade** | ≥85% thumbs up | Feedback em cada mensagem |
-| **Deflexão** | ≥60% sem humano | Sessões resolvidas / total |
-| **CSAT** | ≥4.5/5 | Survey pós-conversa |
-| **Conversão** | ≥35% | Actions completadas / sugeridas |
-| **Acolhimento** | Qualitativo | Análise de sentimento + NPS |
+| Métrica         | Meta            | Como Medir                      |
+| --------------- | --------------- | ------------------------------- |
+| **Utilidade**   | ≥85% thumbs up  | Feedback em cada mensagem       |
+| **Deflexão**    | ≥60% sem humano | Sessões resolvidas / total      |
+| **CSAT**        | ≥4.5/5          | Survey pós-conversa             |
+| **Conversão**   | ≥35%            | Actions completadas / sugeridas |
+| **Acolhimento** | Qualitativo     | Análise de sentimento + NPS     |
 
 ---
 
@@ -725,24 +771,25 @@ LionNath-2/
 
 ## Resumo de Linhas de Código
 
-| Categoria | Arquivos | Linhas |
-|-----------|----------|--------|
-| **Edge Functions** | 9 | ~2,000 |
-| **Módulos Core** | 13 | ~2,500 |
-| **Segurança** | 8 | ~1,500 |
-| **Cliente RN** | 13 | ~3,400 |
-| **Métricas** | 7 | ~2,000 |
-| **Testes** | 3 | ~150 |
-| **SQL Migrations** | 2 | ~1,000 |
-| **Documentação** | 10 | ~10,000 |
-| **Scripts** | 3 | ~800 |
-| **TOTAL** | **68** | **~23,350** |
+| Categoria          | Arquivos | Linhas      |
+| ------------------ | -------- | ----------- |
+| **Edge Functions** | 9        | ~2,000      |
+| **Módulos Core**   | 13       | ~2,500      |
+| **Segurança**      | 8        | ~1,500      |
+| **Cliente RN**     | 13       | ~3,400      |
+| **Métricas**       | 7        | ~2,000      |
+| **Testes**         | 3        | ~150        |
+| **SQL Migrations** | 2        | ~1,000      |
+| **Documentação**   | 10       | ~10,000     |
+| **Scripts**        | 3        | ~800        |
+| **TOTAL**          | **68**   | **~23,350** |
 
 ---
 
 ## Checklist de Deploy
 
 ### Backend
+
 - [ ] Criar projeto Supabase (ou usar existente)
 - [ ] Configurar Gemini API Key
 - [ ] Executar migrations (2 arquivos)
@@ -754,6 +801,7 @@ LionNath-2/
 - [ ] Configurar cron jobs (monitores, relatórios)
 
 ### Frontend
+
 - [ ] Configurar .env (SUPABASE_URL, ANON_KEY)
 - [ ] Integrar NathiaContext no App.tsx
 - [ ] Adicionar rotas de navegação (3 telas)
@@ -767,6 +815,7 @@ LionNath-2/
 - [ ] Build production (iOS + Android)
 
 ### Monitoramento
+
 - [ ] Dashboard admin (opcional, criar)
 - [ ] Configurar Slack webhooks
 - [ ] Configurar emails de alerta
@@ -775,6 +824,7 @@ LionNath-2/
 - [ ] Validar relatórios semanais
 
 ### Segurança
+
 - [ ] Revisar RLS policies
 - [ ] Validar anonimização de PII
 - [ ] Teste de rate limiting
@@ -783,6 +833,7 @@ LionNath-2/
 - [ ] Configurar logs de auditoria
 
 ### Qualidade
+
 - [ ] Definir metas de qualidade (utilidade, deflexão, etc)
 - [ ] Configurar feedback thumbs up/down
 - [ ] Configurar CSAT survey
@@ -795,6 +846,7 @@ LionNath-2/
 ## Suporte e Recursos
 
 ### Documentação
+
 - [Guia de Integração](./docs/NATHIA_INTEGRATION_GUIDE.md)
 - [Quick Start](./docs/NATHIA_QUICK_START.md)
 - [Arquitetura](./docs/NATHIA_ARCHITECTURE.md)
@@ -802,11 +854,13 @@ LionNath-2/
 - [Métricas](./docs/metricas-nathia.md)
 
 ### APIs
+
 - [Gemini 2.0 Flash Docs](https://ai.google.dev/gemini-api/docs)
 - [Supabase Edge Functions](https://supabase.com/docs/guides/functions)
 - [Supabase RLS](https://supabase.com/docs/guides/auth/row-level-security)
 
 ### Contato
+
 - **Desenvolvedor**: Claude (Anthropic) + Agentes especializados
 - **Executor**: Gemini 2.0 Flash
 - **Data**: 2025-11-07
@@ -819,6 +873,7 @@ LionNath-2/
 ✅ **Sistema NAT-IA 100% completo e pronto para deploy**
 
 Todas as 9 funcionalidades foram implementadas com excelência:
+
 1. ✅ Chat empático (nathia-chat)
 2. ✅ Triagem emocional & risco (safety.ts)
 3. ✅ Onboarding inteligente (nathia-onboarding)
@@ -830,12 +885,14 @@ Todas as 9 funcionalidades foram implementadas com excelência:
 9. ✅ Copys operacionais (copys.ts)
 
 **Plus**:
+
 - ✅ Sistema de segurança completo (LGPD)
 - ✅ Sistema de métricas completo (7 módulos)
 - ✅ Cliente React Native completo (13 componentes)
 - ✅ Documentação extensiva (~10,000 linhas)
 
 **Pronto para**:
+
 - Deploy em produção
 - Testes beta com usuários reais
 - Monitoramento contínuo

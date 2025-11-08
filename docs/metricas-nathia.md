@@ -37,9 +37,11 @@ O sistema de métricas NAT-IA fornece visibilidade completa sobre:
 ### 1. Quality Metrics (Qualidade)
 
 #### 1.1 Utilidade (Thumbs Up/Down)
+
 - **Meta**: ≥85% thumbs up
 - **Rastreamento**: `trackUtilidade(message_id, session_id, 'up'|'down')`
 - **Uso**:
+
 ```typescript
 import { trackUtilidade } from '@/services/metrics';
 
@@ -52,9 +54,11 @@ await trackUtilidade(
 ```
 
 #### 1.2 Deflexão (Resolvido sem Humano)
+
 - **Meta**: ≥60%
 - **Rastreamento**: `trackDeflexao(session_id, resolvido, tempo_min)`
 - **Uso**:
+
 ```typescript
 await trackDeflexao(
   session.id,
@@ -65,9 +69,11 @@ await trackDeflexao(
 ```
 
 #### 1.3 CSAT (Customer Satisfaction)
+
 - **Meta**: ≥4.5/5.0
 - **Rastreamento**: `trackAcolhimento(session_id, csat, nps?, comentario?)`
 - **Uso**:
+
 ```typescript
 await trackAcolhimento(
   session.id,
@@ -78,9 +84,11 @@ await trackAcolhimento(
 ```
 
 #### 1.4 Conversão (Ações Completadas)
+
 - **Meta**: ≥35%
 - **Rastreamento**: `trackConversao(session_id, action_type, completed)`
 - **Uso**:
+
 ```typescript
 await trackConversao(
   session.id,
@@ -92,9 +100,11 @@ await trackConversao(
 ### 2. Performance Metrics
 
 #### 2.1 Latência
+
 - **SLO**: p50 < 2.5s, p95 < 5s
 - **Rastreamento**: `trackLatencia(endpoint, latency_ms)`
 - **Uso**:
+
 ```typescript
 const start = Date.now();
 const response = await chatWithNATIA(message, context);
@@ -104,8 +114,10 @@ await trackLatencia('nathia-chat', latency);
 ```
 
 #### 2.2 Tokens e Custos
+
 - **Rastreamento**: `trackTokens(model, input_tokens, output_tokens, session_id)`
 - **Uso**:
+
 ```typescript
 await trackTokens(
   'gemini-2.0-flash',
@@ -116,27 +128,26 @@ await trackTokens(
 ```
 
 #### 2.3 Erros
+
 - **SLO**: < 1% taxa de erro
 - **Rastreamento**: `trackError(endpoint, type, message, stack?)`
 - **Uso**:
+
 ```typescript
 try {
   await chatWithNATIA(message, context);
 } catch (error) {
-  await trackError(
-    'nathia-chat',
-    error.name,
-    error.message,
-    error.stack
-  );
+  await trackError('nathia-chat', error.name, error.message, error.stack);
 }
 ```
 
 ### 3. Safety Metrics (Segurança)
 
 #### 3.1 Detecção de Riscos
+
 - **Rastreamento**: `trackRiscoDetectado(session_id, nivel, sinais, acao)`
 - **Uso**:
+
 ```typescript
 await trackRiscoDetectado(
   session.id,
@@ -147,8 +158,10 @@ await trackRiscoDetectado(
 ```
 
 #### 3.2 Moderação Manual
+
 - **Rastreamento**: `trackModeracaoManual(message_id, decisao, tempo_min)`
 - **Uso**:
+
 ```typescript
 await trackModeracaoManual(
   message.id,
@@ -160,23 +173,21 @@ await trackModeracaoManual(
 ```
 
 #### 3.3 Eventos SOS
+
 - **Rastreamento**: `trackSOS(user_id, tipo, urgencia, fase, recurso)`
 - **Uso**:
+
 ```typescript
-await trackSOS(
-  user.id,
-  'saude_fisica',
-  'emergencia',
-  'gestante',
-  'samu'
-);
+await trackSOS(user.id, 'saude_fisica', 'emergencia', 'gestante', 'samu');
 ```
 
 ### 4. Usage Analytics
 
 #### 4.1 Temas
+
 - **Rastreamento**: `trackTema(session_id, tema, categoria)`
 - **Uso**:
+
 ```typescript
 await trackTema(
   session.id,
@@ -186,8 +197,10 @@ await trackTema(
 ```
 
 #### 4.2 Sentimento
+
 - **Rastreamento**: `trackSentimento(session_id, score)`
 - **Uso**:
+
 ```typescript
 // Score: -1 (muito negativo) a 1 (muito positivo)
 await trackSentimento(session.id, 0.7);
@@ -262,12 +275,7 @@ import {
 async function handleNATIAResponse(message, response, session) {
   // 1. Performance
   await performanceMetrics.trackLatencia('nathia-chat', latency);
-  await performanceMetrics.trackTokens(
-    'gemini-2.0-flash',
-    inputTokens,
-    outputTokens,
-    session.id
-  );
+  await performanceMetrics.trackTokens('gemini-2.0-flash', inputTokens, outputTokens, session.id);
 
   // 2. Tema e Sentimento
   const tema = extrairTema(message);
@@ -279,12 +287,7 @@ async function handleNATIAResponse(message, response, session) {
   // 3. Detecção de Risco (se aplicável)
   const risco = detectarRisco(message);
   if (risco.detectado) {
-    await safetyMetrics.trackRiscoDetectado(
-      session.id,
-      risco.nivel,
-      risco.sinais,
-      risco.acao
-    );
+    await safetyMetrics.trackRiscoDetectado(session.id, risco.nivel, risco.sinais, risco.acao);
   }
 }
 ```
@@ -362,8 +365,8 @@ Apenas usuários com `role: 'admin'` podem acessar:
 
 ```typescript
 // Configurar webhooks e destinatários
-process.env.SLACK_WEBHOOK_URL = 'https://hooks.slack.com/...'
-process.env.ALERT_EMAIL_RECIPIENTS = 'team@nossapaternidade.com'
+process.env.SLACK_WEBHOOK_URL = 'https://hooks.slack.com/...';
+process.env.ALERT_EMAIL_RECIPIENTS = 'team@nossapaternidade.com';
 ```
 
 ### Tipos de Alertas
@@ -417,12 +420,7 @@ if (variant === 'variant') {
 ### Rastrear Métrica
 
 ```typescript
-await abTesting.trackExperimentMetric(
-  expId,
-  variant,
-  'utilidade',
-  thumbsUp ? 1 : 0
-);
+await abTesting.trackExperimentMetric(expId, variant, 'utilidade', thumbsUp ? 1 : 0);
 ```
 
 ### Analisar Resultados
@@ -456,11 +454,11 @@ const report = await abTesting.generateExperimentReport(expId);
 
 Baseado em **1000 usuárias ativas/mês** e **5 mensagens/usuária/mês**:
 
-| Cenário | Mensagens/Mês | Tokens/Msg | Custo Gemini | Supabase | Total |
-|---------|---------------|------------|--------------|----------|-------|
-| Conservador | 7,500 | 2000 | $9.00 | $25 | **$44** |
-| Realista | 5,000 | 1500 | $4.50 | $25 | **$35** |
-| Otimista (cache) | 4,000 | 1200 | $2.10 | $25 | **$32** |
+| Cenário          | Mensagens/Mês | Tokens/Msg | Custo Gemini | Supabase | Total   |
+| ---------------- | ------------- | ---------- | ------------ | -------- | ------- |
+| Conservador      | 7,500         | 2000       | $9.00        | $25      | **$44** |
+| Realista         | 5,000         | 1500       | $4.50        | $25      | **$35** |
+| Otimista (cache) | 4,000         | 1200       | $2.10        | $25      | **$32** |
 
 ### Breakdown
 
@@ -483,12 +481,14 @@ Baseado em **1000 usuárias ativas/mês** e **5 mensagens/usuária/mês**:
 ### Dados Anônimos
 
 ✅ **Armazenamos**:
+
 - Métricas agregadas (quantidades, percentuais)
 - Temas genéricos (não mensagens completas)
 - Sentimentos (scores numéricos)
 - User ID hasheado (SHA-256)
 
 ❌ **NÃO armazenamos**:
+
 - Conteúdo de mensagens
 - PII (nome, email, telefone)
 - User ID em texto plano (apenas hash)
@@ -497,6 +497,7 @@ Baseado em **1000 usuárias ativas/mês** e **5 mensagens/usuária/mês**:
 ### RLS (Row Level Security)
 
 Todas as tabelas têm RLS habilitado:
+
 - **service_role**: Pode escrever métricas
 - **admins**: Podem ler métricas
 - **usuários comuns**: Sem acesso
@@ -581,16 +582,19 @@ npm run metrics:backfill -- --days=30 --verbose
 ### Métricas não aparecem no dashboard
 
 1. Verificar se migration foi executada:
+
 ```sql
 SELECT * FROM nathia_metrics LIMIT 1;
 ```
 
 2. Verificar RLS policies:
+
 ```sql
 SELECT * FROM pg_policies WHERE tablename LIKE 'nathia_%';
 ```
 
 3. Verificar se usuário é admin:
+
 ```sql
 SELECT role FROM user_profiles WHERE id = 'user-id';
 ```
@@ -598,12 +602,14 @@ SELECT role FROM user_profiles WHERE id = 'user-id';
 ### Alertas não disparam
 
 1. Verificar configuração:
+
 ```bash
 echo $SLACK_WEBHOOK_URL
 echo $ALERT_EMAIL_RECIPIENTS
 ```
 
 2. Testar manualmente:
+
 ```typescript
 await alerts.alertIfQualityDrop('utilidade', 70, 85);
 ```
@@ -611,6 +617,7 @@ await alerts.alertIfQualityDrop('utilidade', 70, 85);
 ### Custos divergentes
 
 1. Verificar tokens registrados:
+
 ```sql
 SELECT model, SUM(input_tokens + output_tokens) as total_tokens, SUM(cost_usd) as total_cost
 FROM nathia_token_usage
@@ -629,6 +636,7 @@ GROUP BY model;
 ## Suporte
 
 Para dúvidas ou problemas:
+
 - **Email**: tech@nossapaternidade.com
 - **Slack**: #nathia-metrics
 - **Issues**: GitHub Repository

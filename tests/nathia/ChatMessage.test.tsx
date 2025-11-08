@@ -43,9 +43,7 @@ describe('ChatMessage', () => {
 
   it('should render assistant message with actions', () => {
     const onActionPress = vi.fn();
-    const { getByText } = render(
-      <ChatMessage message={mockAssistantMessage} onActionPress={onActionPress} />
-    );
+    const { getByText } = render(<ChatMessage message={mockAssistantMessage} onActionPress={onActionPress} />);
 
     expect(getByText('Olá! Como posso ajudar?')).toBeTruthy();
     expect(getByText('Ver plano diário')).toBeTruthy();
@@ -53,9 +51,7 @@ describe('ChatMessage', () => {
 
   it('should call onActionPress when action is pressed', () => {
     const onActionPress = vi.fn();
-    const { getByText } = render(
-      <ChatMessage message={mockAssistantMessage} onActionPress={onActionPress} />
-    );
+    const { getByText } = render(<ChatMessage message={mockAssistantMessage} onActionPress={onActionPress} />);
 
     fireEvent.press(getByText('Ver plano diário'));
     expect(onActionPress).toHaveBeenCalledWith(mockAssistantMessage.actions![0]);
@@ -63,9 +59,7 @@ describe('ChatMessage', () => {
 
   it('should show feedback buttons for assistant messages', () => {
     const onFeedback = vi.fn();
-    const { getByA11yLabel } = render(
-      <ChatMessage message={mockAssistantMessage} onFeedback={onFeedback} />
-    );
+    const { getByA11yLabel } = render(<ChatMessage message={mockAssistantMessage} onFeedback={onFeedback} />);
 
     const thumbsUp = getByA11yLabel('Feedback positivo');
     const thumbsDown = getByA11yLabel('Feedback negativo');

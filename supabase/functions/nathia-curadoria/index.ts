@@ -1,8 +1,8 @@
 /**
- * NAT-IA Curadoria - Edge Function para curadoria de conteúdo
+ * NAT-IA Curadoria - Edge Function para curadoria de conteï¿½do
  *
- * Simplifica e adapta conteúdo educacional para gestantes e mães
- * usando linguagem simples e acessível.
+ * Simplifica e adapta conteï¿½do educacional para gestantes e mï¿½es
+ * usando linguagem simples e acessï¿½vel.
  *
  * Endpoint: POST /nathia-curadoria
  * Body: { content_id?, texto, tipo: "resumo"|"5min"|"checklist" }
@@ -21,7 +21,7 @@ const RESUMO_SCHEMA = {
   properties: {
     titulo: {
       type: 'string',
-      description: 'Título curto e atrativo (máx 60 caracteres)',
+      description: 'Tï¿½tulo curto e atrativo (mï¿½x 60 caracteres)',
     },
     resumo: {
       type: 'string',
@@ -30,15 +30,15 @@ const RESUMO_SCHEMA = {
     pontos_principais: {
       type: 'array',
       items: { type: 'string' },
-      description: '3-5 pontos principais em tópicos',
+      description: '3-5 pontos principais em tï¿½picos',
     },
     relevancia: {
       type: 'string',
-      description: 'Por que isso importa para mães/gestantes',
+      description: 'Por que isso importa para mï¿½es/gestantes',
     },
     risco: {
       type: 'boolean',
-      description: 'true se conteúdo contém desinformação ou risco',
+      description: 'true se conteï¿½do contï¿½m desinformaï¿½ï¿½o ou risco',
     },
   },
   required: ['titulo', 'resumo', 'pontos_principais', 'relevancia', 'risco'],
@@ -49,11 +49,11 @@ const FIVE_MIN_SCHEMA = {
   properties: {
     titulo: {
       type: 'string',
-      description: 'Título curto',
+      description: 'Tï¿½tulo curto',
     },
     introducao: {
       type: 'string',
-      description: 'Parágrafo de introdução (2-3 frases)',
+      description: 'Parï¿½grafo de introduï¿½ï¿½o (2-3 frases)',
     },
     secoes: {
       type: 'array',
@@ -64,15 +64,15 @@ const FIVE_MIN_SCHEMA = {
           conteudo: { type: 'string' },
         },
       },
-      description: '3-4 seções com subtítulo e conteúdo',
+      description: '3-4 seï¿½ï¿½es com subtï¿½tulo e conteï¿½do',
     },
     conclusao: {
       type: 'string',
-      description: 'Conclusão prática (2-3 frases)',
+      description: 'Conclusï¿½o prï¿½tica (2-3 frases)',
     },
     risco: {
       type: 'boolean',
-      description: 'true se conteúdo contém desinformação',
+      description: 'true se conteï¿½do contï¿½m desinformaï¿½ï¿½o',
     },
   },
   required: ['titulo', 'introducao', 'secoes', 'conclusao', 'risco'],
@@ -83,11 +83,11 @@ const CHECKLIST_SCHEMA = {
   properties: {
     titulo: {
       type: 'string',
-      description: 'Título da checklist',
+      description: 'Tï¿½tulo da checklist',
     },
     descricao: {
       type: 'string',
-      description: 'Breve descrição (1-2 frases)',
+      description: 'Breve descriï¿½ï¿½o (1-2 frases)',
     },
     itens: {
       type: 'array',
@@ -99,11 +99,11 @@ const CHECKLIST_SCHEMA = {
           opcional: { type: 'boolean' },
         },
       },
-      description: 'Lista de itens acionáveis com dicas',
+      description: 'Lista de itens acionï¿½veis com dicas',
     },
     risco: {
       type: 'boolean',
-      description: 'true se conteúdo contém desinformação',
+      description: 'true se conteï¿½do contï¿½m desinformaï¿½ï¿½o',
     },
   },
   required: ['titulo', 'descricao', 'itens', 'risco'],
@@ -111,65 +111,65 @@ const CHECKLIST_SCHEMA = {
 
 // System Prompts por tipo
 const SYSTEM_PROMPTS = {
-  resumo: `Você é um curador de conteúdo especializado em maternidade e saúde da mulher.
+  resumo: `Vocï¿½ ï¿½ um curador de conteï¿½do especializado em maternidade e saï¿½de da mulher.
 
-Sua tarefa é resumir textos complexos em linguagem simples e acessível para gestantes e mães.
+Sua tarefa ï¿½ resumir textos complexos em linguagem simples e acessï¿½vel para gestantes e mï¿½es.
 
 DIRETRIZES:
-- Use linguagem coloquial, próxima e acolhedora
-- Evite termos técnicos ou explique-os quando necessário
-- Foque no que é prático e aplicável
-- Destaque informações mais relevantes
-- Seja honesta sobre limitações do conhecimento
-- IDENTIFIQUE desinformação ou conselhos perigosos (risco: true)
+- Use linguagem coloquial, prï¿½xima e acolhedora
+- Evite termos tï¿½cnicos ou explique-os quando necessï¿½rio
+- Foque no que ï¿½ prï¿½tico e aplicï¿½vel
+- Destaque informaï¿½ï¿½es mais relevantes
+- Seja honesta sobre limitaï¿½ï¿½es do conhecimento
+- IDENTIFIQUE desinformaï¿½ï¿½o ou conselhos perigosos (risco: true)
 
 IMPORTANTE:
-- Se o conteúdo sugerir tratamentos não comprovados ’ risco: true
-- Se desencorajar vacinação ou cuidados médicos ’ risco: true
-- Se promover produtos sem evidência científica ’ risco: true
-- Se dar conselhos médicos específicos ’ risco: true`,
+- Se o conteï¿½do sugerir tratamentos nï¿½o comprovados ï¿½ risco: true
+- Se desencorajar vacinaï¿½ï¿½o ou cuidados mï¿½dicos ï¿½ risco: true
+- Se promover produtos sem evidï¿½ncia cientï¿½fica ï¿½ risco: true
+- Se dar conselhos mï¿½dicos especï¿½ficos ï¿½ risco: true`,
 
-  '5min': `Você é um curador de conteúdo educacional para gestantes e mães.
+  '5min': `Vocï¿½ ï¿½ um curador de conteï¿½do educacional para gestantes e mï¿½es.
 
-Sua tarefa é transformar textos em leituras rápidas de 5 minutos, bem estruturadas.
+Sua tarefa ï¿½ transformar textos em leituras rï¿½pidas de 5 minutos, bem estruturadas.
 
 ESTRUTURA:
-- Introdução: contexto e por que importa
-- 3-4 seções temáticas com subtítulos claros
-- Cada seção: 2-3 parágrafos curtos
-- Conclusão: mensagem principal ou ação prática
+- Introduï¿½ï¿½o: contexto e por que importa
+- 3-4 seï¿½ï¿½es temï¿½ticas com subtï¿½tulos claros
+- Cada seï¿½ï¿½o: 2-3 parï¿½grafos curtos
+- Conclusï¿½o: mensagem principal ou aï¿½ï¿½o prï¿½tica
 
 ESTILO:
 - Linguagem simples, conversacional
-- Parágrafos curtos (3-4 linhas)
-- Exemplos práticos quando possível
-- Tom encorajador, não assustador
+- Parï¿½grafos curtos (3-4 linhas)
+- Exemplos prï¿½ticos quando possï¿½vel
+- Tom encorajador, nï¿½o assustador
 
-SEGURANÇA:
-- Marque risco: true se conteúdo for problemático
-- Não propague desinformação médica`,
+SEGURANï¿½A:
+- Marque risco: true se conteï¿½do for problemï¿½tico
+- Nï¿½o propague desinformaï¿½ï¿½o mï¿½dica`,
 
-  checklist: `Você é um organizador de conteúdo prático para gestantes e mães.
+  checklist: `Vocï¿½ ï¿½ um organizador de conteï¿½do prï¿½tico para gestantes e mï¿½es.
 
-Sua tarefa é transformar informações em checklists acionáveis e úteis.
+Sua tarefa ï¿½ transformar informaï¿½ï¿½es em checklists acionï¿½veis e ï¿½teis.
 
 FORMATO:
-- Título: claro e específico
-- Descrição: contexto rápido (quando/por que usar)
-- Itens: ações específicas e práticas
-- Dica: informação adicional útil por item
-- Opcional: marque itens não essenciais
+- Tï¿½tulo: claro e especï¿½fico
+- Descriï¿½ï¿½o: contexto rï¿½pido (quando/por que usar)
+- Itens: aï¿½ï¿½es especï¿½ficas e prï¿½ticas
+- Dica: informaï¿½ï¿½o adicional ï¿½til por item
+- Opcional: marque itens nï¿½o essenciais
 
 DIRETRIZES:
-- Itens devem ser ações concretas
-- Ordem lógica ou cronológica
+- Itens devem ser aï¿½ï¿½es concretas
+- Ordem lï¿½gica ou cronolï¿½gica
 - 5-10 itens idealmente
 - Linguagem imperativa e positiva
-- Inclua dicas práticas
+- Inclua dicas prï¿½ticas
 
-SEGURANÇA:
-- Não inclua ações médicas específicas
-- Marque risco: true se houver orientações perigosas`,
+SEGURANï¿½A:
+- Nï¿½o inclua aï¿½ï¿½es mï¿½dicas especï¿½ficas
+- Marque risco: true se houver orientaï¿½ï¿½es perigosas`,
 };
 
 interface CuradoriaRequest {
@@ -202,23 +202,17 @@ serve(async (req: Request) => {
     const { content_id, texto, tipo, user_id }: CuradoriaRequest = await req.json();
 
     if (!texto || !tipo || !user_id) {
-      return new Response(
-        JSON.stringify({ error: 'texto, tipo e user_id são obrigatórios' }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'texto, tipo e user_id sï¿½o obrigatï¿½rios' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     if (!['resumo', '5min', 'checklist'].includes(tipo)) {
-      return new Response(
-        JSON.stringify({ error: 'tipo deve ser: resumo, 5min ou checklist' }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'tipo deve ser: resumo, 5min ou checklist' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     // Initialize Supabase
@@ -239,7 +233,7 @@ serve(async (req: Request) => {
 
       return new Response(
         JSON.stringify({
-          error: 'Limite de requisições excedido',
+          error: 'Limite de requisiï¿½ï¿½es excedido',
           retryAfter: rateLimit.retryAfter,
         }),
         { status: 429, headers }
@@ -276,7 +270,7 @@ serve(async (req: Request) => {
         },
       };
     } else {
-      // Gerar novo conteúdo
+      // Gerar novo conteï¿½do
       const schema = tipo === 'resumo' ? RESUMO_SCHEMA : tipo === '5min' ? FIVE_MIN_SCHEMA : CHECKLIST_SCHEMA;
       const systemPrompt = SYSTEM_PROMPTS[tipo];
 
@@ -285,7 +279,7 @@ serve(async (req: Request) => {
       try {
         const { data } = await gemini.generateJSON<any>(
           systemPrompt,
-          `Processe o seguinte conteúdo:\n\n${texto}`,
+          `Processe o seguinte conteï¿½do:\n\n${texto}`,
           schema
         );
 
@@ -313,7 +307,7 @@ serve(async (req: Request) => {
 
         return new Response(
           JSON.stringify({
-            error: 'Erro ao processar conteúdo',
+            error: 'Erro ao processar conteï¿½do',
             message: aiError.message,
           }),
           {

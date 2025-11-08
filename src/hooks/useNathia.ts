@@ -68,9 +68,7 @@ export function useNathia(context: UserContext): UseNathiaResult {
   const [error, setError] = useState<string | null>(null);
   const [lastActions, setLastActions] = useState<NathiaAction[]>([]);
   const [suggestedReplies, setSuggestedReplies] = useState<string[]>([]);
-  const [contextUpdate, setContextUpdate] = useState<NathiaChatResponse['contextUpdate'] | null>(
-    null
-  );
+  const [contextUpdate, setContextUpdate] = useState<NathiaChatResponse['contextUpdate'] | null>(null);
 
   const isLoadingHistory = useRef(false);
 
@@ -158,12 +156,10 @@ export function useNathia(context: UserContext): UseNathiaResult {
 
       try {
         // Prepara contexto para envio
-        const previousMessages = updatedMessages
-          .slice(-MAX_CONTEXT_MESSAGES)
-          .map((msg) => ({
-            role: msg.role,
-            content: msg.content,
-          }));
+        const previousMessages = updatedMessages.slice(-MAX_CONTEXT_MESSAGES).map((msg) => ({
+          role: msg.role,
+          content: msg.content,
+        }));
 
         const request: NathiaChatRequest = {
           message: messageText.trim(),
@@ -186,10 +182,7 @@ export function useNathia(context: UserContext): UseNathiaResult {
           response = await nathiaClient.sendMessage(request);
         } catch (apiError) {
           // Fallback offline
-          if (
-            apiError instanceof NathiaClientError &&
-            (apiError.isNetworkError || apiError.isTimeout)
-          ) {
+          if (apiError instanceof NathiaClientError && (apiError.isNetworkError || apiError.isTimeout)) {
             response = getOfflineFallbackResponse();
           } else {
             throw apiError;
@@ -236,10 +229,7 @@ export function useNathia(context: UserContext): UseNathiaResult {
       } catch (err) {
         setIsTyping(false);
 
-        const errorMessage =
-          err instanceof NathiaClientError
-            ? err.message
-            : 'Algo deu errado. Tente novamente.';
+        const errorMessage = err instanceof NathiaClientError ? err.message : 'Algo deu errado. Tente novamente.';
 
         setError(errorMessage);
         logger.error('Erro ao enviar mensagem NAT-IA', err);

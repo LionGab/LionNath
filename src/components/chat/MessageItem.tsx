@@ -86,4 +86,3 @@ const styles = StyleSheet.create({
 });
 
 MessageItem.displayName = 'MessageItem';
-

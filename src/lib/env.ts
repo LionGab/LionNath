@@ -12,13 +12,6 @@ export type EnvConfig = {
     url: string;
     anonKey: string;
   };
-  ai: {
-    anthropic?: string;
-    openai?: string;
-    gemini?: string;
-    claude?: string;
-    perplexity?: string;
-  };
   sentry: {
     dsn?: string;
   };
@@ -42,12 +35,10 @@ const REQUIRED_ENV_VARS = ['EXPO_PUBLIC_SUPABASE_URL', 'EXPO_PUBLIC_SUPABASE_ANO
 
 // Variáveis opcionais (para funcionalidades específicas)
 const OPTIONAL_ENV_VARS = [
-  'EXPO_PUBLIC_ANTHROPIC_API_KEY',
-  'EXPO_PUBLIC_OPENAI_API_KEY',
-  'EXPO_PUBLIC_GEMINI_API_KEY',
-  'EXPO_PUBLIC_CLAUDE_API_KEY',
-  'EXPO_PUBLIC_PERPLEXITY_API_KEY',
   'EXPO_PUBLIC_SENTRY_DSN',
+  'EXPO_PUBLIC_ENABLE_AI_FEATURES',
+  'EXPO_PUBLIC_ENABLE_GAMIFICATION',
+  'EXPO_PUBLIC_ENABLE_ANALYTICS',
 ] as const;
 
 /**
@@ -112,13 +103,6 @@ export function getEnvConfig(): EnvConfig {
       url: getEnvVar('EXPO_PUBLIC_SUPABASE_URL') || '',
       anonKey: getEnvVar('EXPO_PUBLIC_SUPABASE_ANON_KEY') || '',
     },
-    ai: {
-      anthropic: getEnvVar('EXPO_PUBLIC_ANTHROPIC_API_KEY'),
-      openai: getEnvVar('EXPO_PUBLIC_OPENAI_API_KEY'),
-      gemini: getEnvVar('EXPO_PUBLIC_GEMINI_API_KEY'),
-      claude: getEnvVar('EXPO_PUBLIC_CLAUDE_API_KEY'),
-      perplexity: getEnvVar('EXPO_PUBLIC_PERPLEXITY_API_KEY'),
-    },
     sentry: {
       dsn: getEnvVar('EXPO_PUBLIC_SENTRY_DSN'),
     },
@@ -131,22 +115,6 @@ export function getEnvConfig(): EnvConfig {
       analyticsEnabled: getEnvVar('EXPO_PUBLIC_ENABLE_ANALYTICS') === 'true',
     },
   };
-}
-
-/**
- * Verifica se uma API key específica está disponível
- */
-export function hasApiKey(service: 'anthropic' | 'openai' | 'gemini' | 'claude' | 'perplexity'): boolean {
-  const config = getEnvConfig();
-  return !!config.ai[service];
-}
-
-/**
- * Obtém uma API key com fallback seguro
- */
-export function getApiKey(service: 'anthropic' | 'openai' | 'gemini' | 'claude' | 'perplexity'): string | null {
-  const config = getEnvConfig();
-  return config.ai[service] || null;
 }
 
 /**
@@ -170,11 +138,6 @@ export const env = getEnvConfig();
 if (isDevelopment()) {
   logger.info('Environment configuration loaded (React Native)', {
     supabase: env.supabase.url ? 'configured' : 'missing',
-    anthropic: env.ai.anthropic ? 'configured' : 'missing',
-    openai: env.ai.openai ? 'configured' : 'missing',
-    gemini: env.ai.gemini ? 'configured' : 'missing',
-    claude: env.ai.claude ? 'configured' : 'missing',
-    perplexity: env.ai.perplexity ? 'configured' : 'missing',
     sentry: env.sentry.dsn ? 'configured' : 'missing',
     features: {
       ai: env.features.aiEnabled,

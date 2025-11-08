@@ -11,7 +11,7 @@
  * - Sentry apenas em produção
  */
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { AppNavigator } from '@/navigation/index';
@@ -26,13 +26,10 @@ export default function App() {
   }, []);
 
   // Performance: Memoize error handler para evitar recriação em cada render
-  const handleError = useMemo(
-    () => (error: Error, errorInfo: React.ErrorInfo) => {
-      console.error('Erro capturado pelo ErrorBoundary:', error, errorInfo);
-      // Sentry capturará automaticamente se inicializado
-    },
-    []
-  );
+  const handleError = useCallback((error: Error, errorInfo: React.ErrorInfo) => {
+    console.error('Erro capturado pelo ErrorBoundary:', error, errorInfo);
+    // Sentry capturará automaticamente se inicializado
+  }, []);
 
   return (
     <ErrorBoundary onError={handleError}>

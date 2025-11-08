@@ -1,5 +1,4 @@
-# Supabase Configuration for LionNath-2
-
+# supabase/config.toml
 [api]
 enabled = true
 port = 54321
@@ -29,25 +28,25 @@ file_size_limit = "50MiB"
 
 [auth]
 enabled = true
-site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://localhost:3000"]
+site_url = "www.nossamaternidade.com.br"          # troca aqui pro host real do app (Expo? usa https://auth.expo.io/@seu-usuario/seu-app)
+additional_redirect_urls = ["https://localhost:3000"]  # adiciona URLs reais (prod, deep links)
 jwt_expiry = 3600
 enable_signup = true
 
 [auth.email]
 enable_signup = true
 double_confirm_changes = true
-enable_confirmations = false
+enable_confirmations = false                # se quiser confirmação por e-mail, bota true e configura SMTP
 
-# Edge Functions Configuration
+# Edge Functions
 [functions.nathia-chat]
-verify_jwt = true
+verify_jwt = true                           # mantem true (chat sempre autenticado)
 
 [functions.nathia-curadoria]
-verify_jwt = true
+verify_jwt = true                           # só libera pra conteúdo curado por staff logada
 
 [functions.nathia-moderacao]
-verify_jwt = false
+verify_jwt = false                          # deixa público só se realmente precisar receber dados anônimos; senão troca pra true
 
 [functions.nathia-onboarding]
 verify_jwt = true

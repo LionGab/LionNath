@@ -18,11 +18,12 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 
 ### ✅ Serviços (src/services/)
 
-| Arquivo | Linhas | Status | Descrição |
-|---------|--------|--------|-----------|
-| `nathia-client.ts` | ~300 | ✅ | Cliente HTTP com retry, timeout e fallback |
+| Arquivo            | Linhas | Status | Descrição                                  |
+| ------------------ | ------ | ------ | ------------------------------------------ |
+| `nathia-client.ts` | ~300   | ✅     | Cliente HTTP com retry, timeout e fallback |
 
 **Features:**
+
 - Retry com exponential backoff (2x)
 - Timeout de 5s
 - Error handling gracioso
@@ -32,12 +33,13 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 
 ### ✅ Hooks (src/hooks/)
 
-| Arquivo | Linhas | Status | Descrição |
-|---------|--------|--------|-----------|
-| `useNathia.ts` | ~250 | ✅ | Gerenciamento de chat e mensagens |
-| `useNathiaActions.ts` | ~200 | ✅ | Processamento de actions contextuais |
+| Arquivo               | Linhas | Status | Descrição                            |
+| --------------------- | ------ | ------ | ------------------------------------ |
+| `useNathia.ts`        | ~250   | ✅     | Gerenciamento de chat e mensagens    |
+| `useNathiaActions.ts` | ~200   | ✅     | Processamento de actions contextuais |
 
 **Features useNathia:**
+
 - Estado de mensagens (user/assistant)
 - Persistência local (AsyncStorage)
 - Sincronização com Supabase
@@ -46,6 +48,7 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 - Error handling
 
 **Features useNathiaActions:**
+
 - 5 tipos de actions (openScreen, joinCircle, startHabit, showContent, sos)
 - Deep linking interno
 - Analytics tracking
@@ -53,11 +56,12 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 
 ### ✅ Contextos (src/contexts/)
 
-| Arquivo | Linhas | Status | Descrição |
-|---------|--------|--------|-----------|
-| `NathiaContext.tsx` | ~200 | ✅ | Contexto global da NAT-IA |
+| Arquivo             | Linhas | Status | Descrição                 |
+| ------------------- | ------ | ------ | ------------------------- |
+| `NathiaContext.tsx` | ~200   | ✅     | Contexto global da NAT-IA |
 
 **Features:**
+
 - Estado global (stage, mood, concerns)
 - Persistência entre sessões
 - Onboarding status
@@ -66,15 +70,16 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 
 ### ✅ Componentes (src/components/nathia/)
 
-| Arquivo | Linhas | Status | Descrição |
-|---------|--------|--------|-----------|
-| `ChatMessage.tsx` | ~250 | ✅ | Mensagem individual do chat |
-| `SOSButton.tsx` | ~300 | ✅ | Botão de emergência + modal |
-| `QuickReplies.tsx` | ~150 | ✅ | Sugestões rápidas contextuais |
-| `OnboardingFlow.tsx` | ~350 | ✅ | Fluxo de integração (4-6 perguntas) |
-| `RecommendationCard.tsx` | ~200 | ✅ | Card de recomendação personalizada |
+| Arquivo                  | Linhas | Status | Descrição                           |
+| ------------------------ | ------ | ------ | ----------------------------------- |
+| `ChatMessage.tsx`        | ~250   | ✅     | Mensagem individual do chat         |
+| `SOSButton.tsx`          | ~300   | ✅     | Botão de emergência + modal         |
+| `QuickReplies.tsx`       | ~150   | ✅     | Sugestões rápidas contextuais       |
+| `OnboardingFlow.tsx`     | ~350   | ✅     | Fluxo de integração (4-6 perguntas) |
+| `RecommendationCard.tsx` | ~200   | ✅     | Card de recomendação personalizada  |
 
 **Features ChatMessage:**
+
 - Renderização user/assistant diferenciada
 - Suporte markdown básico
 - Actions como botões
@@ -83,6 +88,7 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 - Timestamp relativo
 
 **Features SOSButton:**
+
 - Modal com CVV (188) e SAMU (192)
 - Opção "conversar com humano"
 - Analytics de uso
@@ -90,12 +96,14 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 - Acessibilidade
 
 **Features QuickReplies:**
+
 - Chips horizontais (scroll)
 - Helper `getContextualSuggestions()`
 - Atualização baseada em contexto
 - Sugestões por estágio
 
 **Features OnboardingFlow:**
+
 - 4 steps progressivos
 - Validação em cada etapa
 - Skip condicional (pregnancyWeek)
@@ -103,6 +111,7 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 - Error handling
 
 **Features RecommendationCard:**
+
 - Badge por tipo (círculo/hábito/conteúdo)
 - Justificativa curta
 - CTA claro
@@ -110,13 +119,14 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 
 ### ✅ Telas (src/screens/)
 
-| Arquivo | Linhas | Status | Descrição |
-|---------|--------|--------|-----------|
-| `NathiaChat.tsx` | ~400 | ✅ | Tela principal de conversação |
-| `NathiaOnboarding.tsx` | ~300 | ✅ | Onboarding + Starter Pack |
-| `NathiaRecommendations.tsx` | ~350 | ✅ | Lista de recomendações |
+| Arquivo                     | Linhas | Status | Descrição                     |
+| --------------------------- | ------ | ------ | ----------------------------- |
+| `NathiaChat.tsx`            | ~400   | ✅     | Tela principal de conversação |
+| `NathiaOnboarding.tsx`      | ~300   | ✅     | Onboarding + Starter Pack     |
+| `NathiaRecommendations.tsx` | ~350   | ✅     | Lista de recomendações        |
 
 **Features NathiaChat:**
+
 - Interface completa de chat
 - Input com multi-line
 - Botão SOS sempre visível
@@ -128,6 +138,7 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 - 60fps performance
 
 **Features NathiaOnboarding:**
+
 - Fluxo completo (OnboardingFlow)
 - Exibe Starter Pack ao final
 - Cards de recomendações
@@ -135,6 +146,7 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 - Navegação fluida
 
 **Features NathiaRecommendations:**
+
 - Lista de recomendações
 - Filtros (todos/círculos/hábitos/conteúdos)
 - Pull-to-refresh
@@ -144,19 +156,21 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 
 ### ✅ Testes (tests/nathia/)
 
-| Arquivo | Status | Cobertura |
-|---------|--------|-----------|
-| `nathia-client.test.ts` | ✅ | Setup completo (TODOs para implementação) |
-| `useNathia.test.ts` | ✅ | Setup completo (TODOs para implementação) |
-| `ChatMessage.test.tsx` | ✅ | 4 testes implementados |
+| Arquivo                 | Status | Cobertura                                 |
+| ----------------------- | ------ | ----------------------------------------- |
+| `nathia-client.test.ts` | ✅     | Setup completo (TODOs para implementação) |
+| `useNathia.test.ts`     | ✅     | Setup completo (TODOs para implementação) |
+| `ChatMessage.test.tsx`  | ✅     | 4 testes implementados                    |
 
 **Testes implementados:**
+
 - Renderização user/assistant
 - Actions rendering e callbacks
 - Feedback buttons
 - Acessibilidade
 
 **TODOs para testes:**
+
 - Implementar mocks completos
 - Testes de retry logic
 - Testes de offline mode
@@ -164,13 +178,14 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 
 ### ✅ Documentação (docs/)
 
-| Arquivo | Linhas | Status | Descrição |
-|---------|--------|--------|-----------|
-| `NATHIA_INTEGRATION_GUIDE.md` | ~600 | ✅ | Guia completo de integração |
-| `NATHIA_QUICK_START.md` | ~500 | ✅ | Guia rápido de setup |
-| `src/components/nathia/README.md` | ~400 | ✅ | README dos componentes |
+| Arquivo                           | Linhas | Status | Descrição                   |
+| --------------------------------- | ------ | ------ | --------------------------- |
+| `NATHIA_INTEGRATION_GUIDE.md`     | ~600   | ✅     | Guia completo de integração |
+| `NATHIA_QUICK_START.md`           | ~500   | ✅     | Guia rápido de setup        |
+| `src/components/nathia/README.md` | ~400   | ✅     | README dos componentes      |
 
 **Conteúdo INTEGRATION_GUIDE:**
+
 - Arquitetura completa
 - Descrição de cada componente
 - Fluxos principais (3 fluxos documentados)
@@ -182,6 +197,7 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 - Próximos passos (P0/P1/P2)
 
 **Conteúdo QUICK_START:**
+
 - Setup completo (13 seções)
 - Configuração passo-a-passo
 - Exemplos de código
@@ -191,6 +207,7 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 - Troubleshooting
 
 **Conteúdo README Componentes:**
+
 - API de cada componente
 - Props detalhadas
 - Exemplos de uso
@@ -201,9 +218,9 @@ Cliente React Native completo para NAT-IA implementado com sucesso. Todos os com
 
 ### ✅ Configuração
 
-| Arquivo | Status | Descrição |
-|---------|--------|-----------|
-| `.env.nathia.example` | ✅ | Template de configuração |
+| Arquivo               | Status | Descrição                |
+| --------------------- | ------ | ------------------------ |
+| `.env.nathia.example` | ✅     | Template de configuração |
 
 ## Fluxos Implementados
 
@@ -278,6 +295,7 @@ Analytics tracks:
 ## Integrações Implementadas
 
 ### ✅ Design System v1
+
 - Todos os componentes usam tokens do Design System
 - Paleta: primary, accent, surface, background, neutrals
 - Tipografia: display, headline, body, caption, button
@@ -286,16 +304,19 @@ Analytics tracks:
 - Shadows: soft, medium
 
 ### ✅ Navigation
+
 - 3 telas adicionadas (NathiaChat, NathiaOnboarding, NathiaRecommendations)
 - Deep linking preparado
 - Navigation helpers em useNathiaActions
 
 ### ✅ Analytics (preparado)
+
 - Eventos principais identificados
 - Placeholders para tracking
 - Comentários com TODOs
 
 ### ✅ Supabase
+
 - Cliente configurado em nathia-client
 - Integração com chat_messages table
 - getChatHistory e saveChatMessage
@@ -314,6 +335,7 @@ Analytics tracks:
 - **Contraste:** Cores seguem WCAG 2.1 AA (4.5:1)
 
 ### ✅ Testado com:
+
 - VoiceOver (iOS)
 - TalkBack (Android)
 
@@ -330,19 +352,20 @@ Analytics tracks:
 
 ### Métricas Alvo
 
-| Métrica | Alvo | Status |
-|---------|------|--------|
-| First Paint | < 1s | ✅ Implementado |
-| Input Lag | < 100ms | ✅ Implementado |
-| API Response | < 2s | ✅ Timeout 5s |
-| Scroll FPS | 60fps | ✅ FlatList otimizado |
-| Memory | < 100MB | ⚠️ Precisa profiling |
+| Métrica      | Alvo    | Status                |
+| ------------ | ------- | --------------------- |
+| First Paint  | < 1s    | ✅ Implementado       |
+| Input Lag    | < 100ms | ✅ Implementado       |
+| API Response | < 2s    | ✅ Timeout 5s         |
+| Scroll FPS   | 60fps   | ✅ FlatList otimizado |
+| Memory       | < 100MB | ⚠️ Precisa profiling  |
 
 ## Wireframes em Comentários
 
 Todos os componentes têm wireframes ASCII nos comentários:
 
 **Exemplo (NathiaChat.tsx):**
+
 ```
 /**
  * Wireframe:
@@ -357,6 +380,7 @@ Todos os componentes têm wireframes ASCII nos comentários:
 ## Como Testar Cada Tela
 
 ### NathiaChat
+
 1. Abra o app
 2. Navegue para NathiaChat
 3. Digite "Olá"
@@ -370,6 +394,7 @@ Todos os componentes têm wireframes ASCII nos comentários:
 6. Verifique modal com CVV/SAMU
 
 ### NathiaOnboarding
+
 1. Limpe AsyncStorage
 2. Reabra app
 3. Deve mostrar NathiaOnboarding
@@ -381,6 +406,7 @@ Todos os componentes têm wireframes ASCII nos comentários:
    - ✅ CTA navega para chat
 
 ### NathiaRecommendations
+
 1. Navegue para NathiaRecommendations
 2. Verifique:
    - ✅ Lista carrega
@@ -439,6 +465,7 @@ Total: ~4,800 linhas de código + ~1,500 linhas de documentação
 ## Próximos Passos
 
 ### P0 - Crítico (Antes de Release)
+
 - [ ] Implementar Edge Functions no Supabase
 - [ ] Configurar RLS policies
 - [ ] Testar fluxo completo end-to-end
@@ -446,6 +473,7 @@ Total: ~4,800 linhas de código + ~1,500 linhas de documentação
 - [ ] Implementar testes E2E (Maestro)
 
 ### P1 - Importante (Primeira Iteração)
+
 - [ ] Completar testes unitários (TODOs)
 - [ ] Implementar markdown parser completo
 - [ ] Adicionar suporte a imagens no chat
@@ -454,6 +482,7 @@ Total: ~4,800 linhas de código + ~1,500 linhas de documentação
 - [ ] Analytics completo
 
 ### P2 - Desejável (Futuro)
+
 - [ ] Modo offline completo com sync queue
 - [ ] Themes (light/dark mode)
 - [ ] Animações avançadas (Reanimated)
@@ -464,6 +493,7 @@ Total: ~4,800 linhas de código + ~1,500 linhas de documentação
 ## Dependências Necessárias
 
 Todas já instaladas no projeto:
+
 - ✅ axios
 - ✅ @react-native-async-storage/async-storage
 - ✅ @react-navigation/native
@@ -473,22 +503,26 @@ Todas já instaladas no projeto:
 ## Configuração Final Necessária
 
 ### 1. Variáveis de Ambiente (.env)
+
 ```bash
 EXPO_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
 EXPO_PUBLIC_SUPABASE_ANON_KEY=sua-chave
 ```
 
 ### 2. Navegação (src/navigation/index.tsx)
+
 ```typescript
 // Adicionar imports e screens (ver QUICK_START.md)
 ```
 
 ### 3. App Provider (App.tsx)
+
 ```typescript
 // Adicionar NathiaProvider (ver QUICK_START.md)
 ```
 
 ### 4. Edge Functions (Supabase)
+
 ```bash
 supabase functions deploy nathia-chat
 supabase functions deploy nathia-onboarding
@@ -500,6 +534,7 @@ supabase functions deploy nathia-recommendations
 ✅ **Implementação 100% completa** conforme especificação original.
 
 Todos os requisitos foram atendidos:
+
 - ✅ Cliente HTTP completo
 - ✅ Hooks com gerenciamento de estado
 - ✅ Contexto global
@@ -514,12 +549,14 @@ Todos os requisitos foram atendidos:
 - ✅ Error boundaries preparados
 
 **Pronto para:**
+
 - Integração com navegação existente
 - Deploy de Edge Functions
 - Testes E2E
 - Release beta
 
 **Documentação disponível em:**
+
 - `docs/NATHIA_INTEGRATION_GUIDE.md` (guia completo)
 - `docs/NATHIA_QUICK_START.md` (setup rápido)
 - `src/components/nathia/README.md` (API dos componentes)

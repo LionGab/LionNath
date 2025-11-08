@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "Configuração de auto-aprovação do Cursor - Aprova automaticamente todas as mudanças e mantém mudanças de revisão. SKIP ALL PERMISSIONS ATIVADO.",
+  "description": "Configuração automática para manter todas as mudanças durante review. Gerado por review-keeper-agent.ts.",
   "enabled": true,
   "skip_all_permissions": true,
   "auto_approve": {

@@ -425,6 +425,7 @@ chat_messages
 ### POST /functions/v1/nathia-chat
 
 **Request:**
+
 ```json
 {
   "message": "Estou me sentindo ansiosa",
@@ -443,6 +444,7 @@ chat_messages
 ```
 
 **Response:**
+
 ```json
 {
   "response": "Entendo sua ansiedade...",
@@ -453,10 +455,7 @@ chat_messages
       "data": { "screenName": "breathingExercises" }
     }
   ],
-  "suggestedReplies": [
-    "Me conte mais",
-    "Quero ver dicas de relaxamento"
-  ],
+  "suggestedReplies": ["Me conte mais", "Quero ver dicas de relaxamento"],
   "contextUpdate": {
     "mood": "anxious",
     "riskLevel": "low"
@@ -467,6 +466,7 @@ chat_messages
 ### POST /functions/v1/nathia-onboarding
 
 **Request:**
+
 ```json
 {
   "userId": "user-123",
@@ -480,6 +480,7 @@ chat_messages
 ```
 
 **Response:**
+
 ```json
 {
   "welcomeMessage": "Bem-vinda! Estou muito feliz...",
@@ -500,6 +501,7 @@ chat_messages
 ### POST /functions/v1/nathia-recommendations
 
 **Request:**
+
 ```json
 {
   "userId": "user-123",
@@ -512,6 +514,7 @@ chat_messages
 ```
 
 **Response:**
+
 ```json
 {
   "recommendations": [
@@ -648,21 +651,25 @@ Bundle Size:           < 5MB
 ## Security Considerations
 
 ### 1. API Keys
+
 - ✅ Supabase anon key stored in env
 - ✅ RLS policies enforce user isolation
 - ❌ Never log sensitive data
 
 ### 2. User Data
+
 - ✅ All chat messages encrypted in transit (HTTPS)
 - ✅ Local storage encrypted (platform-level)
 - ✅ RLS policies prevent cross-user access
 
 ### 3. Input Validation
+
 - ✅ Message length limited (1000 chars)
 - ✅ XSS prevention in markdown rendering
 - ✅ SQL injection prevented (Supabase client handles)
 
 ### 4. Rate Limiting
+
 - ⚠️ TODO: Implement rate limiting in Edge Functions
 - ⚠️ TODO: Implement client-side throttling
 

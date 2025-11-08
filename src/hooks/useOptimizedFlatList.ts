@@ -13,6 +13,7 @@ export interface OptimizedFlatListConfig<T> {
   updateCellsBatchingPeriod?: number;
   initialNumToRender?: number;
   removeClippedSubviews?: boolean;
+  getItemLayout?: FlatListProps<T>['getItemLayout'];
 }
 
 /**
@@ -32,7 +33,7 @@ export function useOptimizedFlatList<T>(
       updateCellsBatchingPeriod: config?.updateCellsBatchingPeriod ?? 50,
       initialNumToRender: config?.initialNumToRender ?? 10,
       removeClippedSubviews: config?.removeClippedSubviews ?? true,
-      getItemLayout: undefined, // Implementar se possível para melhor performance
+      getItemLayout: config?.getItemLayout,
     }),
     [data, renderItem, config]
   );

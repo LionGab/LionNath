@@ -105,4 +105,3 @@ export const Gap: React.FC<GapProps> = ({ size = 'md', direction = 'column' }) =
 
   return <View style={gapStyle} />;
 };
-

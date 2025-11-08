@@ -50,4 +50,3 @@ export const tokens: DesignTokens = {
 };
 
 export type Tokens = typeof tokens;
-

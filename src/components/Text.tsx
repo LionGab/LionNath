@@ -153,4 +153,3 @@ export const H3: React.FC<Omit<TextProps, 'variant'>> = (props) => <Text variant
 export const Body: React.FC<Omit<TextProps, 'variant'>> = (props) => <Text variant="body" {...props} />;
 
 export const Caption: React.FC<Omit<TextProps, 'variant'>> = (props) => <Text variant="caption" {...props} />;
-

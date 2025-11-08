@@ -1,77 +1,143 @@
-# ⚡ AÇÕES PRIORITÁRIAS - FAZER AGORA
+# 🎯 Ações Prioritárias - Nossa Maternidade
 
-## 🔴 P0 - CRÍTICO (Hoje - 2-4h)
+**Atualizado:** 07/11/2025 17:48
 
-### 1. Revogar API Keys (URGENTE)
+## ✅ Concluído Recentemente
 
+1. ✅ Sistema de logging estruturado implementado (13 arquivos)
+2. ✅ Removidos @ts-ignore de hooks críticos
+3. ✅ Type safety melhorada (erros: 12+ → 3)
+4. ✅ Script de automação de logging criado
+
+## 🔴 ALTA PRIORIDADE
+
+### 1. Corrigir 3 Erros TypeScript Remanescentes
+**Status:** Pendente
+**Impacto:** Baixo (não-críticos)
+**Localização:**
+- `src/hooks/useOptimizedFlatList.ts:35` - getItemLayout com any implícito
+- `src/services/nathia/__tests__/nathia.test.example.ts:268` - array items com any[]
+- `src/services/nathia/__tests__/nathia.test.example.ts:316` - array concerns com any[]
+
+**Como fazer:**
 ```bash
-# 1. Verificar se .env está no Git
-git log --all --full-history -- .env
+# Ver erros
+pnpm type-check
 
-# 2. Se encontrado, limpar histórico
-bfg --delete-files .env
-git reflog expire --expire=now --all
-git gc --prune=now --aggressive
-
-# 3. Revogar keys:
-# - Gemini: https://makersuite.google.com/app/apikey
-# - Claude: https://console.anthropic.com/settings/keys
-# - OpenAI: https://platform.openai.com/api-keys
-# - Perplexity: https://www.perplexity.ai/settings/api
-
-# 4. Configurar nas Edge Functions
-cd supabase/functions
-cp .env.example .env
-# Editar .env com novas keys (SEM EXPO_PUBLIC_)
-
-# 5. Deploy
-supabase functions deploy nathia-chat
+# Corrigir tipos explícitos nos arrays de teste
 ```
 
-### 2. Corrigir Banco de Dados (2h)
+### 2. Executar Testes de Regressão
+**Status:** Pendente
+**Impacto:** Médio
+**Razão:** Validar que mudanças não quebraram funcionalidades
 
+**Como fazer:**
 ```bash
-# Ver script completo em:
-.claude/memory/scripts/fix-database.sql
-
-# Executar via Supabase Dashboard > SQL Editor
+pnpm test
 ```
 
-### 3. Habilitar JWT em moderacao (5min)
+### 3. Executar Migration SQL (Database)
+**Status:** Pendente desde sessão anterior
+**Impacto:** Alto
+**Localização:** `supabase/migrations/99999999999999_fix_critical_issues.sql`
 
-```toml
-# supabase/config.toml
-[functions.nathia-moderacao]
-verify_jwt = true  # Mudar de false para true
+**Como fazer:**
+1. Abrir Supabase Dashboard
+2. SQL Editor → Execute migration
+3. Validar queries de verificação
+
+## 🟡 MÉDIA PRIORIDADE
+
+### 4. Limpar Console.log de Screens & Components
+**Status:** Pendente
+**Impacto:** Médio
+**Escopo:** 48 arquivos com console.log/warn/error
+
+**Como fazer:**
+```bash
+# Expandir script para incluir screens/components
+node scripts/replace-console-with-logger.js
 ```
+
+### 5. Design System V1 - Consolidação
+**Status:** Em progresso (Agente 4)
+**Impacto:** Alto
+**Problema:** 3 sistemas de tema conflitantes
+
+### 6. Aumentar Cobertura de Testes
+**Status:** Pendente
+**Atual:** ~20%
+**Meta:** 60%
+**Prioridade:** Testes de integração NATHIA
+
+## 🟢 BAIXA PRIORIDADE
+
+### 7. Performance - Bundle Size
+**Atual:** 8.5MB
+**Meta:** 5.2MB
+**Estratégia:** Code splitting, lazy loading
+
+### 8. Dark Mode - Tornar Funcional
+**Status:** Implementado mas não usado
+**Problema:** 95% dos componentes não usam useTheme()
+
+### 9. Criar Edge Functions Faltantes
+- habitos.ts (recomendação de hábitos)
+- copys.ts (textos contextuais)
+
+## 📋 Checklist Rápido
+
+**Antes de Qualquer Deploy:**
+- [ ] pnpm type-check (sem erros)
+- [ ] pnpm test (todos passando)
+- [ ] pnpm validate (OK)
+- [ ] Migration SQL executada
+- [ ] Variáveis de ambiente validadas
+
+**Antes de Trabalhar em Features:**
+- [ ] git pull origin main
+- [ ] pnpm install
+- [ ] Verificar .env completo
 
 ---
 
-## 🟡 P1 - URGENTE (1-2 dias)
-
-### 4. Remover Vulnerabilidades
+## 🔧 Comandos Úteis
 
 ```bash
-pnpm remove @react-native-voice/voice react-native-gifted-chat
-pnpm update esbuild@latest xml2js@latest
+# Validação completa
+pnpm validate
+
+# Type check
+pnpm type-check
+
+# Testes
+pnpm test
+
+# Executar app
+pnpm dev
+
+# Commit
+git add . && git commit -m "feat: descrição"
+
+# Ver status
+git status --short
 ```
 
-### 5. Consolidar .env.example
+## 📊 Métricas Atuais
 
-```bash
-# Usar template em:
-.claude/memory/scripts/env.example
-```
+**Qualidade:**
+- Erros TypeScript: 3 (não-críticos)
+- Cobertura de Testes: ~20%
+- Console.log em produção: ~35 arquivos (screens/components)
 
-### 6. TypeScript - Habilitar noImplicitAny
+**Performance:**
+- Bundle Size: 8.5MB
+- TTI (Time to Interactive): ~3.5s
+- FCP (First Contentful Paint): ~2.1s
 
-```json
-// apps/mobile/tsconfig.json
-"noImplicitAny": true
-```
-
----
-
-## 📊 CHECKLIST COMPLETO
-
-Ver: `.claude/memory/checklists/phase-1.md`
+**Segurança:**
+- Variáveis de ambiente: ✅ Validadas
+- RLS Policies: ✅ Ativas
+- Rate Limiting: ✅ Implementado
+- Encryption: ✅ E2E configurado

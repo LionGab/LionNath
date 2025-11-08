@@ -145,7 +145,7 @@ supabase functions deploy nathia-chat
 **Arquivo:** `supabase/functions/nathia-chat/index.ts`
 
 ```typescript
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 
 serve(async (req) => {
   const { message, userId, context } = await req.json();
@@ -159,7 +159,7 @@ serve(async (req) => {
       actions: response.actions,
       suggestedReplies: response.suggestions,
     }),
-    { headers: { "Content-Type": "application/json" } }
+    { headers: { 'Content-Type': 'application/json' } }
   );
 });
 ```
@@ -388,6 +388,7 @@ supabase functions deploy nathia-chat
 ### Erro: "Supabase não configurado"
 
 **Solução:** Verifique `.env`:
+
 ```bash
 EXPO_PUBLIC_SUPABASE_URL=https://...
 EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJ...
@@ -396,6 +397,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 ### Erro: "NAT-IA não responde"
 
 **Solução:**
+
 1. Verifique se Edge Functions estão deployadas
 2. Teste com curl (ver seção 6.3)
 3. Verifique logs: `supabase functions logs nathia-chat`
@@ -403,6 +405,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 ### Erro: "Histórico não carrega"
 
 **Solução:**
+
 1. Verifique tabelas: `psql > \dt`
 2. Verifique RLS policies
 3. Verifique userId está correto
@@ -410,6 +413,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 ### App trava ao enviar mensagem
 
 **Solução:**
+
 1. Verifique timeout não é muito baixo
 2. Verifique network inspector
 3. Adicione error boundary
@@ -419,6 +423,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 ✅ Setup básico completo!
 
 Agora você pode:
+
 - [ ] Customizar design
 - [ ] Adicionar analytics
 - [ ] Implementar push notifications
@@ -435,6 +440,7 @@ Agora você pode:
 ## 13. Suporte
 
 Precisa de ajuda?
+
 - Slack: #nathia-dev
 - Email: dev@nossamaternidade.com
 - Issues: GitHub repository

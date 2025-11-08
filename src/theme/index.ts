@@ -41,12 +41,7 @@ export { tokens } from './tokens';
 
 export type { Tokens } from './tokens';
 
-export {
-  nossaMaternidadeDesignTokens,
-  getNeutralTone,
-  getSpacing,
-  getRadius,
-} from './themes/v1-nossa-maternidade';
+export { nossaMaternidadeDesignTokens, getNeutralTone, getSpacing, getRadius } from './themes/v1-nossa-maternidade';
 
 export {
   nossaMaternidadeTokens,

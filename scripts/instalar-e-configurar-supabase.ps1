@@ -7,8 +7,8 @@ $ErrorActionPreference = "Stop"
 Write-Host "🚀 Instalando e Configurando Supabase CLI Automaticamente" -ForegroundColor Cyan
 Write-Host ""
 
-# Variáveis
-$GEMINI_API_KEY = "AIzaSyC9YVWRmnGyGu4c9y7g-mNkkipDqb5JBZg"
+# Variáveis (preencha com sua chave segura antes de executar)
+$GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"
 $SUPABASE_PROJECT_REF = "bbcwitnbnosyfpjtzkr"
 $MIGRATION_FILE = "supabase\migrations\001_gemini_memory.sql"
 
@@ -39,7 +39,7 @@ try {
 
 if (-not $supabaseInstalled) {
     Write-Host "📥 Instalando Supabase CLI via npm..." -ForegroundColor Yellow
-    
+
     # Verificar se npm está instalado
     try {
         $npmVersion = npm --version
@@ -49,18 +49,18 @@ if (-not $supabaseInstalled) {
         Write-Host "   https://nodejs.org/" -ForegroundColor Cyan
         exit 1
     }
-    
+
     # Instalar Supabase CLI globalmente
     Write-Host "⏳ Instalando (pode demorar alguns minutos)..." -ForegroundColor Gray
     npm install -g supabase
-    
+
     if ($LASTEXITCODE -ne 0) {
         Write-Host "❌ Erro ao instalar Supabase CLI" -ForegroundColor Red
         exit 1
     }
-    
+
     Write-Host "✅ Supabase CLI instalado com sucesso!" -ForegroundColor Green
-    
+
     # Verificar instalação
     $version = supabase --version
     Write-Host "   Versão: $version" -ForegroundColor Gray
@@ -90,15 +90,15 @@ if (-not $loggedIn) {
     Write-Host "⚠️  Não está logado. Fazendo login..." -ForegroundColor Yellow
     Write-Host "   Abra o navegador e faça login no Supabase" -ForegroundColor Cyan
     Write-Host ""
-    
+
     supabase login
-    
+
     if ($LASTEXITCODE -ne 0) {
         Write-Host "❌ Erro ao fazer login" -ForegroundColor Red
         Write-Host "   Execute manualmente: supabase login" -ForegroundColor Yellow
         exit 1
     }
-    
+
     Write-Host "✅ Login realizado com sucesso!" -ForegroundColor Green
 }
 
@@ -123,13 +123,13 @@ if (Test-Path ".supabase\config.toml") {
 if (-not $linked) {
     Write-Host "🔗 Linkando com projeto: $SUPABASE_PROJECT_REF" -ForegroundColor Cyan
     supabase link --project-ref $SUPABASE_PROJECT_REF
-    
+
     if ($LASTEXITCODE -ne 0) {
         Write-Host "❌ Erro ao linkar projeto" -ForegroundColor Red
         Write-Host "   Execute manualmente: supabase link --project-ref $SUPABASE_PROJECT_REF" -ForegroundColor Yellow
         exit 1
     }
-    
+
     Write-Host "✅ Projeto linkado com sucesso!" -ForegroundColor Green
 }
 
@@ -162,16 +162,16 @@ $sqlContent | Out-File -FilePath $tempSqlFile -Encoding UTF8
 try {
     # Tentar executar via db push (se migration estiver na pasta migrations)
     supabase db push
-    
+
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✅ SQL Migration executada com sucesso!" -ForegroundColor Green
     } else {
         # Tentar método alternativo: executar SQL diretamente
         Write-Host "⚠️  Tentando método alternativo..." -ForegroundColor Yellow
-        
+
         # Usar supabase db execute (se disponível)
         $sqlContent | supabase db execute
-        
+
         if ($LASTEXITCODE -eq 0) {
             Write-Host "✅ SQL Migration executada com sucesso!" -ForegroundColor Green
         } else {
@@ -202,7 +202,7 @@ Write-Host "🔑 Passo 5: Configurando Secret GEMINI_API_KEY..." -ForegroundColo
 
 try {
     supabase secrets set GEMINI_API_KEY=$GEMINI_API_KEY
-    
+
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✅ Secret configurado com sucesso!" -ForegroundColor Green
     } else {
@@ -230,13 +230,13 @@ $functions = @("nathia-chat", "moderation-service")
 
 foreach ($function in $functions) {
     $functionPath = "supabase\functions\$function"
-    
+
     if (Test-Path $functionPath) {
         Write-Host "   Deployando: $function..." -ForegroundColor Gray
-        
+
         try {
             supabase functions deploy $function --project-ref $SUPABASE_PROJECT_REF
-            
+
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "✅ $function deployado com sucesso!" -ForegroundColor Green
             } else {

@@ -9,9 +9,6 @@ declare namespace NodeJS {
     NODE_ENV: 'development' | 'production' | 'test';
     EXPO_PUBLIC_SUPABASE_URL: string;
     EXPO_PUBLIC_SUPABASE_ANON_KEY: string;
-    EXPO_PUBLIC_GEMINI_API_KEY: string;
-    EXPO_PUBLIC_CLAUDE_API_KEY?: string;
-    EXPO_PUBLIC_OPENAI_API_KEY?: string;
     EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY?: string;
     EXPO_PUBLIC_ONESIGNAL_APP_ID?: string;
   }

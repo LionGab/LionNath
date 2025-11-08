@@ -140,14 +140,10 @@ Abra `.env` e preencha:
 EXPO_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-# Gemini AI (OBRIGATÓRIO para chat)
-GEMINI_API_KEY=AIzaSy...
-
-# Perplexity (OPCIONAL - para curadoria)
-PERPLEXITY_API_KEY=pplx-...
-
-# Claude (OPCIONAL - para análise)
-CLAUDE_API_KEY=sk-ant-...
+# IA (⚠️ configurar apenas em supabase/functions/.env)
+# GEMINI_API_KEY=your-gemini-api-key
+# CLAUDE_API_KEY=your-claude-api-key
+# PERPLEXITY_API_KEY=your-perplexity-api-key
 
 # Sentry (OPCIONAL - para monitoramento)
 SENTRY_DSN=https://...

@@ -1,14 +1,11 @@
 /**
- * Risk Analyzer - Análise de risco emocional usando Claude API
+ * Risk Analyzer - fallback local para análise de risco emocional
  *
- * Sistema paralelo de análise de risco para detectar crises emocionais
+ * Detecção heurística baseada em palavras-chave. Para uso completo,
+ * mantenha a lógica sensível em Edge Functions seguras no Supabase.
  */
 
-import axios from 'axios';
 import { getRiskLevel } from './guardrails';
-
-const CLAUDE_API_KEY = process.env.EXPO_PUBLIC_CLAUDE_API_KEY || '';
-const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 
 export interface RiskAnalysis {
   level: number; // 0-10
@@ -19,136 +16,14 @@ export interface RiskAnalysis {
 }
 
 /**
- * System prompt para Claude especializado em saúde mental materna
- */
-const RISK_ANALYSIS_SYSTEM_PROMPT = `Você é especialista em saúde mental materna com foco em detecção de crise.
-
-Analise a mensagem e retorne APENAS JSON válido com análise de risco.
-
-NÍVEIS:
-- 0-2: Desabafo normal/saudável
-- 3-4: Estresse elevado mas manejável
-- 5-6: Sobrecarga significativa, monitorar
-- 7-8: Sinais de depressão/ansiedade clínica
-- 9-10: CRISE - suicídio, psicose, risco de harm
-
-FLAGS (use APENAS se houver evidência clara):
-- suicidal_ideation: Ideação suicida ou pensamentos de morte
-- harm_to_baby: Pensamentos de machucar o bebê
-- psychosis: Psicose ou alucinações
-- self_harm: Pensamentos de auto-agressão
-- severe_depression: Depressão severa (não conseguir cuidar do bebê)
-- ppd: Sinais de depressão pós-parto
-- burnout: Burnout materno
-- normal_stress: Estresse normal da maternidade
-
-RECURSOS (recomende baseado em urgência):
-- cvv: Centro de Valorização da Vida (188)
-- caps: Centro de Atenção Psicossocial
-- emergency: Emergência médica (SAMU 192)
-- therapy: Terapia psicológica
-
-Seja preciso mas sensível. Não inferir demais. Isso pode salvar vidas.
-
-Retorne JSON no formato:
-{
-  "level": número (0-10),
-  "flags": ["flag1", "flag2"],
-  "requires_intervention": boolean,
-  "suggested_resources": ["recurso1", "recurso2"],
-  "reasoning": "explicação breve"
-}`;
-
-/**
- * Analisa o risco emocional de uma mensagem usando Claude API para detectar crises
- *
- * Utiliza Claude 3.5 Sonnet especializado em saúde mental materna para identificar
- * sinais de crise emocional, ideação suicida, depressão pós-parto e outros riscos.
- *
- * @param {string} message - Mensagem da usuária a ser analisada
- * @returns {Promise<RiskAnalysis>} Análise de risco com nível (0-10), flags e recursos sugeridos
- *
- * @example
- * ```typescript
- * const analysis = await analyzeRisk("Não aguento mais, não consigo cuidar do bebê");
- * if (analysis.requires_intervention) {
- *   console.log('ALERTA: Intervenção necessária!');
- *   console.log('Recursos:', analysis.suggested_resources);
- * }
- * ```
+ * Analisa risco emocional usando heurísticas locais.
+ * Em produção, utilize a Edge Function `risk-classifier` para análise completa.
  */
 export async function analyzeRisk(message: string): Promise<RiskAnalysis> {
-  try {
-    if (!CLAUDE_API_KEY) {
-      console.warn('CLAUDE_API_KEY não configurada, usando fallback');
-      return fallbackRiskAnalysis(message);
-    }
-
-    const response = await axios.post(
-      CLAUDE_API_URL,
-      {
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 1024,
-        temperature: 0.3, // Consistência
-        system: RISK_ANALYSIS_SYSTEM_PROMPT,
-        messages: [
-          {
-            role: 'user',
-            content: `Analise esta mensagem de uma mãe buscando apoio emocional:\n\n"${message}"`,
-          },
-        ],
-      },
-      {
-        headers: {
-          'x-api-key': CLAUDE_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'Content-Type': 'application/json',
-        },
-        timeout: 5000, // 5 segundos timeout
-      }
-    );
-
-    const content = response.data.content[0].text;
-
-    // Tentar extrair JSON da resposta
-    let analysis: RiskAnalysis;
-    try {
-      // Procurar JSON no texto
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        analysis = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('JSON não encontrado na resposta');
-      }
-    } catch (parseError) {
-      console.error('Erro ao parsear resposta Claude:', parseError);
-      // Usar fallback se não conseguir parsear
-      return fallbackRiskAnalysis(message);
-    }
-
-    // Validar estrutura
-    if (
-      typeof analysis.level !== 'number' ||
-      !Array.isArray(analysis.flags) ||
-      typeof analysis.requires_intervention !== 'boolean'
-    ) {
-      return fallbackRiskAnalysis(message);
-    }
-
-    // Garantir que level está entre 0-10
-    analysis.level = Math.max(0, Math.min(10, analysis.level));
-
-    // Garantir requires_intervention se level >= 9
-    if (analysis.level >= 9) {
-      analysis.requires_intervention = true;
-    }
-
-    return analysis;
-  } catch (error) {
-    console.error('Erro ao analisar risco com Claude:', error instanceof Error ? error.message : String(error));
-    // Usar fallback em caso de erro
-    return fallbackRiskAnalysis(message);
-  }
+  console.warn(
+    '[RiskAnalyzer] Edge Function indisponível neste contexto compartilhado. Usando fallback local de detecção.'
+  );
+  return fallbackRiskAnalysis(message);
 }
 
 /**

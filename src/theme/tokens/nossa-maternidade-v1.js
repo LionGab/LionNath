@@ -23,9 +23,7 @@ export const nossaMaternidadeTokens = {
       danger: palette.feedback.danger,
       info: palette.feedback.info,
       overlay: palette.overlays.scrim,
-      ...Object.fromEntries(
-        Object.entries(palette.neutrals).map(([stop, value]) => [`neutral-${stop}`, value])
-      ),
+      ...Object.fromEntries(Object.entries(palette.neutrals).map(([stop, value]) => [`neutral-${stop}`, value])),
     },
     spacing,
     borderRadius: radius,
@@ -51,5 +49,3 @@ export function getNativeWindSpacing(token) {
 export function getNativeWindRadius(token) {
   return nossaMaternidadeTokens.nativewind.borderRadius[token];
 }
-
-

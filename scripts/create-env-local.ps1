@@ -25,61 +25,44 @@ $envContent = @"
 # =============================================================================
 # NOSSA MATERNIDADE - Environment Variables (.env.local)
 # =============================================================================
-# ⚠️ Preencha apenas com novas chaves após revogar as anteriores
+# ⚠️ Preencha com suas próprias chaves seguras antes de iniciar o app
 # =============================================================================
 
-# ----------------------------------------------------------------------------- 
+# -----------------------------------------------------------------------------
 # SUPABASE - Database & Authentication
 # -----------------------------------------------------------------------------
-# ⚠️ IMPORTANTE: Expo requer prefixo EXPO_PUBLIC_* para variáveis públicas
-EXPO_PUBLIC_SUPABASE_URL=https://bbcwitnbnosyfpfjtzkr.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiY3dpdG5ibm9zeWZwZmp0emtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyODI3NjgsImV4cCI6MjA3NTg1ODc2OH0.a9g_JqrWWnLli_PV0sPikz8KPAWiKY81mQ1hJAbNtCo
+# ⚠️ Expo requer prefixo EXPO_PUBLIC_* apenas para valores realmente públicos
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
-# Service Role Key (NUNCA exponha publicamente - não usar EXPO_PUBLIC_*)
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiY3dpdG5ibm9zeWZwZmp0emtyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDI4Mjc2OCwiZXhwIjoyMDc1ODU4NzY4fQ.K0H61Di0itgPw-CTFVGtWG_XAYwg2mxKS8H_s1WKW-M
+# Service Role Key (NUNCA exponha publicamente - deixar vazio aqui)
+SUPABASE_SERVICE_ROLE_KEY=
 
 # Redirect URLs
 NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL=http://localhost:3000/onboarding
 NEXT_PUBLIC_PROD_SUPABASE_REDIRECT_URL=https://nossamaternidade.netlify.app/onboarding
 
-# ----------------------------------------------------------------------------- 
-# ANTHROPIC - Claude AI
 # -----------------------------------------------------------------------------
-EXPO_PUBLIC_CLAUDE_API_KEY=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
-ANTHROPIC_API_KEY=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
-
-# ----------------------------------------------------------------------------- 
-# OPENAI - GPT-4 / GPT-4o (conteúdo e recomendações)
+# AI PROVIDERS - EDGE FUNCTIONS ONLY
 # -----------------------------------------------------------------------------
-EXPO_PUBLIC_OPENAI_API_KEY=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
-OPENAI_API_KEY=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
+# ⚠️ TODAS as chaves de IA foram movidas para supabase/functions/.env
+# ⚠️ Configure CLAUDE_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, PERPLEXITY_API_KEY somente no backend
+# ⚠️ Nunca use EXPO_PUBLIC_* para essas chaves
 
-# ----------------------------------------------------------------------------- 
-# GOOGLE AI (Gemini)
 # -----------------------------------------------------------------------------
-EXPO_PUBLIC_GEMINI_API_KEY=AIzaSyC9YVWRmnGyGu4c9y7g-mNkkipDqb5JBZg
-GOOGLE_AI_API_KEY=AIzaSyC9YVWRmnGyGu4c9y7g-mNkkipDqb5JBZg
-
-# ----------------------------------------------------------------------------- 
-# PERPLEXITY - IA de busca contextual
-# -----------------------------------------------------------------------------
-EXPO_PUBLIC_PERPLEXITY_API_KEY=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
-PERPLEXITY_API_KEY=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
-
-# ----------------------------------------------------------------------------- 
 # CONFIGURAÇÕES DE AMBIENTE
 # -----------------------------------------------------------------------------
 NODE_ENV=development
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
-# ----------------------------------------------------------------------------- 
+# -----------------------------------------------------------------------------
 # FEATURE FLAGS
 # -----------------------------------------------------------------------------
 EXPO_PUBLIC_ENABLE_AI_FEATURES=true
 EXPO_PUBLIC_ENABLE_GAMIFICATION=true
 EXPO_PUBLIC_ENABLE_ANALYTICS=false
 
-# ----------------------------------------------------------------------------- 
+# -----------------------------------------------------------------------------
 # RATE LIMITING
 # -----------------------------------------------------------------------------
 RATE_LIMIT_MAX_REQUESTS=100
@@ -88,12 +71,9 @@ RATE_LIMIT_WINDOW_MS=900000
 # =============================================================================
 # ⚠️ NOTAS
 # =============================================================================
-# 1. Revogue as chaves antigas imediatamente (já expostas)
-# 2. Gere novas chaves em cada plataforma
-# 3. Atualize este arquivo e adicione ao .gitignore
-# 4. Configure as mesmas variáveis no Netlify Dashboard
-# 5. Nunca exponha SUPABASE_SERVICE_ROLE_KEY publicamente
-# 6. Expo requer prefixo EXPO_PUBLIC_* para variáveis acessíveis no cliente
+# 1. Gere e armazene chaves sensíveis apenas em Edge Functions (supabase/functions/.env)
+# 2. Configure as variáveis seguras nos painéis do Supabase/Netlify/GitHub Secrets
+# 3. Este arquivo é apenas para desenvolvimento local e já está no .gitignore
 # =============================================================================
 "@
 

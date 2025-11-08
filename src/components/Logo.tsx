@@ -41,4 +41,3 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 });
-

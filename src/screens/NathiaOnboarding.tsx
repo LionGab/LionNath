@@ -42,14 +42,7 @@
  */
 
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { OnboardingFlow } from '@/components/nathia/OnboardingFlow';
@@ -93,10 +86,7 @@ export default function NathiaOnboarding() {
   // Ainda no fluxo de onboarding
   if (!starterPack) {
     return (
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: palette.background }]}
-        edges={['top']}
-      >
+      <SafeAreaView style={[styles.container, { backgroundColor: palette.background }]} edges={['top']}>
         <View style={styles.header}>
           <Text
             style={[
@@ -124,20 +114,14 @@ export default function NathiaOnboarding() {
           </Text>
         </View>
 
-        <OnboardingFlow
-          userId={context?.userId || ''}
-          onComplete={handleOnboardingComplete}
-        />
+        <OnboardingFlow userId={context?.userId || ''} onComplete={handleOnboardingComplete} />
       </SafeAreaView>
     );
   }
 
   // Exibindo Starter Pack
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: palette.background }]}
-      edges={['top']}
-    >
+    <SafeAreaView style={[styles.container, { backgroundColor: palette.background }]} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.starterPackHeader}>

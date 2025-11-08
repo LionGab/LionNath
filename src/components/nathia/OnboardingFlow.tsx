@@ -17,7 +17,7 @@
  * />
  */
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -25,14 +25,12 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  useWindowDimensions,
 } from 'react-native';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
-import {
-  nathiaClient,
-  NathiaOnboardingRequest,
-  NathiaOnboardingResponse,
-} from '@/services/nathia-client';
+import { nathiaClient, NathiaOnboardingRequest, NathiaOnboardingResponse } from '@/services/nathia-client';
 import { logger } from '@/lib/logger';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface OnboardingFlowProps {
   userId: string;
@@ -102,14 +100,18 @@ export function OnboardingFlow({ userId, onComplete }: OnboardingFlowProps) {
   const [error, setError] = useState<string | null>(null);
 
   const { palette, typography, spacing, radius } = nossaMaternidadeDesignTokens;
+  const { width } = useWindowDimensions();
+  const styles = useMemo(
+    () => createStyles({ palette, typography, spacing, radius, width }),
+    [palette, typography, spacing, radius, width]
+  );
 
   const step = ONBOARDING_STEPS[currentStep];
   const isLastStep = currentStep === ONBOARDING_STEPS.length - 1;
   const progress = ((currentStep + 1) / ONBOARDING_STEPS.length) * 100;
 
   // Pula step de semanas se não for gestante
-  const shouldSkipPregnancyWeek =
-    step?.id === 'pregnancyWeek' && answers.stage !== 'gestante';
+  const shouldSkipPregnancyWeek = step?.id === 'pregnancyWeek' && answers.stage !== 'gestante';
 
   React.useEffect(() => {
     if (shouldSkipPregnancyWeek) {
@@ -123,9 +125,7 @@ export function OnboardingFlow({ userId, onComplete }: OnboardingFlowProps) {
     } else {
       // Multiple selection
       const current = (answers[step.id] as string[]) || [];
-      const updated = current.includes(value)
-        ? current.filter((v) => v !== value)
-        : [...current, value];
+      const updated = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
 
       setAnswers((prev) => ({ ...prev, [step.id]: updated }));
     }
@@ -175,9 +175,7 @@ export function OnboardingFlow({ userId, onComplete }: OnboardingFlowProps) {
         userId,
         answers: {
           stage: answers.stage || 'gestante',
-          pregnancyWeek: answers.pregnancyWeek
-            ? parseInt(answers.pregnancyWeek.split('-')[0], 10)
-            : undefined,
+          pregnancyWeek: answers.pregnancyWeek ? parseInt(answers.pregnancyWeek.split('-')[0], 10) : undefined,
           concerns: answers.concerns || [],
           expectations: answers.expectations || [],
         },
@@ -191,7 +189,8 @@ export function OnboardingFlow({ userId, onComplete }: OnboardingFlowProps) {
 
       onComplete(response);
     } catch (err) {
-      logger.error('Erro ao completar onboarding', err);
+      const errorInstance = err instanceof Error ? err : new Error(String(err));
+      logger.error('Erro ao completar onboarding', errorInstance);
       setError('Não foi possível concluir. Tente novamente.');
     } finally {
       setLoading(false);
@@ -201,225 +200,250 @@ export function OnboardingFlow({ userId, onComplete }: OnboardingFlowProps) {
   if (!step) return null;
 
   return (
-    <View style={styles.container}>
-      {/* Progress Bar */}
-      <View
-        style={[
-          styles.progressBar,
-          { backgroundColor: palette.neutrals[200] },
-        ]}
-      >
-        <View
-          style={[
-            styles.progressFill,
-            {
-              width: `${progress}%`,
-              backgroundColor: palette.primary,
-            },
-          ]}
-        />
-      </View>
-
-      {/* Step Counter */}
-      <Text
-        style={[
-          styles.stepCounter,
-          {
-            fontSize: typography.caption.fontSize,
-            color: palette.neutrals[600],
-            marginTop: spacing.md,
-          },
-        ]}
-      >
-        Passo {currentStep + 1} de {ONBOARDING_STEPS.length}
-      </Text>
-
-      {/* Question */}
-      <Text
-        style={[
-          styles.question,
-          {
-            fontSize: typography.headlineMd.fontSize,
-            fontWeight: typography.headlineMd.fontWeight,
-            color: palette.text,
-            marginTop: spacing.md,
-            marginBottom: spacing.lg,
-          },
-        ]}
-      >
-        {step.question}
-      </Text>
-
-      {/* Options */}
-      <ScrollView
-        style={styles.optionsContainer}
-        contentContainerStyle={{ paddingBottom: spacing.xl }}
-      >
-        {step.options.map((option) => {
-          const isSelected = isOptionSelected(option.value);
-
-          return (
-            <TouchableOpacity
-              key={option.value}
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+      <View style={styles.container}>
+        {/* Progress Bar */}
+        <View style={styles.content}>
+          <View style={styles.progressBar}>
+            <View
               style={[
-                styles.option,
+                styles.progressFill,
                 {
-                  backgroundColor: isSelected
-                    ? palette.primary
-                    : palette.surface,
-                  borderRadius: radius.md,
-                  marginBottom: spacing.sm,
+                  width: `${progress}%`,
                 },
               ]}
-              onPress={() => handleSelectOption(option.value)}
-              accessible={true}
-              accessibilityRole="button"
-              accessibilityLabel={option.label}
-              accessibilityState={{ selected: isSelected }}
-            >
-              <Text
+            />
+          </View>
+
+          {/* Step Counter */}
+          <Text style={styles.stepCounter}>
+            Passo {currentStep + 1} de {ONBOARDING_STEPS.length}
+          </Text>
+
+          {/* Question */}
+          <Text style={styles.question}>{step.question}</Text>
+
+          {/* Options */}
+          <ScrollView
+            style={styles.optionsContainer}
+            contentContainerStyle={styles.optionsContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {step.options.map((option) => {
+              const isSelected = isOptionSelected(option.value);
+
+              return (
+                <TouchableOpacity
+                  key={option.value}
+                  style={[
+                    styles.option,
+                    {
+                      backgroundColor: isSelected ? palette.primary : palette.surface,
+                      borderRadius: radius.md,
+                    },
+                  ]}
+                  onPress={() => handleSelectOption(option.value)}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel={option.label}
+                  accessibilityState={{ selected: isSelected }}
+                  activeOpacity={0.85}
+                >
+                  <Text
+                    style={[
+                      styles.optionText,
+                      {
+                        color: isSelected ? palette.surface : palette.text,
+                      },
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+
+            {error && <Text style={styles.errorText}>{error}</Text>}
+          </ScrollView>
+
+          {/* Navigation Buttons */}
+          <View style={styles.buttonContainer}>
+            {currentStep > 0 && (
+              <TouchableOpacity
                 style={[
-                  styles.optionText,
+                  styles.backButton,
                   {
-                    fontSize: typography.bodyLg.fontSize,
-                    color: isSelected ? '#FFFFFF' : palette.text,
+                    borderColor: palette.neutrals[300],
                   },
                 ]}
+                onPress={handleBack}
+                disabled={loading}
+                activeOpacity={0.85}
               >
-                {option.label}
-              </Text>
+                <Text style={styles.backButtonText}>Voltar</Text>
+              </TouchableOpacity>
+            )}
+
+            <TouchableOpacity
+              style={[
+                styles.nextButton,
+                {
+                  backgroundColor: canProceed() ? palette.primary : palette.neutrals[300],
+                },
+              ]}
+              onPress={handleNext}
+              disabled={!canProceed() || loading}
+              activeOpacity={0.85}
+            >
+              {loading ? (
+                <ActivityIndicator color={palette.surface} />
+              ) : (
+                <Text style={styles.nextButtonText}>{isLastStep ? 'Concluir' : 'Próximo'}</Text>
+              )}
             </TouchableOpacity>
-          );
-        })}
-
-        {error && (
-          <Text
-            style={[
-              styles.errorText,
-              {
-                fontSize: typography.bodySm.fontSize,
-                color: palette.feedback.danger,
-                marginTop: spacing.sm,
-              },
-            ]}
-          >
-            {error}
-          </Text>
-        )}
-      </ScrollView>
-
-      {/* Navigation Buttons */}
-      <View style={styles.buttonContainer}>
-        {currentStep > 0 && (
-          <TouchableOpacity
-            style={[
-              styles.backButton,
-              {
-                borderRadius: radius.md,
-                borderWidth: 1,
-                borderColor: palette.neutrals[300],
-              },
-            ]}
-            onPress={handleBack}
-            disabled={loading}
-          >
-            <Text
-              style={[
-                styles.backButtonText,
-                {
-                  fontSize: typography.button.fontSize,
-                  color: palette.text,
-                },
-              ]}
-            >
-              Voltar
-            </Text>
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity
-          style={[
-            styles.nextButton,
-            {
-              backgroundColor: canProceed()
-                ? palette.primary
-                : palette.neutrals[300],
-              borderRadius: radius.md,
-            },
-          ]}
-          onPress={handleNext}
-          disabled={!canProceed() || loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#FFFFFF" />
-          ) : (
-            <Text
-              style={[
-                styles.nextButtonText,
-                {
-                  fontSize: typography.button.fontSize,
-                  fontWeight: typography.button.fontWeight,
-                },
-              ]}
-            >
-              {isLastStep ? 'Concluir' : 'Próximo'}
-            </Text>
-          )}
-        </TouchableOpacity>
+          </View>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  progressBar: {
-    height: 4,
-    borderRadius: 2,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-  },
-  stepCounter: {
-    textAlign: 'center',
-  },
-  question: {
-    textAlign: 'center',
-  },
-  optionsContainer: {
-    flex: 1,
-  },
-  option: {
-    padding: 16,
-    alignItems: 'center',
-  },
-  optionText: {
-    fontWeight: '500',
-  },
-  errorText: {
-    textAlign: 'center',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 16,
-  },
-  backButton: {
-    flex: 1,
-    padding: 14,
-    alignItems: 'center',
-  },
-  backButtonText: {},
-  nextButton: {
-    flex: 2,
-    padding: 14,
-    alignItems: 'center',
-  },
-  nextButtonText: {
-    color: '#FFFFFF',
-  },
-});
+type DesignTokens = typeof nossaMaternidadeDesignTokens;
+type Palette = DesignTokens['palette'];
+type Typography = DesignTokens['typography'];
+type Spacing = DesignTokens['spacing'];
+type Radius = DesignTokens['radius'];
+
+interface StyleParams {
+  palette: Palette;
+  typography: Typography;
+  spacing: Spacing;
+  radius: Radius;
+  width: number;
+}
+
+function createStyles({ palette, typography, spacing, radius, width }: StyleParams) {
+  const isCompact = width <= 360;
+  const isTablet = width >= 768;
+
+  const horizontalPadding = isTablet ? spacing['2xl'] : spacing.lg;
+
+  return StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: palette.background,
+    },
+    container: {
+      flex: 1,
+      paddingHorizontal: horizontalPadding,
+      paddingTop: spacing.lg,
+      paddingBottom: spacing.lg,
+      backgroundColor: palette.background,
+    },
+    content: {
+      flex: 1,
+      width: '100%',
+      maxWidth: isTablet ? 640 : '100%',
+      alignSelf: 'center',
+      gap: spacing.md,
+    },
+    progressBar: {
+      height: 4,
+      borderRadius: 2,
+      overflow: 'hidden',
+      backgroundColor: palette.neutrals[200],
+    },
+    progressFill: {
+      height: '100%',
+      backgroundColor: palette.primary,
+      borderRadius: 2,
+    },
+    stepCounter: {
+      textAlign: 'center',
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+      color: palette.neutrals[600],
+      marginTop: spacing.md,
+    },
+    question: {
+      textAlign: 'center',
+      fontSize: isCompact ? typography.headlineSm.fontSize : typography.headlineMd.fontSize,
+      lineHeight: isCompact ? typography.headlineSm.lineHeight : typography.headlineMd.lineHeight,
+      fontWeight: typography.headlineMd.fontWeight,
+      color: palette.text,
+      marginTop: spacing.md,
+      marginBottom: spacing.lg,
+      paddingHorizontal: isCompact ? spacing.sm : spacing.none,
+    },
+    optionsContainer: {
+      flex: 1,
+    },
+    optionsContent: {
+      paddingBottom: spacing.xl,
+      gap: spacing.sm,
+    },
+    option: {
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1,
+      borderColor: 'transparent',
+      minHeight: 56,
+      shadowColor: palette.overlays.subtle,
+      width: '100%',
+    },
+    optionText: {
+      fontSize: isCompact ? typography.bodyMd.fontSize : typography.bodyLg.fontSize,
+      lineHeight: isCompact ? typography.bodyMd.lineHeight : typography.bodyLg.lineHeight,
+      fontWeight: typography.bodyLg.fontWeight,
+      textAlign: 'center',
+    },
+    errorText: {
+      textAlign: 'center',
+      fontSize: typography.bodySm.fontSize,
+      lineHeight: typography.bodySm.lineHeight,
+      color: palette.feedback.danger,
+      marginTop: spacing.sm,
+      paddingHorizontal: spacing.sm,
+    },
+    buttonContainer: {
+      flexDirection: isCompact ? 'column' : 'row',
+      gap: spacing.sm,
+      marginTop: spacing.lg,
+      alignItems: 'stretch',
+      width: '100%',
+    },
+    backButton: {
+      flex: isCompact ? undefined : 1,
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: 52,
+      backgroundColor: palette.surface,
+      borderRadius: radius.md,
+    },
+    backButtonText: {
+      fontSize: typography.button.fontSize,
+      lineHeight: typography.button.lineHeight,
+      fontWeight: typography.button.fontWeight,
+      color: palette.text,
+    },
+    nextButton: {
+      flex: isCompact ? undefined : 1.1,
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.lg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: 52,
+      borderRadius: radius.md,
+    },
+    nextButtonText: {
+      fontSize: typography.button.fontSize,
+      lineHeight: typography.button.lineHeight,
+      fontWeight: typography.button.fontWeight,
+      color: palette.surface,
+    },
+  });
+}

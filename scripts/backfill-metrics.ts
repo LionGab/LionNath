@@ -88,57 +88,11 @@ function extrairTema(message: string): {
 
   // Palavras-chave por categoria
   const keywords = {
-    saude: [
-      'dor',
-      'sangue',
-      'médico',
-      'consulta',
-      'sintoma',
-      'febre',
-      'enjoo',
-      'cansaço',
-      'vitamina',
-    ],
-    emocional: [
-      'ansiedade',
-      'medo',
-      'triste',
-      'preocup',
-      'sozinha',
-      'apoio',
-      'ajuda',
-      'depressão',
-      'choro',
-    ],
-    pratico: [
-      'enxoval',
-      'bolsa',
-      'carrinho',
-      'berço',
-      'amamentação',
-      'fralda',
-      'organizar',
-      'lista',
-    ],
-    informacao: [
-      'semana',
-      'trimestre',
-      'bebê',
-      'desenvolvimento',
-      'parto',
-      'cesárea',
-      'normal',
-      'hospital',
-    ],
-    emergencia: [
-      'urgente',
-      'emergência',
-      'socorro',
-      'sangrando',
-      'muito sangue',
-      'desmaio',
-      'convulsão',
-    ],
+    saude: ['dor', 'sangue', 'médico', 'consulta', 'sintoma', 'febre', 'enjoo', 'cansaço', 'vitamina'],
+    emocional: ['ansiedade', 'medo', 'triste', 'preocup', 'sozinha', 'apoio', 'ajuda', 'depressão', 'choro'],
+    pratico: ['enxoval', 'bolsa', 'carrinho', 'berço', 'amamentação', 'fralda', 'organizar', 'lista'],
+    informacao: ['semana', 'trimestre', 'bebê', 'desenvolvimento', 'parto', 'cesárea', 'normal', 'hospital'],
+    emergencia: ['urgente', 'emergência', 'socorro', 'sangrando', 'muito sangue', 'desmaio', 'convulsão'],
   };
 
   // Detectar categoria
@@ -165,28 +119,8 @@ function extrairTema(message: string): {
 function calcularSentimento(message: string, response: string): number {
   const text = (message + ' ' + response).toLowerCase();
 
-  const positivos = [
-    'feliz',
-    'alegre',
-    'bem',
-    'ótimo',
-    'excelente',
-    'obrigad',
-    'ajudou',
-    'melhor',
-    'gostei',
-  ];
-  const negativos = [
-    'triste',
-    'mal',
-    'dor',
-    'ruim',
-    'difícil',
-    'problema',
-    'preocup',
-    'medo',
-    'sozinha',
-  ];
+  const positivos = ['feliz', 'alegre', 'bem', 'ótimo', 'excelente', 'obrigad', 'ajudou', 'melhor', 'gostei'];
+  const negativos = ['triste', 'mal', 'dor', 'ruim', 'difícil', 'problema', 'preocup', 'medo', 'sozinha'];
 
   let score = 0;
 
@@ -217,10 +151,7 @@ function estimarTokens(text: string): { input: number; output: number } {
 /**
  * Processa backfill
  */
-async function processBackfill(
-  messages: any[],
-  options: BackfillOptions
-): Promise<BackfillStats> {
+async function processBackfill(messages: any[], options: BackfillOptions): Promise<BackfillStats> {
   const stats: BackfillStats = {
     mensagens_processadas: 0,
     sessoes_criadas: 0,
@@ -356,8 +287,7 @@ async function gerarMetricasAgregadas(days: number, options: BackfillOptions) {
       const usage_metrics = {
         mensagens_diarias: temas?.length || 0,
         sentimento_medio:
-          sentimentos?.reduce((acc, s) => acc + s.sentimento_score, 0) /
-            (sentimentos?.length || 1) || 0,
+          sentimentos?.reduce((acc, s) => acc + s.sentimento_score, 0) / (sentimentos?.length || 1) || 0,
       };
 
       const cost_metrics = {

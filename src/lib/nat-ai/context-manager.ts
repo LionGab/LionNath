@@ -8,7 +8,6 @@
  */
 
 import { supabase } from '@/services/supabase';
-import { summarizeOldMessages } from '@/lib/gemini';
 import { NAT_AI_SYSTEM_PROMPT } from './system-prompt';
 
 export interface UserProfile {
@@ -213,7 +212,7 @@ export class ContextManager {
           content: (msg.role === 'user' ? msg.message : msg.response || '') as string,
         }));
 
-        const summary = await summarizeOldMessages(messagesToSummarize, NAT_AI_SYSTEM_PROMPT);
+        const summary = await summarizeMessagesLocally(messagesToSummarize);
 
         // Salvar resumo na conversa
         await supabase.from('conversation_history').update({ context_summary: summary }).eq('id', conversation.id);
@@ -315,7 +314,7 @@ export class ContextManager {
         content: (msg.role === 'user' ? msg.message : msg.response || '') as string,
       }));
 
-      const summary = await summarizeOldMessages(messagesToSummarize, NAT_AI_SYSTEM_PROMPT);
+      const summary = await summarizeMessagesLocally(messagesToSummarize);
 
       await supabase
         .from('conversation_history')
@@ -338,4 +337,62 @@ export class ContextManager {
     this.cachedSummary = null;
     this.lastSummaryCount = 0;
   }
+}
+
+interface SummarizableMessage {
+  role: 'user' | 'model';
+  content: string;
+}
+
+async function summarizeMessagesLocally(messages: SummarizableMessage[]): Promise<string> {
+  const filtered = messages
+    .filter((msg) => typeof msg.content === 'string' && msg.content.trim().length > 0)
+    .map((msg) => ({
+      role: msg.role,
+      content: normalizeWhitespace(msg.content),
+    }));
+
+  if (filtered.length === 0) {
+    return '';
+  }
+
+  const userHighlights = filtered.filter((msg) => msg.role === 'user').slice(-3);
+  const assistantHighlights = filtered.filter((msg) => msg.role === 'model').slice(-2);
+
+  const summaryLines: string[] = [];
+
+  if (userHighlights.length > 0) {
+    summaryLines.push('Principais sentimentos recentes da usuária:');
+    userHighlights.forEach((msg, index) => {
+      summaryLines.push(`- (${index + 1}) ${truncateSentence(msg.content)}`);
+    });
+  }
+
+  if (assistantHighlights.length > 0) {
+    summaryLines.push('\nComo a NAT-AI respondeu:');
+    assistantHighlights.forEach((msg, index) => {
+      summaryLines.push(`- Resposta ${index + 1}: ${truncateSentence(msg.content)}`);
+    });
+  }
+
+  if (summaryLines.length === 0) {
+    const lastMessage = filtered[filtered.length - 1];
+    return `Resumo automático: ${truncateSentence(lastMessage.content)}`;
+  }
+
+  return summaryLines.join('\n');
+}
+
+function normalizeWhitespace(text: string): string {
+  return text.replace(/\s+/g, ' ').trim();
+}
+
+function truncateSentence(text: string, maxLength: number = 180): string {
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  const truncated = text.slice(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return `${truncated.slice(0, lastSpace > 0 ? lastSpace : truncated.length)}…`;
 }

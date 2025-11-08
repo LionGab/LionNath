@@ -633,9 +633,7 @@ import { useNathia } from '@/hooks/useNathia';
 
 describe('useNathia', () => {
   it('should send message and receive response', async () => {
-    const { result } = renderHook(() =>
-      useNathia({ userId: 'test-user' })
-    );
+    const { result } = renderHook(() => useNathia({ userId: 'test-user' }));
 
     expect(result.current.messages).toEqual([]);
 

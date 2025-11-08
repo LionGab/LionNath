@@ -42,7 +42,7 @@ SELECT routine_name FROM information_schema.routines WHERE routine_name = 'match
 3. Clique em **Add Secret** ou **New Secret**
 4. Preencha:
    - **Name**: `GEMINI_API_KEY`
-   - **Value**: `AIzaSyC9YVWRmnGyGu4c9y7g-mNkkipDqb5JBZg`
+   - **Configuração**: definir `GEMINI_API_KEY` em `supabase/functions/.env` (sem prefixo `EXPO_PUBLIC_*`)
 5. Clique em **Save**
 
 ---

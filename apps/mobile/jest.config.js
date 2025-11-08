@@ -3,9 +3,7 @@
  * https://jestjs.io/docs/configuration
  */
 
-import type {Config} from 'jest';
-
-const config: Config = {
+const config = {
   // ✅ Preset para Expo/React Native
   preset: 'jest-expo',
 
@@ -16,10 +14,10 @@ const config: Config = {
   collectCoverage: true,
 
   // The directory where Jest should output its coverage files
-  coverageDirectory: "coverage",
+  coverageDirectory: 'coverage',
 
   // Indicates which provider should be used to instrument code for coverage
-  coverageProvider: "v8",
+  coverageProvider: 'v8',
 
   // ✅ Transformações para TypeScript/React Native
   transform: {
@@ -218,4 +216,4 @@ const config: Config = {
   // watchman: true,
 };
 
-export default config;
+module.exports = config;

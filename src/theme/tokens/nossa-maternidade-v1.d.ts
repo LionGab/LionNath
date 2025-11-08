@@ -30,4 +30,3 @@ export declare function getNativeWindColor(token: string): string | undefined;
 export declare function getNativeWindSpacing(token: string): number | undefined;
 
 export declare function getNativeWindRadius(token: string): number | undefined;
-

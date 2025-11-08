@@ -447,7 +447,7 @@ console.error('Erro ao chamar API:', error.response?.data);
 logger.error('Erro ao chamar API', error, { action: 'claude_api_call' });
 ```
 
-#### 3.3 Mover Credenciais para Expo Secrets
+#### 3.3 Mover Credenciais para Edge Functions
 
 **Prazo**: 2 dias
 
@@ -460,28 +460,37 @@ git rm --cached .env.local
 echo ".env.local" >> .gitignore
 ```
 
-2. Configurar EAS Secrets
+2. Configurar secrets públicos no Expo (apenas Supabase)
 
 ```bash
-eas secret:create --name EXPO_PUBLIC_CLAUDE_API_KEY --value "sk-..."
-eas secret:create --name EXPO_PUBLIC_OPENAI_API_KEY --value "sk-..."
 eas secret:create --name EXPO_PUBLIC_SUPABASE_URL --value "https://..."
 eas secret:create --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value "eyJ..."
 ```
 
-3. Validar na inicialização
-   **Arquivo**: `src/config/api.ts`
+3. Criar `supabase/functions/.env` com as chaves privadas
+
+```bash
+cat <<'EOF' > supabase/functions/.env
+CLAUDE_API_KEY=sk-...
+OPENAI_API_KEY=sk-...
+GEMINI_API_KEY=...
+PERPLEXITY_API_KEY=pplx-...
+EOF
+```
+
+4. Validar na inicialização (Edge Functions)
+   **Arquivo**: `supabase/functions/nat-ai-chat/index.ts`
 
 ```typescript
-const CLAUDE_API_KEY = process.env.EXPO_PUBLIC_CLAUDE_API_KEY;
+const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
 
-if (!CLAUDE_API_KEY) {
-  throw new Error('CRITICAL: EXPO_PUBLIC_CLAUDE_API_KEY not configured. Check EAS secrets.');
+if (!claudeApiKey) {
+  throw new Error('CRITICAL: CLAUDE_API_KEY not configured. Check supabase/functions/.env');
 }
 
 export const config = {
   claude: {
-    apiKey: CLAUDE_API_KEY,
+    apiKey: claudeApiKey,
     baseURL: 'https://api.anthropic.com',
   },
   // ...

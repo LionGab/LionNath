@@ -99,12 +99,15 @@
 
 - [ ] `.env.local` removido do repositório
 - [ ] `.env.local` adicionado ao `.gitignore`
-- [ ] Secrets configurados no Expo EAS:
-  - [ ] EXPO_PUBLIC_CLAUDE_API_KEY
-  - [ ] EXPO_PUBLIC_OPENAI_API_KEY
+- [ ] Secrets configurados no Expo EAS (apenas valores públicos):
   - [ ] EXPO_PUBLIC_SUPABASE_URL
   - [ ] EXPO_PUBLIC_SUPABASE_ANON_KEY
-- [ ] Validação de credenciais em `src/config/api.ts`
+- [ ] Chaves de IA configuradas em `supabase/functions/.env`:
+  - [ ] CLAUDE_API_KEY
+  - [ ] OPENAI_API_KEY
+  - [ ] GEMINI_API_KEY
+  - [ ] PERPLEXITY_API_KEY (se aplicável)
+- [ ] Validação de credenciais em Edge Functions (`Deno.env.get`)
 - [ ] Erro claro se credencial faltando
 
 ### Links de Privacidade

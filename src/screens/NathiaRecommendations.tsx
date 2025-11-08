@@ -25,24 +25,12 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { RecommendationCard } from '@/components/nathia/RecommendationCard';
 import { useNathiaContext } from '@/contexts/NathiaContext';
-import {
-  nathiaClient,
-  NathiaRecommendation,
-  NathiaRecommendationsRequest,
-} from '@/services/nathia-client';
+import { nathiaClient, NathiaRecommendation, NathiaRecommendationsRequest } from '@/services/nathia-client';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
 import { logger } from '@/lib/logger';
 
@@ -126,10 +114,7 @@ export default function NathiaRecommendations() {
   };
 
   // Filtra recomendações
-  const filteredRecommendations =
-    filter === 'all'
-      ? recommendations
-      : recommendations.filter((r) => r.type === filter);
+  const filteredRecommendations = filter === 'all' ? recommendations : recommendations.filter((r) => r.type === filter);
 
   // Render filter tab
   const renderFilterTab = (type: FilterType, label: string) => {
@@ -200,10 +185,7 @@ export default function NathiaRecommendations() {
   // Error state
   if (error && !refreshing) {
     return (
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: palette.background }]}
-        edges={['top']}
-      >
+      <SafeAreaView style={[styles.container, { backgroundColor: palette.background }]} edges={['top']}>
         <View style={styles.errorContainer}>
           <Text
             style={[
@@ -245,10 +227,7 @@ export default function NathiaRecommendations() {
   }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: palette.background }]}
-      edges={['top']}
-    >
+    <SafeAreaView style={[styles.container, { backgroundColor: palette.background }]} edges={['top']}>
       {/* Header */}
       <View style={[styles.header, { paddingHorizontal: spacing.md }]}>
         <Text
@@ -324,11 +303,7 @@ export default function NathiaRecommendations() {
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={renderEmptyState}
           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor={palette.primary}
-            />
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={palette.primary} />
           }
         />
       )}

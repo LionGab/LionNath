@@ -35,6 +35,16 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   'complete',
 ];
 
+function normalizeResponseValue(value: string | string[] | number, questionId: string) {
+  if (questionId === 'stress_level' || questionId === 'energy_level' || questionId === 'baby_age_months') {
+    if (typeof value === 'string') {
+      const parsed = Number.parseInt(value, 10);
+      return Number.isNaN(parsed) ? value : parsed;
+    }
+  }
+  return value;
+}
+
 export interface UseOnboardingReturn {
   // Estado
   currentStep: OnboardingStep;
@@ -135,13 +145,14 @@ export function useOnboarding(userId?: string): UseOnboardingReturn {
         await saveOnboardingResponse(userId, questionId, value);
 
         // Atualizar estado local
+        const normalizedValue = normalizeResponseValue(value, questionId);
         updateData({
-          [questionId]: value,
+          [questionId]: normalizedValue,
           responses: [
             ...(data.responses || []),
             {
               questionId,
-              value,
+              value: normalizedValue,
               timestamp: new Date().toISOString(),
             },
           ],

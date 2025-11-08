@@ -18,13 +18,7 @@
  */
 
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  AccessibilityInfo,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
 import { Message } from '@/hooks/useNathia';
 import { NathiaAction } from '@/services/nathia-client';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
@@ -35,11 +29,7 @@ interface ChatMessageProps {
   onFeedback?: (messageId: string, feedback: 'positive' | 'negative') => void;
 }
 
-export function ChatMessage({
-  message,
-  onActionPress,
-  onFeedback,
-}: ChatMessageProps) {
+export function ChatMessage({ message, onActionPress, onFeedback }: ChatMessageProps) {
   const [feedbackGiven, setFeedbackGiven] = useState<'positive' | 'negative' | null>(null);
 
   const isUser = message.role === 'user';
@@ -51,9 +41,7 @@ export function ChatMessage({
 
     // Announce feedback para screen readers
     AccessibilityInfo.announceForAccessibility(
-      feedback === 'positive'
-        ? 'Feedback positivo registrado'
-        : 'Feedback negativo registrado'
+      feedback === 'positive' ? 'Feedback positivo registrado' : 'Feedback negativo registrado'
     );
   };
 
@@ -66,23 +54,14 @@ export function ChatMessage({
 
   return (
     <View
-      style={[
-        styles.container,
-        isUser ? styles.userContainer : styles.assistantContainer,
-      ]}
+      style={[styles.container, isUser ? styles.userContainer : styles.assistantContainer]}
       accessible={true}
       accessibilityRole="text"
       accessibilityLabel={`${isUser ? 'Você' : 'NAT-IA'}: ${message.content}`}
     >
       {/* Avatar/Indicator */}
       {!isUser && (
-        <View
-          style={[
-            styles.avatar,
-            { backgroundColor: palette.primary },
-          ]}
-          accessible={false}
-        >
+        <View style={[styles.avatar, { backgroundColor: palette.primary }]} accessible={false}>
           <Text style={styles.avatarText}>N</Text>
         </View>
       )}
@@ -166,10 +145,7 @@ export function ChatMessage({
         {!isUser && onFeedback && (
           <View style={styles.feedbackContainer}>
             <TouchableOpacity
-              style={[
-                styles.feedbackButton,
-                feedbackGiven === 'positive' && styles.feedbackActive,
-              ]}
+              style={[styles.feedbackButton, feedbackGiven === 'positive' && styles.feedbackActive]}
               onPress={() => handleFeedback('positive')}
               disabled={feedbackGiven !== null}
               accessible={true}
@@ -181,10 +157,7 @@ export function ChatMessage({
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[
-                styles.feedbackButton,
-                feedbackGiven === 'negative' && styles.feedbackActive,
-              ]}
+              style={[styles.feedbackButton, feedbackGiven === 'negative' && styles.feedbackActive]}
               onPress={() => handleFeedback('negative')}
               disabled={feedbackGiven !== null}
               accessible={true}

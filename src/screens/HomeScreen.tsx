@@ -37,10 +37,7 @@ const QuickActionButton = React.memo<QuickActionButtonProps>(function QuickActio
     onPress();
   }, [onPress]);
 
-  const accessibilityHint = useMemo(
-    () => `Abre a tela de ${title.toLowerCase()}`,
-    [title]
-  );
+  const accessibilityHint = useMemo(() => `Abre a tela de ${title.toLowerCase()}`, [title]);
 
   return (
     <Card
@@ -200,12 +197,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-      <Toast
-        type={toastType}
-        message={toastMessage}
-        visible={toastVisible}
-        onDismiss={() => setToastVisible(false)}
-      />
+      <Toast type={toastType} message={toastMessage} visible={toastVisible} onDismiss={() => setToastVisible(false)} />
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
@@ -471,4 +463,3 @@ const styles = StyleSheet.create({
     marginBottom: spacing['3xl'],
   },
 });
-

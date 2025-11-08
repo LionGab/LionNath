@@ -16,14 +16,7 @@
  */
 
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  AccessibilityInfo,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, AccessibilityInfo } from 'react-native';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
 
 interface QuickRepliesProps {
@@ -32,11 +25,7 @@ interface QuickRepliesProps {
   disabled?: boolean;
 }
 
-export function QuickReplies({
-  suggestions,
-  onSelect,
-  disabled = false,
-}: QuickRepliesProps) {
+export function QuickReplies({ suggestions, onSelect, disabled = false }: QuickRepliesProps) {
   const { palette, typography, spacing, radius } = nossaMaternidadeDesignTokens;
 
   if (!suggestions || suggestions.length === 0) {
@@ -55,10 +44,7 @@ export function QuickReplies({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingHorizontal: spacing.md },
-        ]}
+        contentContainerStyle={[styles.scrollContent, { paddingHorizontal: spacing.md }]}
       >
         {suggestions.map((suggestion, index) => (
           <TouchableOpacity
@@ -66,9 +52,7 @@ export function QuickReplies({
             style={[
               styles.chip,
               {
-                backgroundColor: disabled
-                  ? palette.neutrals[300]
-                  : palette.surface,
+                backgroundColor: disabled ? palette.neutrals[300] : palette.surface,
                 borderRadius: radius.full,
                 paddingHorizontal: spacing.md,
                 paddingVertical: spacing.xs,
@@ -127,63 +111,29 @@ export function getContextualSuggestions(context: {
   const { stage, pregnancyWeek, concerns } = context;
 
   // Sugestões base
-  const baseSuggestions = [
-    'Como está meu bebê?',
-    'Me sinto ansiosa',
-    'Dicas de bem-estar',
-  ];
+  const baseSuggestions = ['Como está meu bebê?', 'Me sinto ansiosa', 'Dicas de bem-estar'];
 
   // Sugestões específicas por estágio
   if (stage === 'gestante') {
     if (pregnancyWeek && pregnancyWeek < 13) {
-      return [
-        'Sintomas do 1º trimestre',
-        'O que evitar na gravidez',
-        'Quando fazer pré-natal',
-        ...baseSuggestions,
-      ];
+      return ['Sintomas do 1º trimestre', 'O que evitar na gravidez', 'Quando fazer pré-natal', ...baseSuggestions];
     } else if (pregnancyWeek && pregnancyWeek < 28) {
-      return [
-        'Movimentos do bebê',
-        'Lista do enxoval',
-        'Dúvidas sobre parto',
-        ...baseSuggestions,
-      ];
+      return ['Movimentos do bebê', 'Lista do enxoval', 'Dúvidas sobre parto', ...baseSuggestions];
     } else {
-      return [
-        'Sinais de trabalho de parto',
-        'Plano de parto',
-        'Bolsa maternidade',
-        ...baseSuggestions,
-      ];
+      return ['Sinais de trabalho de parto', 'Plano de parto', 'Bolsa maternidade', ...baseSuggestions];
     }
   }
 
   if (stage === 'mae') {
-    return [
-      'Dúvidas sobre amamentação',
-      'Rotina com bebê',
-      'Cuidados pós-parto',
-      ...baseSuggestions,
-    ];
+    return ['Dúvidas sobre amamentação', 'Rotina com bebê', 'Cuidados pós-parto', ...baseSuggestions];
   }
 
   if (stage === 'tentante') {
-    return [
-      'Como aumentar fertilidade',
-      'Período fértil',
-      'Exames pré-concepção',
-      ...baseSuggestions,
-    ];
+    return ['Como aumentar fertilidade', 'Período fértil', 'Exames pré-concepção', ...baseSuggestions];
   }
 
   if (stage === 'puerperio') {
-    return [
-      'Me sinto sobrecarregada',
-      'Baby blues',
-      'Recuperação pós-parto',
-      ...baseSuggestions,
-    ];
+    return ['Me sinto sobrecarregada', 'Baby blues', 'Recuperação pós-parto', ...baseSuggestions];
   }
 
   return baseSuggestions;

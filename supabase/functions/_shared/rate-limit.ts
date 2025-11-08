@@ -43,9 +43,7 @@ export class RateLimiter {
 
     try {
       // Buscar histórico de requisições
-      const { data: existingData, error: fetchError } = await this.supabase.storage
-        .from(this.bucketName)
-        .download(key);
+      const { data: existingData, error: fetchError } = await this.supabase.storage.from(this.bucketName).download(key);
 
       let requests: number[] = [];
 
@@ -55,7 +53,7 @@ export class RateLimiter {
       }
 
       // Filtrar requisições dentro da janela de tempo
-      requests = requests.filter(timestamp => timestamp > windowStart);
+      requests = requests.filter((timestamp) => timestamp > windowStart);
 
       // Verificar se está no limite
       if (requests.length >= this.config.maxRequests) {
@@ -77,9 +75,7 @@ export class RateLimiter {
       // Salvar atualizado
       const blob = new Blob([JSON.stringify(requests)], { type: 'application/json' });
 
-      await this.supabase.storage
-        .from(this.bucketName)
-        .upload(key, blob, { upsert: true });
+      await this.supabase.storage.from(this.bucketName).upload(key, blob, { upsert: true });
 
       const remaining = this.config.maxRequests - requests.length;
       const resetAt = new Date(now + this.config.windowMs);
@@ -122,9 +118,7 @@ export class RateLimiter {
     const windowStart = now - this.config.windowMs;
 
     try {
-      const { data: existingData, error: fetchError } = await this.supabase.storage
-        .from(this.bucketName)
-        .download(key);
+      const { data: existingData, error: fetchError } = await this.supabase.storage.from(this.bucketName).download(key);
 
       let requests: number[] = [];
 
@@ -133,7 +127,7 @@ export class RateLimiter {
         requests = JSON.parse(text);
       }
 
-      requests = requests.filter(timestamp => timestamp > windowStart);
+      requests = requests.filter((timestamp) => timestamp > windowStart);
 
       const remaining = Math.max(0, this.config.maxRequests - requests.length);
       const oldestRequest = requests.length > 0 ? Math.min(...requests) : now;
@@ -184,11 +178,7 @@ export const RATE_LIMITS = {
 /**
  * Factory function para criar rate limiter
  */
-export function createRateLimiter(
-  supabaseUrl: string,
-  supabaseKey: string,
-  config: RateLimitConfig
-): RateLimiter {
+export function createRateLimiter(supabaseUrl: string, supabaseKey: string, config: RateLimitConfig): RateLimiter {
   const supabase = createClient(supabaseUrl, supabaseKey);
   return new RateLimiter(supabase, config);
 }
@@ -196,10 +186,7 @@ export function createRateLimiter(
 /**
  * Middleware helper para adicionar headers de rate limit
  */
-export function addRateLimitHeaders(
-  headers: Headers,
-  result: RateLimitResult
-): void {
+export function addRateLimitHeaders(headers: Headers, result: RateLimitResult): void {
   headers.set('X-RateLimit-Limit', String(result.remaining + (result.allowed ? 1 : 0)));
   headers.set('X-RateLimit-Remaining', String(result.remaining));
   headers.set('X-RateLimit-Reset', result.resetAt.toISOString());

@@ -7,8 +7,8 @@ Write-Host "Configuracao Automatica Supabase" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Variaveis
-$GEMINI_API_KEY = "AIzaSyC9YVWRmnGyGu4c9y7g-mNkkipDqb5JBZg"
+# Variaveis (preencha com sua chave segura antes de executar)
+$GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"
 $SUPABASE_PROJECT_REF = "mnszbkeuerjcevjvdqme"
 $MIGRATION_FILE = "supabase\migrations\001_gemini_memory.sql"
 
@@ -147,7 +147,7 @@ if (Test-Path ".supabase\config.toml") {
 if (-not $linked) {
     Write-Host "  Linkando com projeto: $SUPABASE_PROJECT_REF" -ForegroundColor Gray
     supabase link --project-ref $SUPABASE_PROJECT_REF 2>&1 | Out-Null
-    
+
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  OK: Projeto linkado!" -ForegroundColor Green
     } else {
@@ -166,10 +166,10 @@ Write-Host "[4/6] Executando SQL Migration..." -ForegroundColor Yellow
 
 if (Test-Path $MIGRATION_FILE) {
     Write-Host "  Arquivo: $MIGRATION_FILE" -ForegroundColor Gray
-    
+
     # Tentar db push primeiro
     supabase db push 2>&1 | Out-Null
-    
+
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  OK: SQL Migration executada!" -ForegroundColor Green
     } else {
@@ -220,7 +220,7 @@ foreach ($function in $functions) {
     if (Test-Path $functionPath) {
         Write-Host "  Deployando: $function..." -ForegroundColor Gray
         supabase functions deploy $function --project-ref $SUPABASE_PROJECT_REF 2>&1 | Out-Null
-        
+
         if ($LASTEXITCODE -eq 0) {
             Write-Host "  OK: $function deployado!" -ForegroundColor Green
             $deployed++

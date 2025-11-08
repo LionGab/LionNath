@@ -83,13 +83,9 @@ export function useNathiaActions(): UseNathiaActionsResult {
         trackActionConversion(action);
       } catch (caughtError) {
         const error = caughtError instanceof Error ? caughtError : new Error(String(caughtError));
-        logger.error('Erro ao processar action', { actionType: action.type }, error);
+        logger.error('Erro ao processar action', error, { actionType: action.type });
 
-        Alert.alert(
-          'Ops!',
-          'Não foi possível completar esta ação. Tente novamente.',
-          [{ text: 'OK' }]
-        );
+        Alert.alert('Ops!', 'Não foi possível completar esta ação. Tente novamente.', [{ text: 'OK' }]);
       } finally {
         setIsProcessing(false);
       }

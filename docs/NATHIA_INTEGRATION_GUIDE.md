@@ -30,40 +30,46 @@ src/
 ## Componentes Criados
 
 ### 1. nathia-client.ts
+
 **Caminho:** `src/services/nathia-client.ts`
 
 Cliente HTTP para todas as Edge Functions da NAT-IA:
+
 - `nathia-chat`: Conversação principal
 - `nathia-onboarding`: Fluxo inicial
 - `nathia-recommendations`: Sugestões personalizadas
 
 **Features:**
+
 - Retry logic com exponential backoff (2 tentativas)
 - Timeout de 5s
 - Error handling gracioso
 - Fallback offline
 
 **Exemplo de uso:**
+
 ```typescript
 import { nathiaClient } from '@/services/nathia-client';
 
 const response = await nathiaClient.sendMessage({
-  message: "Estou me sentindo ansiosa",
-  userId: "user123",
+  message: 'Estou me sentindo ansiosa',
+  userId: 'user123',
   context: {
-    stage: "gestante",
+    stage: 'gestante',
     pregnancyWeek: 20,
-    mood: "anxious",
-  }
+    mood: 'anxious',
+  },
 });
 ```
 
 ### 2. useNathia.ts
+
 **Caminho:** `src/hooks/useNathia.ts`
 
 Hook principal para gerenciamento de chat.
 
 **Features:**
+
 - Gerencia estado de mensagens
 - Persistência local (AsyncStorage)
 - Sincronização com Supabase
@@ -71,22 +77,25 @@ Hook principal para gerenciamento de chat.
 - Typing indicator
 
 **Exemplo de uso:**
+
 ```typescript
 const { sendMessage, messages, loading, isTyping } = useNathia({
-  userId: "user123",
-  stage: "gestante",
+  userId: 'user123',
+  stage: 'gestante',
   pregnancyWeek: 20,
 });
 
-await sendMessage("Como está meu bebê?");
+await sendMessage('Como está meu bebê?');
 ```
 
 ### 3. useNathiaActions.ts
+
 **Caminho:** `src/hooks/useNathiaActions.ts`
 
 Processa actions contextuais retornadas pelo Claude.
 
 **Actions suportadas:**
+
 - `openScreen`: Navega para tela
 - `joinCircle`: Entra em círculo
 - `startHabit`: Inicia hábito
@@ -94,28 +103,32 @@ Processa actions contextuais retornadas pelo Claude.
 - `sos`: Aciona emergência
 
 **Exemplo de uso:**
+
 ```typescript
 const { processAction } = useNathiaActions();
 
 await processAction({
-  type: "openScreen",
-  label: "Ver plano diário",
-  data: { screenName: "dailyPlan" }
+  type: 'openScreen',
+  label: 'Ver plano diário',
+  data: { screenName: 'dailyPlan' },
 });
 ```
 
 ### 4. NathiaContext.tsx
+
 **Caminho:** `src/contexts/NathiaContext.tsx`
 
 Contexto global da NAT-IA.
 
 **Gerencia:**
+
 - Estado do usuário (stage, mood, concerns)
 - Persistência entre sessões
 - Onboarding status
 - Preferências
 
 **Exemplo de uso:**
+
 ```typescript
 // No App.tsx
 <NathiaProvider userId={userId}>
@@ -127,11 +140,13 @@ const { context, updateContext } = useNathiaContext();
 ```
 
 ### 5. ChatMessage.tsx
+
 **Caminho:** `src/components/nathia/ChatMessage.tsx`
 
 Renderiza mensagem individual no chat.
 
 **Features:**
+
 - Diferenciação visual user/assistant
 - Suporte a markdown básico
 - Actions como botões
@@ -139,54 +154,64 @@ Renderiza mensagem individual no chat.
 - Acessibilidade completa
 
 ### 6. SOSButton.tsx
+
 **Caminho:** `src/components/nathia/SOSButton.tsx`
 
 Botão de emergência sempre visível.
 
 **Features:**
+
 - Modal com CVV (188) e SAMU (192)
 - Opção "conversar com humano"
 - Analytics de uso
 - Design destacado
 
 ### 7. QuickReplies.tsx
+
 **Caminho:** `src/components/nathia/QuickReplies.tsx`
 
 Sugestões rápidas contextuais.
 
 **Features:**
+
 - Chips horizontais
 - Atualização baseada em contexto
 - Helper `getContextualSuggestions()`
 
 ### 8. OnboardingFlow.tsx
+
 **Caminho:** `src/components/nathia/OnboardingFlow.tsx`
 
 Fluxo de integração inicial (4-6 perguntas).
 
 **Coleta:**
+
 - Estágio (gestante, mãe, tentante, puerpério)
 - Semana de gestação (se aplicável)
 - Preocupações principais
 - Expectativas
 
 ### 9. RecommendationCard.tsx
+
 **Caminho:** `src/components/nathia/RecommendationCard.tsx`
 
 Card de recomendação personalizada.
 
 **Features:**
+
 - Exibe: círculo, hábito ou conteúdo
 - Justificativa (por que é relevante)
 - CTA claro
 - Tracking de impressão e clique
 
 ### 10. NathiaChat.tsx
+
 **Caminho:** `src/screens/NathiaChat.tsx`
 
 Tela principal de conversação.
 
 **Features:**
+
 - Interface de chat completa
 - Input com sugestões
 - Botão SOS sempre visível
@@ -195,21 +220,25 @@ Tela principal de conversação.
 - Performance otimizada (60fps)
 
 ### 11. NathiaOnboarding.tsx
+
 **Caminho:** `src/screens/NathiaOnboarding.tsx`
 
 Tela de onboarding inicial.
 
 **Fluxo:**
+
 1. OnboardingFlow (perguntas)
 2. Starter Pack (recomendações iniciais)
 3. CTA para começar chat
 
 ### 12. NathiaRecommendations.tsx
+
 **Caminho:** `src/screens/NathiaRecommendations.tsx`
 
 Tela de recomendações personalizadas.
 
 **Features:**
+
 - Lista de recomendações
 - Filtros (todos, círculos, hábitos, conteúdos)
 - Pull-to-refresh
@@ -218,6 +247,7 @@ Tela de recomendações personalizadas.
 ## Fluxos Principais
 
 ### Fluxo 1: Onboarding → Chat → Ação
+
 ```
 1. Usuário abre app pela primeira vez
 2. NathiaOnboarding.tsx
@@ -233,6 +263,7 @@ Tela de recomendações personalizadas.
 ```
 
 ### Fluxo 2: SOS → Modal → Moderação
+
 ```
 1. Usuário pressiona botão SOS
 2. SOSButton abre modal
@@ -244,6 +275,7 @@ Tela de recomendações personalizadas.
 ```
 
 ### Fluxo 3: Chat → Recomendação → Conversão
+
 ```
 1. NAT-IA identifica oportunidade
 2. Retorna action "showContent"
@@ -307,10 +339,7 @@ import NathiaRecommendations from '@/screens/NathiaRecommendations';
 
 ```typescript
 // Em src/services/analytics.ts
-export const trackNathiaEvent = (
-  eventName: string,
-  properties: Record<string, any>
-) => {
+export const trackNathiaEvent = (eventName: string, properties: Record<string, any>) => {
   // Analytics implementation
   console.log('NAT-IA Event:', eventName, properties);
 };
@@ -337,6 +366,7 @@ npm test tests/nathia/
 ```
 
 **Passos:**
+
 1. Abra o app
 2. Navegue para NathiaChat
 3. Digite "Olá"
@@ -349,6 +379,7 @@ npm test tests/nathia/
 ### 2. Testar Onboarding
 
 **Passos:**
+
 1. Limpe AsyncStorage: `await AsyncStorage.clear()`
 2. Reabra o app
 3. Deve mostrar NathiaOnboarding
@@ -360,6 +391,7 @@ npm test tests/nathia/
 ### 3. Testar Actions
 
 **Passos:**
+
 1. No chat, digite: "Quero ver meu plano diário"
 2. NAT-IA deve responder com action
 3. Clique no botão da action
@@ -368,6 +400,7 @@ npm test tests/nathia/
 ### 4. Testar SOS
 
 **Passos:**
+
 1. Pressione botão SOS
 2. Modal deve abrir
 3. Verifique acessibilidade:
@@ -380,6 +413,7 @@ npm test tests/nathia/
 ### 5. Testar Recomendações
 
 **Passos:**
+
 1. Navegue para NathiaRecommendations
 2. Deve carregar recomendações
 3. Teste filtros (Todos, Círculos, Hábitos, Conteúdos)
@@ -390,6 +424,7 @@ npm test tests/nathia/
 ### 6. Testar Offline
 
 **Passos:**
+
 1. Desative rede
 2. Envie mensagem no chat
 3. Deve mostrar mensagem offline
@@ -400,18 +435,21 @@ npm test tests/nathia/
 ### 7. Testar Acessibilidade
 
 **iOS:**
+
 ```bash
 # Ativar VoiceOver
 Settings > Accessibility > VoiceOver
 ```
 
 **Android:**
+
 ```bash
 # Ativar TalkBack
 Settings > Accessibility > TalkBack
 ```
 
 **Verificar:**
+
 - Todas as interações são anunciadas
 - Botões têm labels claros
 - Formulários têm hints
@@ -425,6 +463,7 @@ Settings > Accessibility > TalkBack
 ```
 
 **Verificar:**
+
 - Scroll do chat mantém 60fps
 - Input não causa lag
 - Animações são suaves
@@ -437,8 +476,10 @@ Settings > Accessibility > TalkBack
 **Causa:** Edge Function offline ou timeout
 
 **Solução:**
+
 1. Verifique se Edge Functions estão deployadas
 2. Teste com `curl`:
+
 ```bash
 curl -X POST https://YOUR_PROJECT.supabase.co/functions/v1/nathia-chat \
   -H "Authorization: Bearer YOUR_ANON_KEY" \
@@ -451,8 +492,10 @@ curl -X POST https://YOUR_PROJECT.supabase.co/functions/v1/nathia-chat \
 **Causa:** Supabase não configurado ou tabelas faltando
 
 **Solução:**
+
 1. Verifique `EXPO_PUBLIC_SUPABASE_URL` e `EXPO_PUBLIC_SUPABASE_ANON_KEY`
 2. Rode migrations:
+
 ```bash
 supabase migration up
 ```
@@ -462,6 +505,7 @@ supabase migration up
 **Causa:** Navegação não configurada
 
 **Solução:**
+
 1. Verifique se telas estão registradas no AppNavigator
 2. Verifique `screenMap` em `useNathiaActions.ts`
 
@@ -486,17 +530,20 @@ supabase migration up
 ## Próximos Passos
 
 ### P0 (Crítico)
+
 - [ ] Implementar Edge Functions no Supabase
 - [ ] Configurar RLS policies
 - [ ] Adicionar monitoring (Sentry)
 
 ### P1 (Importante)
+
 - [ ] Implementar markdown parser completo
 - [ ] Adicionar suporte a imagens
 - [ ] Voice input (Speech-to-Text)
 - [ ] Push notifications contextuais
 
 ### P2 (Desejável)
+
 - [ ] Modo offline completo
 - [ ] Sync queue quando voltar online
 - [ ] Themes (light/dark)
@@ -512,6 +559,7 @@ supabase migration up
 ## Suporte
 
 Para dúvidas ou issues:
+
 - Email: dev@nossamaternidade.com
 - Slack: #nathia-dev
 - Issues: GitHub repository

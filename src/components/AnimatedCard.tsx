@@ -79,4 +79,3 @@ const styles = StyleSheet.create({
     ...shadows.light.lg,
   },
 });
-

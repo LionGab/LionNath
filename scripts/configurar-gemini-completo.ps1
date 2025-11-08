@@ -6,7 +6,8 @@ Write-Host "🚀 Configurando Gemini 1.5 Pro + Memória Vetorial" -ForegroundCol
 Write-Host ""
 
 # Variáveis
-$GEMINI_API_KEY = "AIzaSyC9YVWRmnGyGu4c9y7g-mNkkipDqb5JBZg"
+# Configurações principais (preencha com sua chave segura antes de executar)
+$GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"
 $SUPABASE_PROJECT_REF = "bbcwitnbnosyfpjtzkr"
 $MIGRATION_FILE = "supabase\migrations\001_gemini_memory.sql"
 
@@ -109,11 +110,11 @@ $functions = @("nathia-chat", "moderation-service")
 
 foreach ($function in $functions) {
     $functionPath = "supabase\functions\$function"
-    
+
     if (Test-Path $functionPath) {
         Write-Host "   Deployando: $function..." -ForegroundColor Gray
         supabase functions deploy $function --project-ref $SUPABASE_PROJECT_REF
-        
+
         if ($LASTEXITCODE -eq 0) {
             Write-Host "✅ $function deployado com sucesso!" -ForegroundColor Green
         } else {

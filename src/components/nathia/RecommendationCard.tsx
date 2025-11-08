@@ -17,13 +17,7 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  AccessibilityInfo,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
 import { NathiaRecommendation } from '@/services/nathia-client';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
 import { logger } from '@/lib/logger';
@@ -34,11 +28,7 @@ interface RecommendationCardProps {
   onImpression?: (recommendationId: string) => void;
 }
 
-export function RecommendationCard({
-  recommendation,
-  onPress,
-  onImpression,
-}: RecommendationCardProps) {
+export function RecommendationCard({ recommendation, onPress, onImpression }: RecommendationCardProps) {
   const impressionTracked = useRef(false);
   const { palette, typography, spacing, radius, shadow } = nossaMaternidadeDesignTokens;
 
@@ -63,9 +53,7 @@ export function RecommendationCard({
       type: recommendation.type,
     });
 
-    AccessibilityInfo.announceForAccessibility(
-      `Navegando para ${recommendation.title}`
-    );
+    AccessibilityInfo.announceForAccessibility(`Navegando para ${recommendation.title}`);
   };
 
   const getTypeLabel = (type: string): string => {

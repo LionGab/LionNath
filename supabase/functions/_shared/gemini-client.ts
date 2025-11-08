@@ -5,7 +5,7 @@
  * com suporte a JSON estruturado, streaming e error handling robusto.
  */
 
-import { GoogleGenerativeAI, GenerativeModel, GenerationConfig, SafetySetting } from "npm:@google/generative-ai@0.21.0";
+import { GoogleGenerativeAI, GenerativeModel, GenerationConfig, SafetySetting } from 'npm:@google/generative-ai@0.21.0';
 
 export interface GeminiConfig {
   apiKey: string;
@@ -107,7 +107,7 @@ export class GeminiClient {
 
       // Converter histórico para formato Gemini
       const chat = model.startChat({
-        history: history.map(msg => ({
+        history: history.map((msg) => ({
           role: msg.role,
           parts: [{ text: msg.parts }],
         })),
@@ -122,11 +122,13 @@ export class GeminiClient {
 
       return {
         data,
-        usage: response.usageMetadata ? {
-          promptTokens: response.usageMetadata.promptTokenCount,
-          completionTokens: response.usageMetadata.candidatesTokenCount,
-          totalTokens: response.usageMetadata.totalTokenCount,
-        } : undefined,
+        usage: response.usageMetadata
+          ? {
+              promptTokens: response.usageMetadata.promptTokenCount,
+              completionTokens: response.usageMetadata.candidatesTokenCount,
+              totalTokens: response.usageMetadata.totalTokenCount,
+            }
+          : undefined,
       };
     } catch (error: any) {
       console.error('[GeminiClient] Error generating JSON:', error);
@@ -137,11 +139,7 @@ export class GeminiClient {
   /**
    * Gera resposta de texto simples
    */
-  async generateText(
-    systemPrompt: string,
-    userPrompt: string,
-    history: GeminiMessage[] = []
-  ): Promise<GeminiResponse> {
+  async generateText(systemPrompt: string, userPrompt: string, history: GeminiMessage[] = []): Promise<GeminiResponse> {
     try {
       const model = this.client.getGenerativeModel({
         model: this.config.model!,
@@ -156,7 +154,7 @@ export class GeminiClient {
       });
 
       const chat = model.startChat({
-        history: history.map(msg => ({
+        history: history.map((msg) => ({
           role: msg.role,
           parts: [{ text: msg.parts }],
         })),
@@ -167,11 +165,13 @@ export class GeminiClient {
 
       return {
         text: response.text(),
-        usage: response.usageMetadata ? {
-          promptTokens: response.usageMetadata.promptTokenCount,
-          completionTokens: response.usageMetadata.candidatesTokenCount,
-          totalTokens: response.usageMetadata.totalTokenCount,
-        } : undefined,
+        usage: response.usageMetadata
+          ? {
+              promptTokens: response.usageMetadata.promptTokenCount,
+              completionTokens: response.usageMetadata.candidatesTokenCount,
+              totalTokens: response.usageMetadata.totalTokenCount,
+            }
+          : undefined,
         finishReason: response.candidates?.[0]?.finishReason,
       };
     } catch (error: any) {
@@ -202,7 +202,7 @@ export class GeminiClient {
       });
 
       const chat = model.startChat({
-        history: history.map(msg => ({
+        history: history.map((msg) => ({
           role: msg.role,
           parts: [{ text: msg.parts }],
         })),

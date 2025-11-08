@@ -32,7 +32,7 @@
 
 #### Screenshot:
 
-![Onboarding](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\onboarding.png)
+![Onboarding](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade.cursor\agents\reports\screenshots\onboarding.png)
 
 ### Home
 
@@ -44,7 +44,7 @@
 
 #### Screenshot:
 
-![Home](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\home.png)
+![Home](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade.cursor\agents\reports\screenshots\home.png)
 
 ### Chat
 
@@ -56,7 +56,7 @@
 
 #### Screenshot:
 
-![Chat](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\chat.png)
+![Chat](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade.cursor\agents\reports\screenshots\chat.png)
 
 ### Habits
 
@@ -68,7 +68,7 @@
 
 #### Screenshot:
 
-![Habits](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\habits.png)
+![Habits](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade.cursor\agents\reports\screenshots\habits.png)
 
 ### Content
 
@@ -80,7 +80,7 @@
 
 #### Screenshot:
 
-![Content](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\content.png)
+![Content](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade.cursor\agents\reports\screenshots\content.png)
 
 ### Profile
 
@@ -92,7 +92,7 @@
 
 #### Screenshot:
 
-![Profile](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\profile.png)
+![Profile](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade.cursor\agents\reports\screenshots\profile.png)
 
 ### DailyPlan
 
@@ -104,10 +104,9 @@
 
 #### Screenshot:
 
-![DailyPlan](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade\.cursor\agents\reports\screenshots\dailyplan.png)
+![DailyPlan](C:\Users\User\NossaMaternidade\PastaAtual-NossaMaternidade.cursor\agents\reports\screenshots\dailyplan.png)
 
 ## 💡 Recomendações
-
 
 ---
 

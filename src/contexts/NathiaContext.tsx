@@ -12,14 +12,7 @@
  * const { context, updateContext, resetContext } = useNathiaContext();
  */
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-  useCallback,
-} from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from '@/lib/logger';
 

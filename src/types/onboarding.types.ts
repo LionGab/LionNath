@@ -31,6 +31,8 @@ export interface OnboardingResponse {
   timestamp: string;
 }
 
+export type SupportNetworkLevel = 'muito' | 'algum' | 'pouco' | 'nenhum';
+
 export interface OnboardingData {
   // Informações Básicas
   name: string;
@@ -46,6 +48,7 @@ export interface OnboardingData {
   stress_level?: number; // 1-10
   sleep_quality?: 'otimo' | 'bom' | 'regular' | 'ruim' | 'pessimo';
   energy_level?: number; // 1-10
+  self_care_frequency?: 'nunca' | 'raramente' | 'as-vezes' | 'frequentemente';
 
   // Desafios Atuais
   main_challenges?: string[]; // ['solidão', 'culpa', 'exaustão', 'ansiedade', 'dúvidas', 'julgamento']
@@ -53,7 +56,7 @@ export interface OnboardingData {
 
   // Necessidades de Suporte
   support_needs?: string[]; // ['emocional', 'informações', 'comunidade', 'profissional', 'prático']
-  has_support_network?: boolean;
+  support_network_level?: SupportNetworkLevel;
   support_network_description?: string;
 
   // Objetivos no App
@@ -67,7 +70,7 @@ export interface OnboardingData {
 
   // Contexto Familiar
   partner_support?: 'muito' | 'moderado' | 'pouco' | 'nenhum' | 'nao_tem';
-  family_support?: 'muito' | 'moderato' | 'pouco' | 'nenhum';
+  family_support?: 'muito' | 'moderado' | 'pouco' | 'nenhum';
   other_children?: boolean;
   other_children_count?: number;
 
@@ -96,7 +99,7 @@ export const ONBOARDING_QUESTIONS: OnboardingQuestion[] = [
   },
   {
     id: 'maternal_stage',
-    step: 'basic_info',
+    step: 'maternal_stage',
     question: 'Como você se identifica?',
     type: 'select',
     required: true,
@@ -127,7 +130,7 @@ export const ONBOARDING_QUESTIONS: OnboardingQuestion[] = [
     category: 'basic',
   },
   {
-    id: 'baby_age',
+    id: 'baby_age_months',
     step: 'basic_info',
     question: 'Qual a idade do seu bebê? (em meses)',
     type: 'text',
@@ -267,16 +270,16 @@ export const ONBOARDING_QUESTIONS: OnboardingQuestion[] = [
     category: 'needs',
   },
   {
-    id: 'has_support_network',
+    id: 'support_network_level',
     step: 'support_needs',
     question: 'Você tem uma rede de apoio (família, amigos, parceiro)?',
     type: 'select',
     required: true,
     options: [
-      { label: 'Sim, tenho muito apoio', value: 'true' },
-      { label: 'Tenho algum apoio', value: 'partial' },
-      { label: 'Tenho pouco apoio', value: 'little' },
-      { label: 'Não tenho apoio', value: 'false' },
+      { label: 'Sim, tenho muito apoio', value: 'muito' },
+      { label: 'Tenho algum apoio', value: 'algum' },
+      { label: 'Tenho pouco apoio', value: 'pouco' },
+      { label: 'Não tenho apoio', value: 'nenhum' },
     ],
     category: 'needs',
   },

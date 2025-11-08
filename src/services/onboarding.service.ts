@@ -10,6 +10,7 @@ import {
   OnboardingQuestion,
   OnboardingResponse,
   OnboardingStep,
+  SupportNetworkLevel,
   getQuestionsByStep,
 } from '@/types/onboarding.types';
 
@@ -18,6 +19,44 @@ export interface OnboardingProgress {
   completedSteps: OnboardingStep[];
   progress: number;
   data: Partial<OnboardingData>;
+}
+
+const SUPPORT_NETWORK_VALUES: SupportNetworkLevel[] = ['muito', 'algum', 'pouco', 'nenhum'];
+const SELF_CARE_VALUES: NonNullable<OnboardingData['self_care_frequency']>[] = [
+  'nunca',
+  'raramente',
+  'as-vezes',
+  'frequentemente',
+];
+
+function normalizeSupportNetwork(value: unknown): SupportNetworkLevel | undefined {
+  if (typeof value === 'string') {
+    if ((SUPPORT_NETWORK_VALUES as readonly string[]).includes(value)) {
+      return value as SupportNetworkLevel;
+    }
+    if (value === 'true') return 'muito';
+    if (value === 'partial') return 'algum';
+    if (value === 'little') return 'pouco';
+    if (value === 'false') return 'nenhum';
+  }
+  if (typeof value === 'boolean') {
+    return value ? 'muito' : 'nenhum';
+  }
+  return undefined;
+}
+
+function resolveSupportNetworkLevel(
+  level?: SupportNetworkLevel | string | null,
+  legacy?: boolean | string | null
+): SupportNetworkLevel | undefined {
+  return normalizeSupportNetwork(level) ?? normalizeSupportNetwork(legacy);
+}
+
+function normalizeSelfCareFrequency(value: unknown): OnboardingData['self_care_frequency'] | undefined {
+  if (typeof value === 'string' && (SELF_CARE_VALUES as readonly string[]).includes(value)) {
+    return value as OnboardingData['self_care_frequency'];
+  }
+  return undefined;
 }
 
 /**
@@ -82,31 +121,38 @@ export async function saveOnboardingData(userId: string, data: Partial<Onboardin
     if (profileError) throw profileError;
 
     // Salvar dados emocionais e situacionais em tabela separada
-    const { error: onboardingError } = await supabase.from('onboarding_data').upsert(
-      {
-        user_id: userId,
-        emotional_state: data.emotional_state,
-        stress_level: data.stress_level,
-        sleep_quality: data.sleep_quality,
-        energy_level: data.energy_level,
-        main_challenges: data.main_challenges || [],
-        specific_challenges: data.specific_challenges,
-        support_needs: data.support_needs || [],
-        has_support_network:
-          typeof data.has_support_network === 'boolean'
-            ? data.has_support_network
-            : data.has_support_network === 'true',
-        support_network_description: data.support_network_description,
-        main_goals: data.main_goals || [],
-        what_brings_you_here: data.what_brings_you_here,
-        communication_style: data.communication_style,
-        partner_support: data.partner_support,
-        family_support: data.family_support,
-        completed_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'user_id' }
+    const supportNetworkLevel = resolveSupportNetworkLevel(
+      data.support_network_level,
+      (data as any).has_support_network
     );
+    const supportNetworkFlag = supportNetworkLevel === undefined ? undefined : supportNetworkLevel !== 'nenhum';
+
+    const onboardingPayload: Record<string, unknown> = {
+      user_id: userId,
+      emotional_state: data.emotional_state,
+      stress_level: data.stress_level,
+      sleep_quality: data.sleep_quality,
+      energy_level: data.energy_level,
+      main_challenges: data.main_challenges || [],
+      specific_challenges: data.specific_challenges,
+      support_needs: data.support_needs || [],
+      support_network_description: data.support_network_description,
+      main_goals: data.main_goals || [],
+      what_brings_you_here: data.what_brings_you_here,
+      communication_style: data.communication_style,
+      partner_support: data.partner_support,
+      family_support: data.family_support,
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    if (supportNetworkFlag !== undefined) {
+      onboardingPayload.has_support_network = supportNetworkFlag;
+    }
+
+    const { error: onboardingError } = await supabase
+      .from('onboarding_data')
+      .upsert(onboardingPayload, { onConflict: 'user_id' });
 
     if (onboardingError) throw onboardingError;
 
@@ -158,6 +204,14 @@ export async function getOnboardingData(userId: string): Promise<Partial<Onboard
 
     if (responsesError) throw responsesError;
 
+    const responsesList = responses || [];
+    const supportNetworkFromResponses = normalizeSupportNetwork(
+      responsesList.find((response) => response.question_id === 'support_network_level')?.response_value
+    );
+    const selfCareFromResponses = normalizeSelfCareFrequency(
+      responsesList.find((response) => response.question_id === 'self_care_frequency')?.response_value
+    );
+
     // Montar objeto completo
     const data: Partial<OnboardingData> = {
       name: profile.name,
@@ -165,7 +219,7 @@ export async function getOnboardingData(userId: string): Promise<Partial<Onboard
       pregnancy_week: profile.pregnancy_week,
       baby_name: profile.baby_name,
       content_preferences: profile.preferences || [],
-      responses: (responses || []).map((r) => ({
+      responses: responsesList.map((r) => ({
         questionId: r.question_id,
         value: r.response_value,
         timestamp: r.created_at,
@@ -178,10 +232,13 @@ export async function getOnboardingData(userId: string): Promise<Partial<Onboard
         stress_level: onboardingData.stress_level,
         sleep_quality: onboardingData.sleep_quality,
         energy_level: onboardingData.energy_level,
+        self_care_frequency: selfCareFromResponses ?? normalizeSelfCareFrequency(onboardingData.self_care_frequency),
         main_challenges: onboardingData.main_challenges || [],
         specific_challenges: onboardingData.specific_challenges,
         support_needs: onboardingData.support_needs || [],
-        has_support_network: onboardingData.has_support_network,
+        support_network_level:
+          supportNetworkFromResponses ??
+          resolveSupportNetworkLevel(onboardingData.support_network_level, onboardingData.has_support_network),
         support_network_description: onboardingData.support_network_description,
         main_goals: onboardingData.main_goals || [],
         what_brings_you_here: onboardingData.what_brings_you_here,
@@ -261,6 +318,15 @@ export function generateNathIAContext(data: Partial<OnboardingData>): string {
   if (data.energy_level !== undefined) {
     contextParts.push(`Nível de energia: ${data.energy_level}/10`);
   }
+  if (data.self_care_frequency) {
+    const selfCareLabels: Record<NonNullable<OnboardingData['self_care_frequency']>, string> = {
+      nunca: 'Quase nunca consegue tempo para si',
+      raramente: 'Raramente encontra tempo para autocuidado',
+      'as-vezes': 'Às vezes consegue dedicar tempo para si',
+      frequentemente: 'Consegue se cuidar com frequência',
+    };
+    contextParts.push(`Autocuidado: ${selfCareLabels[data.self_care_frequency]}`);
+  }
 
   // Desafios
   if (data.main_challenges && data.main_challenges.length > 0) {
@@ -274,8 +340,15 @@ export function generateNathIAContext(data: Partial<OnboardingData>): string {
   if (data.support_needs && data.support_needs.length > 0) {
     contextParts.push(`Necessidades de suporte: ${data.support_needs.join(', ')}`);
   }
-  if (data.has_support_network !== undefined) {
-    contextParts.push(`Rede de apoio: ${data.has_support_network ? 'Sim' : 'Não'}`);
+  const supportNetworkLevel = resolveSupportNetworkLevel(data.support_network_level, (data as any).has_support_network);
+  if (supportNetworkLevel) {
+    const supportLabels: Record<SupportNetworkLevel, string> = {
+      muito: 'Muito apoio disponível',
+      algum: 'Algum apoio disponível',
+      pouco: 'Pouco apoio disponível',
+      nenhum: 'Sem rede de apoio',
+    };
+    contextParts.push(`Rede de apoio: ${supportLabels[supportNetworkLevel]}`);
   }
   if (data.support_network_description) {
     contextParts.push(`Descrição da rede de apoio: ${data.support_network_description}`);

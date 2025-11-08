@@ -74,9 +74,7 @@ function assert(condition: boolean, message: string) {
 
 function assertEquals(actual: any, expected: any, message?: string) {
   if (actual !== expected) {
-    throw new Error(
-      message || `Expected ${expected}, got ${actual}`
-    );
+    throw new Error(message || `Expected ${expected}, got ${actual}`);
   }
 }
 
@@ -92,14 +90,8 @@ const testPIIProtection = async () => {
     const result = anonimizarMensagem(texto);
 
     assert(result.hasPII, 'Deveria detectar PII');
-    assert(
-      result.sanitized.includes('[CPF-REMOVIDO]'),
-      'Deveria anonimizar CPF'
-    );
-    assert(
-      !result.sanitized.includes('123.456.789-10'),
-      'Não deveria conter CPF original'
-    );
+    assert(result.sanitized.includes('[CPF-REMOVIDO]'), 'Deveria anonimizar CPF');
+    assert(!result.sanitized.includes('123.456.789-10'), 'Não deveria conter CPF original');
   })();
 
   await test('Valida CPF válido', () => {
@@ -118,10 +110,7 @@ const testPIIProtection = async () => {
 
     const result = anonimizarMensagem(texto);
     assert(result.hasPII, 'Deveria detectar PII');
-    assert(
-      result.sanitized.includes('[TELEFONE-REMOVIDO]'),
-      'Deveria anonimizar telefone'
-    );
+    assert(result.sanitized.includes('[TELEFONE-REMOVIDO]'), 'Deveria anonimizar telefone');
   })();
 
   await test('Detecta email', () => {
@@ -129,10 +118,7 @@ const testPIIProtection = async () => {
     assert(contemEmail(texto), 'Deveria detectar email');
 
     const result = anonimizarMensagem(texto);
-    assert(
-      result.sanitized.includes('[EMAIL-REMOVIDO]'),
-      'Deveria anonimizar email'
-    );
+    assert(result.sanitized.includes('[EMAIL-REMOVIDO]'), 'Deveria anonimizar email');
   })();
 
   await test('Múltiplos tipos de PII', () => {
@@ -141,10 +127,7 @@ const testPIIProtection = async () => {
 
     assert(result.hasPII, 'Deveria detectar múltiplos PII');
     assert(result.types.length >= 2, 'Deveria detectar múltiplos tipos');
-    assert(
-      !result.sanitized.includes('123.456.789-10'),
-      'Não deveria conter PII'
-    );
+    assert(!result.sanitized.includes('123.456.789-10'), 'Não deveria conter PII');
   })();
 };
 
@@ -207,10 +190,7 @@ const testRiskDetection = async () => {
     const result = analisarRisco('Não aguento mais, quero me matar');
     assert(result.level >= RiskLevel.HIGH, 'Deveria detectar risco alto');
     assert(result.urgency >= UrgencyLevel.URGENT, 'Deveria ser urgente');
-    assert(
-      requerIntervencaoImediata(result),
-      'Deveria requerer intervenção'
-    );
+    assert(requerIntervencaoImediata(result), 'Deveria requerer intervenção');
   })();
 
   await test('Detecta autoagressão', () => {
@@ -222,10 +202,7 @@ const testRiskDetection = async () => {
   await test('Detecta psicose pós-parto', () => {
     const result = analisarRisco('Tenho medo de machucar o bebê, ouço vozes mandando');
     assert(result.level >= RiskLevel.CRITICAL, 'Deveria ser crítico');
-    assert(
-      result.urgency === UrgencyLevel.EMERGENCY,
-      'Deveria ser emergência'
-    );
+    assert(result.urgency === UrgencyLevel.EMERGENCY, 'Deveria ser emergência');
   })();
 
   await test('Detecta violência doméstica', () => {
@@ -340,13 +317,9 @@ const testIntegration = async () => {
       await clearRateLimit(userId, endpoint);
 
       // Testar com conteúdo válido
-      const result = await securityMiddleware(
-        userId,
-        endpoint,
-        {
-          content: 'Olá, preciso de ajuda com amamentação',
-        }
-      );
+      const result = await securityMiddleware(userId, endpoint, {
+        content: 'Olá, preciso de ajuda com amamentação',
+      });
 
       assert(result.allowed, 'Conteúdo válido deveria ser permitido');
       assert(result.sanitizedContent !== undefined, 'Deveria ter conteúdo sanitizado');
@@ -363,13 +336,9 @@ const testIntegration = async () => {
     try {
       await clearRateLimit(userId, endpoint);
 
-      const result = await securityMiddleware(
-        userId,
-        endpoint,
-        {
-          content: 'Quero me matar, não aguento mais',
-        }
-      );
+      const result = await securityMiddleware(userId, endpoint, {
+        content: 'Quero me matar, não aguento mais',
+      });
 
       // Deveria ser bloqueado ou flagged
       assert(

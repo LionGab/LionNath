@@ -1,13 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { Image, ImageSourcePropType, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { borderRadius, colors, shadows, spacing, typography } from '@/theme';
 import { Button } from '@/components/Button';
 
@@ -92,10 +84,7 @@ const EmptyStateComponent: React.FC<EmptyStateProps> = ({
 }) => {
   const containerStyles = useMemo(() => [styles.container, style], [style]);
   const computedTitleStyle = useMemo(() => [styles.title, titleStyle], [titleStyle]);
-  const computedDescriptionStyle = useMemo(
-    () => [styles.description, descriptionStyle],
-    [descriptionStyle]
-  );
+  const computedDescriptionStyle = useMemo(() => [styles.description, descriptionStyle], [descriptionStyle]);
 
   const handleActionPress = useCallback(() => {
     if (!onActionPress) {
@@ -202,5 +191,3 @@ const styles = StyleSheet.create({
 });
 
 export const EmptyState = React.memo(EmptyStateComponent);
-
-

@@ -1,9 +1,10 @@
-/**
- * Tipos de navegação da Nossa Maternidade
- */
+import { Question } from '@/types/onboarding-questions';
 
 export type RootStackParamList = {
+  SignIn: undefined;
   Onboarding: { onComplete?: () => void } | undefined;
+  OnboardingQuestions: { questions: Question[] } | undefined;
+  ReviewAnswers: { questions?: Question[]; answers?: Record<string, string | string[]> } | undefined;
   Home: undefined;
   Chat: { context?: string; initialPrompt?: string } | undefined;
   DailyPlan: undefined;
@@ -22,8 +23,7 @@ export type TabParamList = {
   Profile: undefined;
 };
 
-declare global {
-  namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
-  }
+// Extensão para React Navigation
+declare module '@react-navigation/native' {
+  export type RootParamList = RootStackParamList;
 }

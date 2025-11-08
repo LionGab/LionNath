@@ -93,7 +93,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onLogin }
     if (onLogin) {
       onLogin();
     } else {
-      (navigation as any).navigate('Home');
+      (navigation as any).navigate('SignIn');
     }
   };
 
@@ -171,9 +171,9 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onLogin }
             onPress={handleLogin}
             activeOpacity={0.7}
             accessibilityRole="button"
-            accessibilityLabel="Já sou membro"
+            accessibilityLabel="Entrar"
           >
-            <Text style={styles.secondaryButtonText}>Já Sou Membro</Text>
+            <Text style={styles.secondaryButtonText}>Entrar</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>

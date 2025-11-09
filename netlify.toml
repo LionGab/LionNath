@@ -1,12 +1,14 @@
 # Netlify configuration for Nossa Maternidade
 # Deploy from GitHub to www.nossamaternidade.com.br
+# PWA Mobile-First para apresentação à influenciadora
 
 [build]
   # Base directory for the build - raiz do monorepo para resolver dependências do workspace
   base = "."
 
   # Build command - instalar dependências da raiz e buildar o app mobile
-  command = "pnpm install && cd apps/mobile && pnpm run build:web"
+  # Usa --clear para garantir build limpo e --platform web para otimização
+  command = "pnpm install --frozen-lockfile && cd apps/mobile && pnpm run build:web"
 
   # Publish directory - onde o Expo exporta o build web
   # Expo export cria o diretório 'dist' dentro de apps/mobile
@@ -16,30 +18,51 @@
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/mobile packages/ src/"
 
 [build.environment]
-  # Node version
+  # Node version - usar LTS estável
   NODE_VERSION = "20"
 
   # Use pnpm for package management
   NPM_FLAGS = "--prefer-offline --no-audit"
 
-  # Skip Husky install in CI
+  # Skip Husky install in CI (não necessário no Netlify)
   HUSKY = "0"
 
-# Redirect rules for SPA routing
+  # Expo variables (serão sobrescritas pelas variáveis do Netlify UI)
+  EXPO_PUBLIC_SUPABASE_URL = ""
+  EXPO_PUBLIC_SUPABASE_ANON_KEY = ""
+  EXPO_PUBLIC_SENTRY_DSN = ""
+
+# Redirect rules for SPA routing (React Navigation)
+# Todas as rotas devem redirecionar para index.html para funcionar com deep linking
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
   force = false
 
-# Headers for security and caching
+# Redirect para HTTPS (segurança)
+[[redirects]]
+  from = "http://*"
+  to = "https://:splat"
+  status = 301
+  force = true
+
+# Headers for security, caching and PWA
 [[headers]]
   for = "/*"
   [headers.values]
+    # Security headers
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    
+    # PWA headers
+    X-DNS-Prefetch-Control = "on"
+    
+    # CORS para Supabase (se necessário)
+    Access-Control-Allow-Origin = "*"
 
 [[headers]]
   for = "/*.js"
@@ -80,16 +103,34 @@
   for = "/index.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+    # PWA manifest
+    Link = "</manifest.json>; rel=manifest"
+
+# Service Worker (PWA)
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
 
 # Context-specific builds
 [context.production]
-  command = "pnpm install && cd apps/mobile && pnpm run build:web"
+  command = "pnpm install --frozen-lockfile && cd apps/mobile && pnpm run build:web"
+  [context.production.environment]
+    NODE_ENV = "production"
+    EXPO_PUBLIC_ENV = "production"
 
 [context.deploy-preview]
-  command = "pnpm install && cd apps/mobile && pnpm run build:web"
+  command = "pnpm install --frozen-lockfile && cd apps/mobile && pnpm run build:web"
+  [context.deploy-preview.environment]
+    NODE_ENV = "development"
+    EXPO_PUBLIC_ENV = "preview"
 
 [context.branch-deploy]
-  command = "pnpm install && cd apps/mobile && pnpm run build:web"
+  command = "pnpm install --frozen-lockfile && cd apps/mobile && pnpm run build:web"
+  [context.branch-deploy.environment]
+    NODE_ENV = "development"
+    EXPO_PUBLIC_ENV = "development"
 
 # Functions (if needed in the future)
 [functions]

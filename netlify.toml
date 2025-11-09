@@ -24,6 +24,12 @@
 
   # Skip Husky install in CI
   HUSKY = "0"
+  
+  # Variáveis de ambiente padrão para modo demo
+  # ⚠️ IMPORTANTE: Configure estas variáveis no Netlify Dashboard para produção
+  # Site Settings > Environment Variables
+  # Para modo demo, defina: EXPO_PUBLIC_USE_MOCKS=true
+  # Para produção, defina: EXPO_PUBLIC_USE_MOCKS=false e configure Supabase real
 
 # Redirect rules for SPA routing
 [[redirects]]

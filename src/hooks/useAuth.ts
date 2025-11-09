@@ -84,15 +84,18 @@ export function useAuth(): UseAuthReturn {
   }, []);
 
   // Função de login com email e senha
-  const signIn = useCallback(async (email: string, password: string): Promise<{ user: User | null; error: Error | null }> => {
-    try {
-      const data = await signInWithEmail(email, password);
-      return { user: data.user, error: null };
-    } catch (error) {
-      console.error('Erro ao fazer login:', error);
-      return { user: null, error: error as Error };
-    }
-  }, []);
+  const signIn = useCallback(
+    async (email: string, password: string): Promise<{ user: User | null; error: Error | null }> => {
+      try {
+        const data = await signInWithEmail(email, password);
+        return { user: data.user, error: null };
+      } catch (error) {
+        console.error('Erro ao fazer login:', error);
+        return { user: null, error: error as Error };
+      }
+    },
+    []
+  );
 
   // Função de login com magic link
   const signInWithMagicLink = useCallback(async (email: string) => {

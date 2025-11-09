@@ -27,5 +27,6 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
-  "exclude": ["node_modules", "dist", "build", ".expo", ".expo-shared"]
+  "exclude": ["node_modules", "dist", "build", ".expo", ".expo-shared"],
+  "extends": "expo/tsconfig.base"
 }

@@ -30,5 +30,3 @@ const styles = StyleSheet.create({
     marginTop: tokens.spacing.lg,
   } as ViewStyle,
 });
-
-

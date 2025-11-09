@@ -26,8 +26,29 @@ const INSECURE_VARS = [
   'EXPO_PUBLIC_SERVICE_ROLE_KEY',
 ];
 
-// Load .env file
-require('dotenv').config();
+// Load .env file - try multiple locations
+const envFiles = [
+  path.join(__dirname, '..', '.env'),
+  path.join(__dirname, '..', '.env.local'),
+  path.join(__dirname, '..', '.env.auto'),
+  path.join(__dirname, '..', 'apps', 'mobile', '.env'),
+  path.join(__dirname, '..', 'apps', 'mobile', '.env.local'),
+];
+
+// Try to load from first available file
+let envLoaded = false;
+for (const envFile of envFiles) {
+  if (fs.existsSync(envFile)) {
+    require('dotenv').config({ path: envFile });
+    envLoaded = true;
+    break;
+  }
+}
+
+// Fallback to default dotenv behavior
+if (!envLoaded) {
+  require('dotenv').config();
+}
 
 console.log('🔍 Validating environment variables...\n');
 

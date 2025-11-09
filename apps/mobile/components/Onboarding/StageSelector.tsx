@@ -56,5 +56,3 @@ const styles = StyleSheet.create({
     gap: tokens.spacing.sm,
   } as ViewStyle,
 });
-
-

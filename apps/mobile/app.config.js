@@ -20,6 +20,11 @@ module.exports = {
     name: 'Nossa Maternidade',
     slug: 'nossa-maternidade',
     version: '1.0.0',
+    // Hermes Engine - JavaScript engine otimizado para React Native
+    jsEngine: 'hermes',
+    // Runtime version para compatibilidade com EAS Update
+    // Baseado na versão do React Native (0.81.5) para garantir compatibilidade do bytecode Hermes
+    runtimeVersion: '0.81.5',
     // ⚠️ Estas propriedades não são sincronizadas automaticamente quando android/ios existem
     orientation: 'portrait',
     icon: './assets/icon.png',

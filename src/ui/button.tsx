@@ -102,12 +102,10 @@ export function Button({
           {leftIcon}
           {loading ? (
             <ActivityIndicator color={variant === 'primary' ? tokens.palette.surface : tokens.palette.text} />
+          ) : typeof buttonText === 'string' ? (
+            <Text style={computedTextStyle}>{buttonText}</Text>
           ) : (
-            typeof buttonText === 'string' ? (
-              <Text style={computedTextStyle}>{buttonText}</Text>
-            ) : (
-              buttonText
-            )
+            buttonText
           )}
           {rightIcon}
         </View>

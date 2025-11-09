@@ -28,6 +28,7 @@
     "validate:full": "pnpm run validate && pnpm run test:coverage",
     "validate:quick": "pnpm run type-check && pnpm run lint",
     "validate:env": "node scripts/validate-env.js",
+    "validate:demo": "node scripts/validate-demo.js",
     "audit": "pnpm audit --audit-level=moderate",
     "prepare": "husky install",
     "agents:start": "node scripts/start-agents.js",

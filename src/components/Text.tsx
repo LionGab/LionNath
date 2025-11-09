@@ -120,7 +120,7 @@ const getVariantStyles = (variant: TextVariant): TextStyle => {
   }
 };
 
-export const Text: React.FC<TextProps> = ({ variant = 'body', color, style, children, ...props }) => {
+const TextComponent: React.FC<TextProps> = ({ variant = 'body', color, style, children, ...props }) => {
   // Memoizar estilos da variante
   const variantStyles = useMemo(() => getVariantStyles(variant), [variant]);
 
@@ -136,6 +136,8 @@ export const Text: React.FC<TextProps> = ({ variant = 'body', color, style, chil
     </RNText>
   );
 };
+
+export const Text = React.memo(TextComponent);
 
 const styles = StyleSheet.create({
   base: {

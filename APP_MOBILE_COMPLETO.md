@@ -22,24 +22,29 @@
 ### 2. Onboarding em 5 Passos (≤90s) ✅
 
 **Passo 1: Fase**
+
 - Opções: Gestante, Mãe, Tentante, Puerpério
 - Seleção visual com ícones
 
 **Passo 2: Emoção/Slider**
+
 - Slider de 0-10
 - Labels: 0=Calma, 5=Oscilando, 10=No limite
 - Display visual do valor
 
 **Passo 3: Desafios**
+
 - Seleção de até 2 desafios
 - Opções: Sono, Alimentação, Ansiedade, Relacionamento, Trabalho, Finanças
 
 **Passo 4: Preferências**
+
 - Postar anônimo: **ON por padrão**
 - Notificações: **OFF por padrão**
 - Switches acessíveis
 
 **Passo 5: Starter Pack**
+
 - Círculo recomendado
 - Conteúdo "Em 5 Minutos"
 - Micro-hábito personalizado
@@ -51,6 +56,7 @@
 ### 3. Design Tokens Aplicados ✅
 
 **Cores**:
+
 - `primary`: `#6DA9E4` (Azul suave)
 - `accent`: `#FF8BA3` (Rosa acento)
 - `background`: `#FFF8F3` (Bege claro)
@@ -58,6 +64,7 @@
 - `text`: `#6A5450` (Marrom suave)
 
 **Radius**:
+
 - `md`: `16px`
 - `lg`: `24px`
 
@@ -72,6 +79,7 @@
 ### 4. Telas Criadas ✅
 
 #### CirculosScreen
+
 - Feed de posts anônimos (`is_anonymous=true` por padrão)
 - Criar novo post
 - Curtir posts
@@ -81,6 +89,7 @@
 **Arquivo**: `src/screens/CirculosScreen.tsx`
 
 #### MundoNathScreen
+
 - Feed de conteúdos "Em 5 Minutos"
 - Cards com resumo, bullets e tempo de leitura
 - Integração com API `GET /trending-5min`
@@ -93,6 +102,7 @@
 ### 5. Integrações de API ✅
 
 #### POST /nathia-chat
+
 - Endpoint: `/functions/v1/nathia-chat`
 - Request: `{ message, userId, context }`
 - Response: `{ reply, actions, safety }`
@@ -103,6 +113,7 @@
 **Hook**: `src/hooks/useChatOptimized.ts` (atualizado)
 
 #### GET /trending-5min
+
 - Endpoint: `/functions/v1/trending-5min`
 - Response: `{ cards: Trending5MinCard[] }`
 - Cards com título, resumo, bullets, tempo de leitura
@@ -115,17 +126,20 @@
 ### 6. Collections Supabase ✅
 
 #### Tabela `circles`
+
 - Campos: `id`, `name`, `description`, `stage`
 - RLS habilitado
 - Círculos padrão criados
 
 #### Tabela `posts`
+
 - Campos: `id`, `user_id`, `circle_id`, `content`, `is_anonymous`, `likes_count`, `comments_count`
 - **`is_anonymous` DEFAULT TRUE** ✅
 - RLS habilitado
 - Índices para performance
 
 #### Tabela `post_likes`
+
 - Campos: `id`, `post_id`, `user_id`
 - Unique constraint em `(post_id, user_id)`
 
@@ -136,6 +150,7 @@
 ## 🎨 Design System
 
 ### Tokens Aplicados
+
 - ✅ Cores conforme especificação
 - ✅ Radius md=16px, lg=24px
 - ✅ Contraste ≥4.5:1
@@ -143,6 +158,7 @@
 - ✅ Áreas de toque ≥44x44px (WCAG)
 
 ### Acessibilidade
+
 - ✅ Labels descritivos
 - ✅ Roles corretos
 - ✅ Hints quando necessário
@@ -177,22 +193,26 @@
 ## 📝 Notas Técnicas
 
 ### Onboarding
+
 - Tempo máximo: 90 segundos
 - Progress bar visual
 - Validação de cada passo antes de avançar
 - Dados salvos em AsyncStorage
 
 ### Círculos
+
 - Posts sempre anônimos por padrão (`is_anonymous=true`)
 - Avatar genérico "Mãe Anônima"
 - Sistema de likes funcional
 
 ### MundoNath
+
 - Fallback para dados mockados se API falhar
 - Cards otimizados para leitura rápida
 - Pull-to-refresh implementado
 
 ### NathIA Chat
+
 - Integração com detecção de segurança
 - Ações sugeridas suportadas
 - Tratamento de erros robusto

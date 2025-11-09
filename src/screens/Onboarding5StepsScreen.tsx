@@ -142,11 +142,7 @@ export default function OnboardingScreen() {
             accessibilityLabel={`Fase: ${fase.label}`}
             accessibilityRole="button"
           >
-            <Icon
-              name={fase.icon}
-              size={32}
-              color={data.fase === fase.value ? '#FFFFFF' : palette.primary}
-            />
+            <Icon name={fase.icon} size={32} color={data.fase === fase.value ? '#FFFFFF' : palette.primary} />
             <Text
               style={[
                 styles.faseLabel,

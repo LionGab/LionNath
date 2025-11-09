@@ -42,6 +42,9 @@ interface AnswerValue {
   timestamp?: Date;
 }
 
+// Helper type para respostas do onboarding
+type OnboardingAnswer = string | string[];
+
 interface OnboardingStep {
   id: string;
   question: string;
@@ -100,7 +103,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
 
 export function OnboardingFlow({ userId, onComplete }: OnboardingFlowProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
+  const [answers, setAnswers] = useState<Record<string, OnboardingAnswer>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -140,7 +143,7 @@ export function OnboardingFlow({ userId, onComplete }: OnboardingFlowProps) {
     if (step.type === 'single') {
       return answers[step.id] === value;
     } else {
-      const current = (answers[step.id] as string[]) || [];
+      const current = Array.isArray(answers[step.id]) ? (answers[step.id] as string[]) : [];
       return current.includes(value);
     }
   };
@@ -176,13 +179,25 @@ export function OnboardingFlow({ userId, onComplete }: OnboardingFlowProps) {
 
     try {
       // Prepara request
+      const getStringValue = (key: string): string => {
+        const value = answers[key];
+        return typeof value === 'string' ? value : Array.isArray(value) ? value[0] || '' : '';
+      };
+
+      const getArrayValue = (key: string): string[] => {
+        const value = answers[key];
+        return Array.isArray(value) ? value : typeof value === 'string' ? [value] : [];
+      };
+
       const request: NathiaOnboardingRequest = {
         userId,
         answers: {
-          stage: answers.stage || 'gestante',
-          pregnancyWeek: answers.pregnancyWeek ? parseInt(answers.pregnancyWeek.split('-')[0], 10) : undefined,
-          concerns: answers.concerns || [],
-          expectations: answers.expectations || [],
+          stage: getStringValue('stage') || 'gestante',
+          pregnancyWeek: getStringValue('pregnancyWeek') 
+            ? parseInt(getStringValue('pregnancyWeek').split('-')[0], 10) 
+            : undefined,
+          concerns: getArrayValue('concerns'),
+          expectations: getArrayValue('expectations'),
         },
       };
 

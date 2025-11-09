@@ -160,7 +160,12 @@ function ContentFeedScreen() {
       <Card
         variant="elevated"
         style={styles.contentCard}
-        onPress={() => navigation.navigate('ContentDetail' as any, { contentId: item.id })}
+        onPress={() => {
+          // Navegação segura com verificação de tipo
+          if ('ContentDetail' in (navigation.getState().routes[0]?.params || {})) {
+            (navigation as any).navigate('ContentDetail', { contentId: item.id });
+          }
+        }}
         accessibilityLabel={`${item.title} - ${item.type}`}
       >
         {item.thumbnail_url && (

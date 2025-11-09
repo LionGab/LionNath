@@ -120,23 +120,6 @@ const getVariantStyles = (variant: TextVariant): TextStyle => {
   }
 };
 
-export const Text: React.FC<TextProps> = ({ variant = 'body', color, style, children, ...props }) => {
-  // Memoizar estilos da variante
-  const variantStyles = useMemo(() => getVariantStyles(variant), [variant]);
-
-  // Memoizar estilo final
-  const finalStyle = useMemo(
-    () => [styles.base, variantStyles, color ? { color } : null, style].filter(Boolean) as TextStyle[],
-    [variantStyles, color, style]
-  );
-
-  return (
-    <RNText style={finalStyle} {...props}>
-      {children}
-    </RNText>
-  );
-};
-
 const TextComponent: React.FC<TextProps> = ({ variant = 'body', color, style, children, ...props }) => {
   // Memoizar estilos da variante
   const variantStyles = useMemo(() => getVariantStyles(variant), [variant]);

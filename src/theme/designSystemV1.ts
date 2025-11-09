@@ -80,7 +80,8 @@ export interface GradientTokens {
   ocean: [string, string];
   blossom: [string, string];
   calm: [string, string];
-  pink: [string, string];
+  pink: [string, string, string]; // Gradiente rosa suave de 3 cores
+  pinkSoft: [string, string, string]; // Gradiente rosa suave para cards
   blue: [string, string];
   purple: [string, string];
   green: [string, string];
@@ -343,7 +344,8 @@ const gradients: GradientTokens = {
   ocean: ['#4E8BC3', '#203A54'],
   blossom: ['#FFE4EA', '#FF8BA3'],
   calm: ['#E5F6E9', '#6CC8A1'],
-  pink: ['#FF9FB8', '#FF6C8D'],
+  pink: ['#FFB6C1', '#FFC0CB', '#FFE4E1'], // Gradiente rosa suave de 3 cores
+  pinkSoft: ['#FFB6C1', '#FFC0CB', '#FFE4E1'], // Gradiente rosa suave para cards
   blue: ['#7FBBEB', '#325A7D'],
   purple: ['#9D2E4D', '#4E8BC3'],
   green: ['#6CC8A1', '#2B9B77'],

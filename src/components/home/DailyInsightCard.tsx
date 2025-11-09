@@ -4,10 +4,10 @@
  */
 
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { colors, spacing, typography, borderRadius, shadows } from '@/theme';
+import { colors, spacing, typography, borderRadius, shadows, gradients } from '@/theme';
 import { DailyInsight } from '@/services/dailyInsight';
 
 interface DailyInsightCardProps {
@@ -38,7 +38,7 @@ export function DailyInsightCard({ insight, loading, onRefresh, onActionPress }:
     return (
       <View style={styles.container}>
         <LinearGradient
-          colors={['#FFB6C1', '#FFC0CB', '#FFE4E1']} // Rosa suave
+          colors={gradients.pinkSoft}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
@@ -61,7 +61,7 @@ export function DailyInsightCard({ insight, loading, onRefresh, onActionPress }:
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       <LinearGradient
-        colors={['#FFB6C1', '#FFC0CB', '#FFE4E1']} // Rosa suave gradient
+        colors={gradients.pinkSoft}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
@@ -88,7 +88,13 @@ export function DailyInsightCard({ insight, loading, onRefresh, onActionPress }:
         {/* Avatar */}
         <View style={styles.avatarContainer}>
           <View style={styles.avatar}>
-            <Icon name="account-heart" size={32} color={colors.primary} />
+            <Image
+              source={require('@/assets/images/nat1.png')}
+              style={styles.avatarImage}
+              resizeMode="cover"
+              accessible={true}
+              accessibilityLabel="Foto de Nathália Valente"
+            />
           </View>
           <Text style={styles.avatarLabel}>Nathália Valente</Text>
         </View>
@@ -229,6 +235,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.sm,
     ...shadows.dark.md,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
   },
   avatarLabel: {
     fontSize: typography.sizes.sm,

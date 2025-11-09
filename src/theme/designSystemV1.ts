@@ -168,37 +168,37 @@ export interface RadiusTokens {
 
 const palette: ThemePalette = {
   primary: {
-    100: '#E4F0FC',
-    200: '#CBE1F7',
-    300: '#A7CDF2',
-    400: '#7FBBEB',
+    100: '#FCE4EC', // Rosa muito claro
+    200: '#F8BBD0', // Rosa claro
+    300: '#F48FB1', // Primary do Stitch (base)
+    400: '#F06292', // Rosa médio
     500: nossaMaternidadeDesignTokens.palette.primary,
-    600: '#4E8BC3',
-    700: '#3A6E9D',
-    800: '#2C5276',
-    900: '#203A54',
+    600: '#EC407A', // Rosa escuro
+    700: '#D81B60', // Rosa mais escuro
+    800: '#C2185B', // Rosa muito escuro
+    900: '#AD1457', // Rosa mais escuro ainda
   },
   accent: {
-    100: '#FFE4EA',
-    200: '#FFC9D6',
-    300: '#FF9FB8',
-    400: '#FF8BA3',
+    100: '#FCE4EC', // Mesma escala do primary (rosa)
+    200: '#F8BBD0',
+    300: '#F48FB1', // Mesma cor do primary
+    400: '#F48FB1',
     500: nossaMaternidadeDesignTokens.palette.accent,
-    600: '#E55479',
-    700: '#C43F64',
-    800: '#9D2E4D',
-    900: '#711F38',
+    600: '#EC407A',
+    700: '#D81B60',
+    800: '#C2185B',
+    900: '#AD1457',
   },
   surface: {
-    100: '#F7FBFF',
-    200: '#EEF4FF',
-    300: '#E2EEFF',
-    400: '#D6E6FF',
+    100: '#E0F7FA', // Background light do Stitch (base)
+    200: '#B2EBF2', // Azul claro
+    300: '#80DEEA', // Azul médio claro
+    400: '#4DD0E1', // Azul médio
     500: nossaMaternidadeDesignTokens.palette.surface,
-    600: '#B4C7DA',
-    700: '#8AA1B4',
-    800: '#637A8C',
-    900: '#435362',
+    600: '#00BCD4', // Azul escuro
+    700: '#00ACC1', // Azul mais escuro
+    800: '#0097A7', // Azul muito escuro
+    900: '#00838F', // Azul mais escuro ainda
   },
   neutral: {
     100: nossaMaternidadeDesignTokens.palette.neutrals[100],
@@ -260,71 +260,71 @@ const palette: ThemePalette = {
 };
 
 const light: ThemeColors = {
-  background: nossaMaternidadeDesignTokens.palette.background,
-  foreground: nossaMaternidadeDesignTokens.palette.text,
+  background: '#E0F7FA', // Background light do Stitch
+  foreground: '#37474F', // Text main do Stitch
   card: '#FFFFFF',
-  cardForeground: nossaMaternidadeDesignTokens.palette.text,
+  cardForeground: '#37474F',
   popover: '#FFFFFF',
-  popoverForeground: nossaMaternidadeDesignTokens.palette.text,
-  primary: nossaMaternidadeDesignTokens.palette.primary,
+  popoverForeground: '#37474F',
+  primary: '#F48FB1', // Primary rosa do Stitch
   primaryForeground: '#FFFFFF',
-  secondary: palette.surface[500],
-  secondaryForeground: '#325A7D',
-  accent: palette.accent[400],
-  accentForeground: '#451822',
-  muted: palette.surface[100],
-  mutedForeground: '#7B6A63',
+  secondary: '#B0BEC5', // Border color do Stitch
+  secondaryForeground: '#37474F',
+  accent: '#F48FB1', // Mesma cor primária
+  accentForeground: '#FFFFFF',
+  muted: '#E0F7FA', // Background light
+  mutedForeground: '#78909C', // Placeholder color do Stitch
   destructive: palette.support.danger[500],
   destructiveForeground: '#FFFFFF',
-  border: palette.surface[300],
-  input: palette.surface[200],
-  ring: palette.primary[400],
-  sidebar: palette.surface[200],
-  sidebarForeground: '#325A7D',
-  sidebarPrimary: palette.primary[500],
+  border: '#B0BEC5', // Border color do Stitch
+  input: '#FFFFFF', // Input background branco com opacidade
+  ring: '#F48FB1', // Primary para ring
+  sidebar: '#E0F7FA',
+  sidebarForeground: '#37474F',
+  sidebarPrimary: '#F48FB1',
   sidebarPrimaryForeground: '#FFFFFF',
-  sidebarAccent: palette.accent[200],
-  sidebarAccentForeground: '#5C1F30',
-  sidebarBorder: palette.surface[400],
-  sidebarRing: palette.primary[300],
-  chart1: palette.primary[500],
-  chart2: palette.accent[300],
-  chart3: palette.surface[600],
+  sidebarAccent: '#F48FB1',
+  sidebarAccentForeground: '#FFFFFF',
+  sidebarBorder: '#B0BEC5',
+  sidebarRing: '#F48FB1',
+  chart1: '#F48FB1',
+  chart2: '#73B5E6',
+  chart3: '#6EBFA2',
   chart4: palette.support.success[400],
   chart5: palette.support.warning[300],
 };
 
 const dark: ThemeColors = {
-  background: '#2A1F1C',
-  foreground: palette.neutral[100],
-  card: '#352826',
-  cardForeground: palette.neutral[100],
-  popover: '#352826',
-  popoverForeground: palette.neutral[100],
-  primary: palette.primary[300],
-  primaryForeground: '#112236',
+  background: '#111c21', // Background dark do Stitch
+  foreground: '#FFFFFF', // Texto branco no dark
+  card: '#1E2A2F', // Card escuro
+  cardForeground: '#FFFFFF',
+  popover: '#1E2A2F',
+  popoverForeground: '#FFFFFF',
+  primary: '#F48FB1', // Mesma cor primária no dark
+  primaryForeground: '#FFFFFF',
   secondary: '#3E4555',
-  secondaryForeground: palette.neutral[100],
-  accent: palette.accent[300],
-  accentForeground: '#411724',
-  muted: '#3C2F2B',
-  mutedForeground: '#D3C0B9',
+  secondaryForeground: '#FFFFFF',
+  accent: '#F48FB1',
+  accentForeground: '#FFFFFF',
+  muted: '#1E2A2F',
+  mutedForeground: '#78909C', // Placeholder color mantido
   destructive: palette.support.danger[400],
-  destructiveForeground: '#401615',
-  border: '#4B3B35',
-  input: '#3C2F2B',
-  ring: palette.primary[300],
-  sidebar: '#352826',
-  sidebarForeground: palette.neutral[100],
-  sidebarPrimary: palette.primary[400],
-  sidebarPrimaryForeground: '#112236',
-  sidebarAccent: palette.accent[200],
-  sidebarAccentForeground: '#40171F',
-  sidebarBorder: '#4B3B35',
-  sidebarRing: palette.primary[400],
-  chart1: palette.primary[300],
-  chart2: palette.accent[400],
-  chart3: '#7DA2C4',
+  destructiveForeground: '#FFFFFF',
+  border: '#3E4555', // Border mais escuro no dark
+  input: '#1E2A2F',
+  ring: '#F48FB1',
+  sidebar: '#111c21',
+  sidebarForeground: '#FFFFFF',
+  sidebarPrimary: '#F48FB1',
+  sidebarPrimaryForeground: '#FFFFFF',
+  sidebarAccent: '#F48FB1',
+  sidebarAccentForeground: '#FFFFFF',
+  sidebarBorder: '#3E4555',
+  sidebarRing: '#F48FB1',
+  chart1: '#F48FB1',
+  chart2: '#73B5E6',
+  chart3: '#6EBFA2',
   chart4: palette.support.success[400],
   chart5: palette.support.warning[400],
 };

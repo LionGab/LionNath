@@ -187,10 +187,10 @@ const spacingScale: SpacingScale = {
 };
 
 const radiusScale: RadiusScale = {
-  sm: 12,
-  md: 18,
-  lg: 24,
-  full: 999,
+  sm: 8, // 0.5rem do Stitch
+  md: 16, // 1rem (xl) do Stitch
+  lg: 24, // 1.5rem do Stitch
+  full: 9999, // full do Stitch
 };
 
 const shadowScale: ShadowScale = {
@@ -222,11 +222,11 @@ const shadowScale: ShadowScale = {
 
 export const nossaMaternidadeDesignTokens: NossaMaternidadeDesignTokens = {
   palette: {
-    primary: '#6DA9E4',
-    accent: '#FF8BA3',
-    background: '#FFF8F3',
-    surface: '#DCEBFA',
-    text: '#6A5450',
+    primary: '#F48FB1', // Rosa do Stitch
+    accent: '#F48FB1', // Mesma cor primária como accent
+    background: '#E0F7FA', // Background light do Stitch
+    surface: '#FFFFFF', // Superfície branca
+    text: '#37474F', // Text main do Stitch
     neutrals: neutralPalette,
     feedback: {
       success: '#6EBFA2',
@@ -239,8 +239,8 @@ export const nossaMaternidadeDesignTokens: NossaMaternidadeDesignTokens = {
       infoContrast: '#0F2F46',
     },
     overlays: {
-      scrim: 'rgba(16, 12, 11, 0.45)',
-      subtle: 'rgba(109, 169, 228, 0.08)',
+      scrim: 'rgba(17, 28, 33, 0.45)', // Background dark com opacidade
+      subtle: 'rgba(244, 143, 177, 0.08)', // Primary com opacidade
     },
   },
   typography: typographyScale,

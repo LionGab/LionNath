@@ -21,17 +21,17 @@ import { linking } from './linking';
 // Lazy load screens para melhor performance
 const SignInScreen = lazy(() => import('@/screens/SignInScreen').then((m) => ({ default: m.SignInScreen })));
 const OnboardingQuestionsWrapper = lazy(() =>
-  import('@/screens/Onboarding/OnboardingQuestionsWrapper').then((m) => ({ default: m.OnboardingQuestionsWrapper })),
+  import('@/screens/Onboarding/OnboardingQuestionsWrapper').then((m) => ({ default: m.OnboardingQuestionsWrapper }))
 );
 const ReviewAnswersScreen = lazy(() =>
-  import('@/screens/Onboarding/ReviewAnswersScreen').then((m) => ({ default: m.ReviewAnswersScreen })),
+  import('@/screens/Onboarding/ReviewAnswersScreen').then((m) => ({ default: m.ReviewAnswersScreen }))
 );
 const DailyPlanScreen = lazy(() => import('@/screens/DailyPlanScreen').then((m) => ({ default: m.default })));
 const ContentDetailScreen = lazy(() =>
-  import('@/features/content/ContentDetailScreen').then((m) => ({ default: m.default })),
+  import('@/features/content/ContentDetailScreen').then((m) => ({ default: m.default }))
 );
 const ComponentValidationScreen = lazy(() =>
-  import('@/screens/ComponentValidationScreen').then((m) => ({ default: m.default })),
+  import('@/screens/ComponentValidationScreen').then((m) => ({ default: m.default }))
 );
 
 // Wrapper com Suspense para lazy loaded screens

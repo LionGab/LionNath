@@ -1,9 +1,9 @@
 /**
  * Stitch Design References Configuration
- * 
+ *
  * Este arquivo centraliza as referências de design do projeto Stitch
  * para fácil aplicação no nosso Design System.
- * 
+ *
  * URL do projeto: https://stitch.withgoogle.com/projects/11277703543515991022
  */
 
@@ -86,7 +86,7 @@ export interface StitchDesignTokens {
 
 /**
  * PLACEHOLDER - Aguardando referências do Stitch
- * 
+ *
  * Para aplicar as referências:
  * 1. Preencha os valores abaixo com as informações do projeto Stitch
  * 2. Execute o script de migração: npm run apply-stitch-references
@@ -174,11 +174,5 @@ export function applyStitchReferences(references: StitchDesignTokens): void {
  */
 export function validateStitchReferences(): boolean {
   const refs = stitchReferences;
-  return !!(
-    refs.colors &&
-    refs.typography &&
-    refs.spacing &&
-    refs.borderRadius &&
-    refs.elevation
-  );
+  return !!(refs.colors && refs.typography && refs.spacing && refs.borderRadius && refs.elevation);
 }

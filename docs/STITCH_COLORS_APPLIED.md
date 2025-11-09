@@ -9,6 +9,7 @@ Todas as cores e valores do design Stitch foram aplicados ao design system React
 ## 📋 Cores Aplicadas:
 
 ### Cores Principais:
+
 - ✅ **Primary:** `#F48FB1` (Rosa)
 - ✅ **Background Light:** `#E0F7FA` (Azul claro)
 - ✅ **Background Dark:** `#111c21` (Quase preto)
@@ -17,6 +18,7 @@ Todas as cores e valores do design Stitch foram aplicados ao design system React
 - ✅ **Placeholder Color:** `#78909C` (Cinza)
 
 ### Border Radius (Stitch):
+
 - ✅ **sm:** `8px` (0.5rem)
 - ✅ **md:** `16px` (1rem/xl)
 - ✅ **lg:** `24px` (1.5rem)
@@ -27,12 +29,14 @@ Todas as cores e valores do design Stitch foram aplicados ao design system React
 ## 📱 Compatibilidade iOS/Android
 
 ### ✅ iOS:
+
 - Cores funcionam nativamente
 - Border radius compatível
 - SafeAreaView para áreas seguras
 - Suporte a dark mode completo
 
 ### ✅ Android:
+
 - Cores funcionam nativamente
 - Border radius compatível
 - Elevation para sombras

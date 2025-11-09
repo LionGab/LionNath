@@ -193,8 +193,8 @@ export function OnboardingFlow({ userId, onComplete }: OnboardingFlowProps) {
         userId,
         answers: {
           stage: getStringValue('stage') || 'gestante',
-          pregnancyWeek: getStringValue('pregnancyWeek') 
-            ? parseInt(getStringValue('pregnancyWeek').split('-')[0], 10) 
+          pregnancyWeek: getStringValue('pregnancyWeek')
+            ? parseInt(getStringValue('pregnancyWeek').split('-')[0], 10)
             : undefined,
           concerns: getArrayValue('concerns'),
           expectations: getArrayValue('expectations'),

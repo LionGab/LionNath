@@ -5,28 +5,33 @@
 Para aplicar as referências do projeto Stitch ao nosso design system, precisamos das seguintes informações:
 
 ### 1. **Cores Principais**
+
 - Cor primária (Primary)
 - Cor secundária (Accent)
 - Cores de feedback (Success, Warning, Error, Info)
 - Gradientes específicos
 
 ### 2. **Tipografia**
+
 - Família de fontes
 - Escala de tamanhos
 - Pesos de fonte
 - Line heights
 
 ### 3. **Espaçamentos**
+
 - Sistema de espaçamento (base 4 ou 8)
 - Padding e margins padrão
 
 ### 4. **Componentes Visuais**
+
 - Estilo de cards
 - Botões e seus estados
 - Inputs e formulários
 - Navegação
 
 ### 5. **Imagens**
+
 - Foto da influenciadora (já adicionada: nat1.png)
 - Outras imagens de referência
 

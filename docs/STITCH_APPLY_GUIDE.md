@@ -9,6 +9,7 @@ Para aplicar as referências do projeto Stitch ao nosso design system, siga este
 Acesse o projeto no Stitch e colete:
 
 #### **Cores:**
+
 - Cor primária (Primary)
 - Cor secundária (Accent/Secondary)
 - Cores de feedback (Success, Warning, Error, Info)
@@ -16,16 +17,19 @@ Acesse o projeto no Stitch e colete:
 - Gradientes específicos
 
 #### **Tipografia:**
+
 - Família de fontes (geralmente "Google Sans" no Stitch)
 - Escala de tamanhos (display, h1-h6, body, caption, etc.)
 - Pesos de fonte (300, 400, 500, 600, 700)
 - Line heights
 
 #### **Espaçamentos:**
+
 - Sistema de espaçamento (base 4 ou 8)
 - Valores de padding e margin padrão
 
 #### **Outros:**
+
 - Border radius
 - Elevações/sombras
 - Componentes específicos
@@ -69,6 +73,7 @@ npm run apply-stitch-references
 ```
 
 Ou manualmente atualize os arquivos:
+
 - `src/theme/designSystemV1.ts` - Cores e tokens principais
 - `src/theme/themes/v1-nossa-maternidade.ts` - Tema específico
 

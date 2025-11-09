@@ -37,11 +37,13 @@ Scan the QR code above with Expo Go (Android) or the Camera app (iOS)
 ```
 
 **Android:**
+
 - Abra o app **Expo Go**
 - Toque em **"Scan QR Code"**
 - Escaneie o QR code do terminal
 
 **iOS:**
+
 - Abra o app **Câmera** nativo
 - Aponte para o QR code
 - Toque na notificação que aparecer
@@ -147,21 +149,25 @@ pnpm build:web
 ### Problema: QR Code não conecta
 
 **Solução 1: Verificar rede Wi-Fi**
+
 - Celular e PC devem estar na mesma rede Wi-Fi
 - Desative VPN se estiver usando
 
 **Solução 2: Usar Tunnel**
+
 ```bash
 pnpm dev:tunnel
 ```
 
 **Solução 3: Verificar firewall**
+
 - Windows: Permitir Node.js e Expo nas regras de firewall
 - Mac: Permitir conexões de entrada para Node.js
 
 ### Problema: "Metro bundler error"
 
 **Solução:**
+
 ```bash
 cd apps/mobile
 pnpm clean
@@ -171,6 +177,7 @@ pnpm dev
 ### Problema: "Port 8081 already in use"
 
 **Solução Windows:**
+
 ```powershell
 # Encontrar processo
 netstat -ano | findstr ":8081"
@@ -180,6 +187,7 @@ taskkill /PID <PID> /F
 ```
 
 **Solução Mac/Linux:**
+
 ```bash
 # Encontrar processo
 lsof -ti:8081
@@ -191,6 +199,7 @@ kill -9 $(lsof -ti:8081)
 ### Problema: App não atualiza após mudanças
 
 **Solução:**
+
 1. Agite o celular (shake gesture)
 2. Toque em **"Reload"** no menu do Expo Go
 3. Ou pressione `r` no terminal para reload
@@ -198,6 +207,7 @@ kill -9 $(lsof -ti:8081)
 ### Problema: Erros de módulos não encontrados
 
 **Solução:**
+
 ```bash
 # Limpar e reinstalar
 cd apps/mobile
@@ -267,4 +277,3 @@ pnpm dev
 ## 🎉 Pronto!
 
 Agora você pode testar o app tanto no mobile quanto na web. Use `pnpm dev` para mobile e `pnpm dev:web` para web!
-

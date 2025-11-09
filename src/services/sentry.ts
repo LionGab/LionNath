@@ -2,7 +2,7 @@
  * Sentry Configuration
  * Error tracking e performance monitoring
  * Suporta React Native e Web
- * 
+ *
  * No web, usa stub; no mobile, usa @sentry/react-native
  */
 

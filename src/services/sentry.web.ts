@@ -20,4 +20,3 @@ export const SentryWeb = {
 };
 
 export default SentryWeb;
-

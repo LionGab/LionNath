@@ -37,12 +37,7 @@ export function DailyInsightCard({ insight, loading, onRefresh, onActionPress }:
   if (!insight) {
     return (
       <View style={styles.container}>
-        <LinearGradient
-          colors={gradients.pinkSoft}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradient}
-        >
+        <LinearGradient colors={gradients.pinkSoft} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradient}>
           <View style={styles.emptyContent}>
             <Icon name="lightbulb-off-outline" size={48} color="rgba(255, 255, 255, 0.7)" />
             <Text style={styles.emptyText}>Nenhuma dica disponível ainda</Text>
@@ -60,12 +55,7 @@ export function DailyInsightCard({ insight, loading, onRefresh, onActionPress }:
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <LinearGradient
-        colors={gradients.pinkSoft}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradient}
-      >
+      <LinearGradient colors={gradients.pinkSoft} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradient}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.badgeContainer}>

@@ -31,7 +31,7 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
       type: 'sourceFile',
     };
   }
-  
+
   // Usar resolução padrão para outros casos
   if (defaultResolver) {
     return defaultResolver(context, moduleName, platform);

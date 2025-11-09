@@ -157,15 +157,18 @@ function ContentFeedScreen() {
 
   // Memoizar renderItem para evitar recriação em cada render
   const renderContentItem = useCallback(
-    ({ item }: { item: ContentItem }) => (
-      <Card
-        variant="elevated"
-        style={styles.contentCard}
-        onPress={() => {
-          navigation.navigate('ContentDetail', { contentId: item.id });
-        }}
-        accessibilityLabel={`${item.title} - ${item.type}`}
-      >
+    ({ item }: { item: ContentItem }) => {
+      const handlePress = () => {
+        (navigation as NavigationProp<RootStackParamList>).navigate('ContentDetail', { contentId: item.id });
+      };
+
+      return (
+        <Card
+          variant="elevated"
+          style={styles.contentCard}
+          onPress={handlePress}
+          accessibilityLabel={`${item.title} - ${item.type}`}
+        >
         {item.thumbnail_url && (
           <Image source={{ uri: item.thumbnail_url }} style={styles.thumbnail} resizeMode="cover" />
         )}
@@ -199,7 +202,8 @@ function ContentFeedScreen() {
           {item.category && <Text style={styles.contentCategory}>{item.category}</Text>}
         </View>
       </Card>
-    ),
+    );
+    },
     [navigation, toggleFavorite]
   );
 

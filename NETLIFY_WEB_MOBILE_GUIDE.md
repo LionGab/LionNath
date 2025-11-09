@@ -26,6 +26,7 @@ EXPO_PUBLIC_SENTRY_DSN=https://seu-dsn-sentry.io/...
 ### 2. Build Automático
 
 O Netlify está configurado para:
+
 - ✅ Build automático a cada push na `main`
 - ✅ Deploy previews para cada PR
 - ✅ Build otimizado para web mobile
@@ -33,6 +34,7 @@ O Netlify está configurado para:
 ### 3. Verificação do Deploy
 
 Após o deploy, verifique:
+
 1. **URL do site**: Acesse a URL fornecida pelo Netlify
 2. **Mobile view**: Abra no navegador mobile ou use DevTools (F12 > Toggle device toolbar)
 3. **Login demo**: Use `demo@demo.com` / `Demo1234` se `USE_MOCKS=true`
@@ -42,16 +44,19 @@ Após o deploy, verifique:
 O app está configurado para funcionar perfeitamente em navegadores mobile:
 
 ### Viewport Mobile-First
+
 - Viewport otimizado para dispositivos móveis
 - `user-scalable=no` para evitar zoom indesejado
 - `viewport-fit=cover` para suportar notch/recortes
 
 ### PWA Ready
+
 - Meta tags para "Add to Home Screen"
 - Apple mobile web app capable
 - Theme color configurado
 
 ### Performance
+
 - Cache de assets estáticos (JS/CSS/Images)
 - Headers de segurança configurados
 - Redirects SPA para navegação
@@ -61,7 +66,8 @@ O app está configurado para funcionar perfeitamente em navegadores mobile:
 ### Build Falha no Netlify
 
 **Problema**: Build falha com erro de dependências
-**Solução**: 
+**Solução**:
+
 ```bash
 # Verificar se pnpm está instalado
 # O Netlify usa pnpm automaticamente se detectar pnpm-lock.yaml
@@ -71,6 +77,7 @@ O app está configurado para funcionar perfeitamente em navegadores mobile:
 
 **Problema**: App não detecta variáveis de ambiente
 **Solução**:
+
 1. Verifique se as variáveis começam com `EXPO_PUBLIC_`
 2. Rebuild o site após adicionar variáveis
 3. Verifique logs do build no Netlify Dashboard
@@ -79,6 +86,7 @@ O app está configurado para funcionar perfeitamente em navegadores mobile:
 
 **Problema**: Tela branca ou erro no mobile
 **Solução**:
+
 1. Verifique console do navegador (Chrome DevTools > Remote debugging)
 2. Verifique se `EXPO_PUBLIC_USE_MOCKS` está configurado
 3. Verifique se Supabase está configurado (se não usar mocks)
@@ -86,7 +94,8 @@ O app está configurado para funcionar perfeitamente em navegadores mobile:
 ### AsyncStorage Não Funciona no Web
 
 **Problema**: Dados não persistem no navegador
-**Solução**: 
+**Solução**:
+
 - O `@react-native-async-storage/async-storage` já usa `localStorage` automaticamente no web
 - Verifique se não há bloqueio de cookies/localStorage no navegador
 

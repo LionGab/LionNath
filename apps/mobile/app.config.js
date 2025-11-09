@@ -76,7 +76,7 @@ module.exports = {
         'apple-mobile-web-app-status-bar-style': 'default',
         'apple-mobile-web-app-title': 'Nossa Maternidade',
         'theme-color': '#FFE5F1',
-        'description': 'App de apoio para gestantes e mães - Nossa Maternidade',
+        description: 'App de apoio para gestantes e mães - Nossa Maternidade',
       },
     },
     plugins: ['expo-notifications', 'expo-av', '@react-native-voice/voice'],

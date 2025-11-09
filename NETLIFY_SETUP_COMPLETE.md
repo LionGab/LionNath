@@ -3,6 +3,7 @@
 ## O Que Foi Feito
 
 ### 1. Configuração Netlify (`netlify.toml`)
+
 - ✅ Build command configurado: `pnpm install && cd apps/mobile && pnpm run build:web`
 - ✅ Publish directory: `apps/mobile/dist`
 - ✅ Headers de segurança e cache otimizados
@@ -10,12 +11,14 @@
 - ✅ Documentação sobre variáveis de ambiente adicionada
 
 ### 2. Configuração Web Mobile (`apps/mobile/app.config.js`)
+
 - ✅ Viewport mobile-first configurado
 - ✅ Meta tags PWA adicionadas
 - ✅ Apple mobile web app configurado
 - ✅ Theme color e descrição adicionados
 
 ### 3. Documentação (`NETLIFY_WEB_MOBILE_GUIDE.md`)
+
 - ✅ Guia completo de configuração
 - ✅ Instruções para variáveis de ambiente
 - ✅ Troubleshooting comum
@@ -28,6 +31,7 @@
 Acesse: **Netlify Dashboard > Site Settings > Environment Variables**
 
 **Para Modo Demo:**
+
 ```
 EXPO_PUBLIC_USE_MOCKS=true
 EXPO_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
@@ -35,6 +39,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=placeholder-key
 ```
 
 **Para Produção:**
+
 ```
 EXPO_PUBLIC_USE_MOCKS=false
 EXPO_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
@@ -44,6 +49,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=sua-chave-real
 ### 2. Trigger Build
 
 O build será automático após:
+
 - Push na `main` → Deploy produção
 - Pull Request → Deploy preview
 - Push em branch → Branch deploy

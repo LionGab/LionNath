@@ -81,23 +81,36 @@ nossa-maternidade/
 
 ```bash
 # Clonar repositório
-git clone https://github.com/sua-org/nossa-maternidade.git
-cd nossa-maternidade
+git clone https://github.com/LionGab/NossaMaternidade-LN.git
+cd NossaMaternidade-LN
 
 # Instalar dependências
 pnpm install
 
 # Configurar variáveis de ambiente
-cp .env.example .env
-# Editar .env com suas keys
+cp apps/mobile/.env.example apps/mobile/.env
+# Editar apps/mobile/.env com suas keys
 
 # Executar migrations
 supabase link --project-ref YOUR_PROJECT_ID
 supabase db push
 
+# Popular banco com dados de teste (opcional)
+supabase db reset  # ou psql -h localhost -p 54322 -U postgres -d postgres -f supabase/seed.sql
+
 # Iniciar app
 pnpm dev
 ```
+
+### Verificar Configuração Netlify
+
+Antes de fazer deploy no Netlify:
+
+```bash
+pnpm netlify:check
+```
+
+Ver: `docs/NETLIFY_DEPLOY.md` para guia completo de deploy.
 
 ### Executar
 
@@ -170,6 +183,7 @@ pnpm e2e:android
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Arquitetura do sistema
 - **[PRIVACY.md](docs/PRIVACY.md)**: Política de privacidade e LGPD
 - **[SECURITY.md](docs/SECURITY.md)**: Segurança e boas práticas
+- **[NETLIFY_DEPLOY.md](docs/NETLIFY_DEPLOY.md)**: Guia completo de deploy no Netlify
 - **[TROUBLESHOOTING_NETLIFY.md](docs/TROUBLESHOOTING_NETLIFY.md)**: Troubleshooting Netlify/GitHub
 - **[HABITS_GAMIFICATION.md](docs/HABITS_GAMIFICATION.md)**: Sistema de hábitos
 - **[PR_CHECKLIST.md](docs/PR_CHECKLIST.md)**: Checklist de PR
@@ -252,6 +266,10 @@ pnpm e2e:android          # E2E Android
 # Validation
 pnpm validate             # Completa (type + lint + test + format)
 pnpm validate:quick       # Rápida (type + lint)
+
+# Netlify
+pnpm netlify:check        # Verificar configuração Netlify
+pnpm netlify:build        # Build para web (teste local)
 ```
 
 ## 🌍 Variáveis de Ambiente

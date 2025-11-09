@@ -43,7 +43,9 @@
     "review:keep": "tsx scripts/review-keeper-agent.ts",
     "mvp:diagnostic": "tsx scripts/mvp-diagnostic-agent.ts",
     "precommit": "lint-staged",
-    "prepush": "pnpm run validate:quick"
+    "prepush": "pnpm run validate:quick",
+    "netlify:check": "node scripts/check-netlify-config.js",
+    "netlify:build": "cd apps/mobile && pnpm run build:web"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.4.0",

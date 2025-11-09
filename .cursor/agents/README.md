@@ -373,29 +373,48 @@ Ver: [MULTI_AGENT_ANALYSIS_COMPLETE.md](../../MULTI_AGENT_ANALYSIS_COMPLETE.md)
 
 ## 🚀 Como Usar
 
+### **⚡ Início Rápido (30 segundos)**
+
+1. Abra Composer: `Ctrl+I` (Windows/Linux) ou `Cmd+I` (Mac)
+2. Copie o comando de: `.cursor/agents/ativar-8-agentes-paralelo.md`
+3. Cole e execute
+4. Aguarde conclusão (10-20 minutos)
+5. Revise relatórios em `.cursor/agents/reports/`
+
+**📋 Veja:** `.cursor/agents/QUICK_START_8_AGENTES.md` para guia rápido completo
+
 ### **1. Setup Inicial**
 
 ```bash
 # No terminal
-mkdir -p .cursor/agents/{prompts,workflows}
+mkdir -p .cursor/agents/{prompts,workflows,reports}
 git worktree add ../nossa-maternidade-agent1 feature/frontend
 git worktree add ../nossa-maternidade-agent2 feature/backend
 # ... criar worktrees para todos os agentes
 ```
 
-### **2. Ativar Agente**
+### **2. Ativar Agente Individual**
 
 ```bash
 # No Cursor Composer, use o prompt:
 @agent-1-frontend.md "Implemente componente Button com variantes"
 ```
 
-### **3. Orquestrar Múltiplos**
+Veja comandos individuais em: `.cursor/agents/comandos-prontos-copiar.md`
+
+### **3. Orquestrar Múltiplos (8 em Paralelo)**
 
 ```bash
 # No Cursor Composer simultaneamente:
-@agent-1-frontend.md @agent-4-design-system.md "Feature X completa"
+# Veja: .cursor/agents/ativar-8-agentes-paralelo.md
 ```
+
+### **4. Via Site do Cursor (Agentes na Nuvem)**
+
+1. Acesse: https://cursor.com/agents
+2. Faça login e conecte GitHub
+3. Inicie os 8 agentes
+4. Benefícios: 99,9% confiabilidade, execução isolada, acesso de qualquer dispositivo
 
 ---
 

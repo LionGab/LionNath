@@ -170,6 +170,7 @@ pnpm e2e:android
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Arquitetura do sistema
 - **[PRIVACY.md](docs/PRIVACY.md)**: Política de privacidade e LGPD
 - **[SECURITY.md](docs/SECURITY.md)**: Segurança e boas práticas
+- **[TROUBLESHOOTING_NETLIFY.md](docs/TROUBLESHOOTING_NETLIFY.md)**: Troubleshooting Netlify/GitHub
 - **[HABITS_GAMIFICATION.md](docs/HABITS_GAMIFICATION.md)**: Sistema de hábitos
 - **[PR_CHECKLIST.md](docs/PR_CHECKLIST.md)**: Checklist de PR
 - **[CURSOR_2.0_BEST_PRACTICES.md](docs/CURSOR_2.0_BEST_PRACTICES.md)**: Best practices

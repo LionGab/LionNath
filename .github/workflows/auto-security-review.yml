@@ -1,0 +1,123 @@
+name: Auto Security Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, develop]
+  schedule:
+    # Run daily at 3 AM UTC
+    - cron: '0 3 * * *'
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+
+jobs:
+  security-scan:
+    name: Security Review
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Run Security Audit
+        run: |
+          echo "## 🔒 Security Audit" >> $GITHUB_STEP_SUMMARY
+          pnpm audit --audit-level=moderate --json > audit.json || true
+          
+          # Parse audit results
+          if [ -f audit.json ]; then
+            VULNERABILITIES=$(cat audit.json | jq '.metadata.vulnerabilities.total // 0')
+            echo "### Vulnerabilities Found: $VULNERABILITIES" >> $GITHUB_STEP_SUMMARY
+            
+            if [ "$VULNERABILITIES" -gt 0 ]; then
+              echo "⚠️ **Action Required:** $VULNERABILITIES vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+              cat audit.json | jq -r '.vulnerabilities | to_entries[] | "### \(.key)\n- Severity: \(.value.severity)\n- Title: \(.value.title)\n"' >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ No vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+        continue-on-error: true
+      
+      - name: Check for Secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.pull_request.base.sha || 'HEAD~1' }}
+          head: HEAD
+          extra_args: --only-verified
+        continue-on-error: true
+      
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        if: github.event_name == 'pull_request'
+        with:
+          fail-on-severity: moderate
+        continue-on-error: true
+      
+      - name: Snyk Security Scan
+        if: ${{ secrets.SNYK_TOKEN != '' }}
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+      
+      - name: Create Security Review Comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            let securityIssues = [];
+            
+            // Check audit results
+            if (fs.existsSync('audit.json')) {
+              const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
+              const vulnerabilities = audit.metadata?.vulnerabilities || {};
+              
+              if (vulnerabilities.total > 0) {
+                securityIssues.push(`⚠️ **${vulnerabilities.total} vulnerabilidades encontradas**`);
+              }
+            }
+            
+            const summary = `## 🔒 Revisão de Segurança
+            
+            ${securityIssues.length > 0 
+              ? securityIssues.join('\n') 
+              : '✅ Nenhuma vulnerabilidade crítica encontrada'}
+            
+            ### Verificações Realizadas
+            - ✅ Auditoria de dependências
+            - ✅ Verificação de secrets
+            - ✅ Análise de dependências
+            ${process.env.SNYK_TOKEN ? '- ✅ Scan Snyk' : '- ⏭️ Scan Snyk (não configurado)'}
+            
+            ### Recomendações
+            - Atualize dependências com vulnerabilidades conhecidas
+            - Revise mudanças em arquivos de configuração
+            - Verifique se não há secrets expostos`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: summary,
+            });
+

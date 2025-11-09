@@ -155,7 +155,7 @@ function DailyInsightSkeleton() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#E0E0E0', '#F0F0F0', '#E0E0E0']}
+        colors={[colors.muted, colors.muted, colors.muted]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.semibold as any,
+    fontWeight: typography.weights.semibold,
     color: colors.primary,
     fontFamily: typography.fontFamily.sans,
   },
@@ -233,8 +233,8 @@ const styles = StyleSheet.create({
   },
   avatarLabel: {
     fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.medium as any,
-    color: 'rgba(255, 255, 255, 0.95)',
+    fontWeight: typography.weights.medium,
+    color: colors.primaryForeground,
     fontFamily: typography.fontFamily.sans,
   },
   content: {
@@ -242,8 +242,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: typography.sizes['2xl'],
-    fontWeight: typography.weights.bold as any,
-    color: '#fff',
+    fontWeight: typography.weights.bold,
+    color: colors.primaryForeground,
     textAlign: 'center',
     marginBottom: spacing.md,
     fontFamily: typography.fontFamily.sans,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: typography.sizes.base,
-    color: 'rgba(255, 255, 255, 0.95)',
+    color: colors.primaryForeground,
     textAlign: 'center',
     lineHeight: 24,
     fontFamily: typography.fontFamily.sans,
@@ -266,8 +266,8 @@ const styles = StyleSheet.create({
   },
   actionable: {
     fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold as any,
-    color: '#fff',
+    fontWeight: typography.weights.semibold,
+    color: colors.primaryForeground,
     textAlign: 'center',
     fontFamily: typography.fontFamily.sans,
   },
@@ -288,8 +288,8 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold as any,
-    color: '#fff',
+    fontWeight: typography.weights.semibold,
+    color: colors.primaryForeground,
     fontFamily: typography.fontFamily.sans,
   },
   footer: {
@@ -331,8 +331,8 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.semibold as any,
-    color: '#fff',
+    fontWeight: typography.weights.semibold,
+    color: colors.primaryForeground,
     fontFamily: typography.fontFamily.sans,
   },
   // Skeleton styles

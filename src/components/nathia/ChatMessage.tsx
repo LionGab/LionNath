@@ -81,7 +81,7 @@ export function ChatMessage({ message, onActionPress, onFeedback }: ChatMessageP
             style={[
               styles.text,
               {
-                color: isUser ? '#FFFFFF' : palette.text,
+                color: isUser ? colors.primaryForeground : palette.text,
                 fontSize: typography.bodyMd.fontSize,
                 lineHeight: typography.bodyMd.lineHeight,
               },
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   avatarText: {
-    color: '#FFFFFF',
+    color: colors.primaryForeground,
     fontWeight: '600',
     fontSize: 16,
   },
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   actionText: {
-    color: '#FFFFFF',
+    color: colors.primaryForeground,
   },
   feedbackContainer: {
     flexDirection: 'row',

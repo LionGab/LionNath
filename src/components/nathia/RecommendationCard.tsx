@@ -259,6 +259,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ctaText: {
-    color: '#FFFFFF',
+    color: colors.primaryForeground,
   },
 });

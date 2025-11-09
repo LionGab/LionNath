@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   sosText: {
-    color: '#FFFFFF',
+    color: colors.primaryForeground,
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.5,
@@ -321,12 +321,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   optionTitle: {
-    color: '#FFFFFF',
+    color: colors.primaryForeground,
     fontWeight: '600',
     marginBottom: 4,
   },
   optionDescription: {
-    color: '#FFFFFF',
+    color: colors.primaryForeground,
     opacity: 0.9,
   },
   closeButton: {

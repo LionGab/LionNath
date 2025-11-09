@@ -202,6 +202,7 @@ export function RecommendationCard({ recommendation, onPress, onImpression }: Re
           style={[
             styles.ctaText,
             {
+              color: '#FFFFFF',
               fontSize: typography.button.fontSize,
               fontWeight: typography.button.fontWeight,
             },
@@ -259,6 +260,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ctaText: {
-    color: colors.primaryForeground,
+    // Cor aplicada dinamicamente via inline style
   },
 });

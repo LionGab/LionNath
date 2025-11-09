@@ -113,7 +113,7 @@ export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {
         accessibilityLabel="Botão de emergência SOS"
         accessibilityHint="Toque para acessar contatos de emergência e suporte"
       >
-        <Text style={styles.sosText}>SOS</Text>
+        <Text style={[styles.sosText, { color: '#FFFFFF' }]}>SOS</Text>
       </TouchableOpacity>
 
       {/* Emergency Modal */}
@@ -183,8 +183,8 @@ export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {
               >
                 <Text style={styles.optionIcon}>📞</Text>
                 <View style={styles.optionTextContainer}>
-                  <Text style={[styles.optionTitle, { fontSize: typography.bodyLg.fontSize }]}>CVV - 188</Text>
-                  <Text style={[styles.optionDescription, { fontSize: typography.bodySm.fontSize }]}>
+                  <Text style={[styles.optionTitle, { color: '#FFFFFF', fontSize: typography.bodyLg.fontSize }]}>CVV - 188</Text>
+                  <Text style={[styles.optionDescription, { color: '#FFFFFF', fontSize: typography.bodySm.fontSize }]}>
                     Centro de Valorização da Vida - Apoio emocional e prevenção do suicídio
                   </Text>
                 </View>
@@ -205,8 +205,8 @@ export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {
               >
                 <Text style={styles.optionIcon}>🚑</Text>
                 <View style={styles.optionTextContainer}>
-                  <Text style={[styles.optionTitle, { fontSize: typography.bodyLg.fontSize }]}>SAMU - 192</Text>
-                  <Text style={[styles.optionDescription, { fontSize: typography.bodySm.fontSize }]}>
+                  <Text style={[styles.optionTitle, { color: '#FFFFFF', fontSize: typography.bodyLg.fontSize }]}>SAMU - 192</Text>
+                  <Text style={[styles.optionDescription, { color: '#FFFFFF', fontSize: typography.bodySm.fontSize }]}>
                     Emergência médica - Atendimento urgente
                   </Text>
                 </View>
@@ -227,10 +227,10 @@ export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {
               >
                 <Text style={styles.optionIcon}>💙</Text>
                 <View style={styles.optionTextContainer}>
-                  <Text style={[styles.optionTitle, { fontSize: typography.bodyLg.fontSize }]}>
+                  <Text style={[styles.optionTitle, { color: '#FFFFFF', fontSize: typography.bodyLg.fontSize }]}>
                     Quero conversar com alguém
                   </Text>
-                  <Text style={[styles.optionDescription, { fontSize: typography.bodySm.fontSize }]}>
+                  <Text style={[styles.optionDescription, { color: '#FFFFFF', fontSize: typography.bodySm.fontSize }]}>
                     Nossa equipe te acompanhará neste momento
                   </Text>
                 </View>
@@ -279,7 +279,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   sosText: {
-    color: colors.primaryForeground,
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.5,
@@ -321,12 +320,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   optionTitle: {
-    color: colors.primaryForeground,
     fontWeight: '600',
     marginBottom: 4,
   },
   optionDescription: {
-    color: colors.primaryForeground,
     opacity: 0.9,
   },
   closeButton: {

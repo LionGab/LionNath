@@ -183,7 +183,9 @@ export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {
               >
                 <Text style={styles.optionIcon}>📞</Text>
                 <View style={styles.optionTextContainer}>
-                  <Text style={[styles.optionTitle, { color: '#FFFFFF', fontSize: typography.bodyLg.fontSize }]}>CVV - 188</Text>
+                  <Text style={[styles.optionTitle, { color: '#FFFFFF', fontSize: typography.bodyLg.fontSize }]}>
+                    CVV - 188
+                  </Text>
                   <Text style={[styles.optionDescription, { color: '#FFFFFF', fontSize: typography.bodySm.fontSize }]}>
                     Centro de Valorização da Vida - Apoio emocional e prevenção do suicídio
                   </Text>
@@ -205,7 +207,9 @@ export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {
               >
                 <Text style={styles.optionIcon}>🚑</Text>
                 <View style={styles.optionTextContainer}>
-                  <Text style={[styles.optionTitle, { color: '#FFFFFF', fontSize: typography.bodyLg.fontSize }]}>SAMU - 192</Text>
+                  <Text style={[styles.optionTitle, { color: '#FFFFFF', fontSize: typography.bodyLg.fontSize }]}>
+                    SAMU - 192
+                  </Text>
                   <Text style={[styles.optionDescription, { color: '#FFFFFF', fontSize: typography.bodySm.fontSize }]}>
                     Emergência médica - Atendimento urgente
                   </Text>

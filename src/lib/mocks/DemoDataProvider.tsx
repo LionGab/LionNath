@@ -158,16 +158,21 @@ interface DemoClientContextValue {
     comments_count: number;
     created_at: string;
   }>;
-  fetchPosts: () => Promise<Array<{
-    id: string;
-    user_id: string;
-    content: string;
-    image_url: string | null;
-    likes_count: number;
-    comments_count: number;
-    created_at: string;
-  }>>;
-  createPost: (content: string, imageUrl?: string) => Promise<{
+  fetchPosts: () => Promise<
+    Array<{
+      id: string;
+      user_id: string;
+      content: string;
+      image_url: string | null;
+      likes_count: number;
+      comments_count: number;
+      created_at: string;
+    }>
+  >;
+  createPost: (
+    content: string,
+    imageUrl?: string
+  ) => Promise<{
     id: string;
     user_id: string;
     content: string;
@@ -197,32 +202,37 @@ export function DemoDataProvider({ children }: DemoDataProviderProps) {
   const [profile, setProfile] = useState<UserProfile | null>(USE_MOCKS ? MOCK_PROFILE : null);
   const [messages, setMessages] = useState<ChatMessage[]>(USE_MOCKS ? MOCK_CHAT_MESSAGES : []);
   const [dailyPlans, setDailyPlans] = useState<DailyPlan[]>(USE_MOCKS ? MOCK_DAILY_PLANS : []);
-  const [posts, setPosts] = useState<Array<{
-    id: string;
-    user_id: string;
-    content: string;
-    image_url: string | null;
-    likes_count: number;
-    comments_count: number;
-    created_at: string;
-  }>>(USE_MOCKS ? MOCK_POSTS : []);
+  const [posts, setPosts] = useState<
+    Array<{
+      id: string;
+      user_id: string;
+      content: string;
+      image_url: string | null;
+      likes_count: number;
+      comments_count: number;
+      created_at: string;
+    }>
+  >(USE_MOCKS ? MOCK_POSTS : []);
 
   // Auth methods
-  const signIn = useCallback(async (email: string, password: string): Promise<{ user: User | null; error: Error | null }> => {
-    if (!USE_MOCKS) {
-      throw new Error('Demo mode not enabled');
-    }
+  const signIn = useCallback(
+    async (email: string, password: string): Promise<{ user: User | null; error: Error | null }> => {
+      if (!USE_MOCKS) {
+        throw new Error('Demo mode not enabled');
+      }
 
-    // Simular delay de rede
-    await new Promise((resolve) => setTimeout(resolve, 500));
+      // Simular delay de rede
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    if (email === 'demo@demo.com' && password === 'Demo1234') {
-      setUser(MOCK_USER);
-      return { user: MOCK_USER, error: null };
-    }
+      if (email === 'demo@demo.com' && password === 'Demo1234') {
+        setUser(MOCK_USER);
+        return { user: MOCK_USER, error: null };
+      }
 
-    return { user: null, error: new Error('Credenciais inválidas') };
-  }, []);
+      return { user: null, error: new Error('Credenciais inválidas') };
+    },
+    []
+  );
 
   const signOut = useCallback(async () => {
     if (!USE_MOCKS) return;
@@ -325,15 +335,17 @@ export function DemoDataProvider({ children }: DemoDataProviderProps) {
   );
 
   // Posts/Feed methods
-  const fetchPosts = useCallback(async (): Promise<Array<{
-    id: string;
-    user_id: string;
-    content: string;
-    image_url: string | null;
-    likes_count: number;
-    comments_count: number;
-    created_at: string;
-  }>> => {
+  const fetchPosts = useCallback(async (): Promise<
+    Array<{
+      id: string;
+      user_id: string;
+      content: string;
+      image_url: string | null;
+      likes_count: number;
+      comments_count: number;
+      created_at: string;
+    }>
+  > => {
     if (!USE_MOCKS) {
       throw new Error('Demo mode not enabled');
     }
@@ -343,7 +355,10 @@ export function DemoDataProvider({ children }: DemoDataProviderProps) {
   }, [posts]);
 
   const createPost = useCallback(
-    async (content: string, imageUrl?: string): Promise<{
+    async (
+      content: string,
+      imageUrl?: string
+    ): Promise<{
       id: string;
       user_id: string;
       content: string;

@@ -15,6 +15,30 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
+// Resolver para plataformas específicas
+config.resolver.platforms = ['native', 'android', 'ios', 'web'];
+
+// Resolver para arquivos .web.ts quando estiver no web
+config.resolver.sourceExts = [...(config.resolver.sourceExts || []), 'web.ts', 'web.tsx'];
+
+// Resolver para módulos específicos de plataforma
+const defaultResolver = config.resolver.resolveRequest;
+config.resolver.resolveRequest = (context, moduleName, platform) => {
+  // No web, substituir @sentry/react-native por stub
+  if (platform === 'web' && moduleName === '@sentry/react-native') {
+    return {
+      filePath: path.resolve(workspaceRoot, 'src/services/sentry.web.ts'),
+      type: 'sourceFile',
+    };
+  }
+  
+  // Usar resolução padrão para outros casos
+  if (defaultResolver) {
+    return defaultResolver(context, moduleName, platform);
+  }
+  return context.resolveRequest(context, moduleName, platform);
+};
+
 // Otimizações para Fast Refresh e Hot Reload
 // Configurações de servidor para melhor conexão iOS
 config.server = {

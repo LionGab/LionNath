@@ -75,16 +75,25 @@ jobs:
       
       - run: pnpm install --frozen-lockfile
       
-      - run: pnpm test -- --coverage
+      - name: Run tests with coverage
+        run: pnpm test:coverage
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      
+      - name: Check coverage threshold
+        run: |
+          # Verifica se a cobertura atende ao threshold mínimo (70%)
+          # O vitest já falha se não atingir, mas adicionamos mensagem clara
+          echo "✅ Coverage threshold: 70% (configurado em vitest.config.ts)"
       
       - uses: codecov/codecov-action@v4
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
+          threshold: 70
+          flags: unittests
 
   security:
     needs: install

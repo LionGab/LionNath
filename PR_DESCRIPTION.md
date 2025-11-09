@@ -7,6 +7,7 @@ Este PR implementa um sistema de mocks robusto e ferramentas de validação para
 ## ✨ Principais Mudanças
 
 ### 1. Sistema de Mocks Completo (`src/lib/mocks/`)
+
 - **`DemoDataProvider.tsx`**: Provider React que injeta dados mockados para:
   - Autenticação (login/logout com credenciais demo)
   - Perfil de usuário (dados completos de gestante)
@@ -17,11 +18,13 @@ Este PR implementa um sistema de mocks robusto e ferramentas de validação para
 - **Ativação**: Via variável de ambiente `EXPO_PUBLIC_USE_MOCKS=true`
 
 ### 2. Integração no App (`apps/mobile/App.tsx`)
+
 - Detecção automática do modo mock
 - Wrapping condicional com `DemoDataProvider` quando `USE_MOCKS=true`
 - Mantém compatibilidade total com modo produção
 
 ### 3. Ferramentas de Validação (`scripts/validate-demo.js`)
+
 - Script Node.js que executa checklist pré-demo:
   - ✅ Dependências instaladas
   - ✅ Variáveis de ambiente configuradas
@@ -35,11 +38,13 @@ Este PR implementa um sistema de mocks robusto e ferramentas de validação para
 - Comando: `pnpm run validate:demo`
 
 ### 4. Documentação
+
 - **`DEMO_GUIDE.md`**: Guia completo de uso do modo demo
 - **`RESUMO_IMPLEMENTACAO.md`**: Resumo técnico da implementação
 - **`.env.example`**: Atualizado com `EXPO_PUBLIC_USE_MOCKS` e melhor documentação
 
 ### 5. Correções de TypeScript
+
 - Corrigido erro de tipagem em `ContentFeedScreen.tsx` (navegação)
 - Corrigido erro em `onboarding.ts` (`radius.xl` → `radius.lg`)
 
@@ -70,7 +75,7 @@ pnpm dev
 
 1. **Login**: Use credenciais demo → deve autenticar instantaneamente
 2. **Onboarding**: Complete o fluxo → dados salvos em AsyncStorage (mock)
-3. **Home/Feed**: 
+3. **Home/Feed**:
    - Verifique carregamento de conteúdo mockado
    - Teste scroll e performance
    - Verifique dica diária personalizada
@@ -78,10 +83,10 @@ pnpm dev
    - Envie mensagens → receba respostas mockadas
    - Verifique loading states e typing indicator
    - Teste ações rápidas
-5. **Perfil**: 
+5. **Perfil**:
    - Edite informações → deve salvar localmente
    - Teste upload de foto (se implementado)
-6. **Navegação**: 
+6. **Navegação**:
    - Teste navegação entre todas as telas
    - Verifique botão voltar (Android)
    - Confirme que tudo funciona offline
@@ -131,6 +136,7 @@ pnpm dev
 ## 📚 Arquivos Modificados/Criados
 
 ### Novos Arquivos:
+
 - `src/lib/mocks/DemoDataProvider.tsx`
 - `src/lib/mocks/constants.ts`
 - `src/lib/mocks/demoData.ts`
@@ -141,6 +147,7 @@ pnpm dev
 - `CORRECOES_TYPESCRIPT.md`
 
 ### Arquivos Modificados:
+
 - `apps/mobile/App.tsx` - Integração do DemoDataProvider
 - `package.json` - Adicionado script `validate:demo`
 - `.env.example` - Adicionado `EXPO_PUBLIC_USE_MOCKS`

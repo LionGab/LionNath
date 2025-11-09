@@ -91,7 +91,8 @@ const MOCK_DAILY_PLANS: DailyPlan[] = [
     priorities: ['Hidratação', 'Descanso', 'Alimentação equilibrada'],
     tip: 'Lembre-se de beber pelo menos 2 litros de água por dia. A hidratação é essencial para você e seu bebê!',
     tip_video_url: null,
-    recipe: 'Smoothie de banana com espinafre: 1 banana, 1 xícara de espinafre, 200ml de leite de amêndoas, 1 colher de chia. Bata tudo e aproveite!',
+    recipe:
+      'Smoothie de banana com espinafre: 1 banana, 1 xícara de espinafre, 200ml de leite de amêndoas, 1 colher de chia. Bata tudo e aproveite!',
     created_at: new Date().toISOString(),
   },
 ];
@@ -193,38 +194,44 @@ export function DemoDataProvider({ children }: DemoDataProviderProps) {
   }, []);
 
   // Profile methods
-  const updateProfile = useCallback(async (updates: Partial<UserProfile>) => {
-    if (!USE_MOCKS) {
-      throw new Error('Demo mode not enabled');
-    }
+  const updateProfile = useCallback(
+    async (updates: Partial<UserProfile>) => {
+      if (!USE_MOCKS) {
+        throw new Error('Demo mode not enabled');
+      }
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const updated = { ...profile!, ...updates };
-    setProfile(updated);
-    await AsyncStorage.setItem('userProfile', JSON.stringify(updated));
-    return updated;
-  }, [profile]);
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      const updated = { ...profile!, ...updates };
+      setProfile(updated);
+      await AsyncStorage.setItem('userProfile', JSON.stringify(updated));
+      return updated;
+    },
+    [profile]
+  );
 
   // Chat methods
-  const sendMessage = useCallback(async (message: string): Promise<ChatMessage> => {
-    if (!USE_MOCKS) {
-      throw new Error('Demo mode not enabled');
-    }
+  const sendMessage = useCallback(
+    async (message: string): Promise<ChatMessage> => {
+      if (!USE_MOCKS) {
+        throw new Error('Demo mode not enabled');
+      }
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const newMessage: ChatMessage = {
-      id: `msg-${Date.now()}`,
-      user_id: user?.id || 'demo-user-123',
-      message,
-      response:
-        'Obrigada pela sua pergunta! Estou aqui para te ajudar. Esta é uma resposta mockada para demonstração. Em produção, a NathIA usaria inteligência artificial para responder de forma personalizada.',
-      created_at: new Date().toISOString(),
-    };
+      const newMessage: ChatMessage = {
+        id: `msg-${Date.now()}`,
+        user_id: user?.id || 'demo-user-123',
+        message,
+        response:
+          'Obrigada pela sua pergunta! Estou aqui para te ajudar. Esta é uma resposta mockada para demonstração. Em produção, a NathIA usaria inteligência artificial para responder de forma personalizada.',
+        created_at: new Date().toISOString(),
+      };
 
-    setMessages((prev) => [newMessage, ...prev]);
-    return newMessage;
-  }, [user]);
+      setMessages((prev) => [newMessage, ...prev]);
+      return newMessage;
+    },
+    [user]
+  );
 
   const getChatHistory = useCallback(async (): Promise<ChatMessage[]> => {
     if (!USE_MOCKS) {
@@ -236,40 +243,46 @@ export function DemoDataProvider({ children }: DemoDataProviderProps) {
   }, [messages]);
 
   // Daily Plans methods
-  const getDailyPlan = useCallback(async (date: string): Promise<DailyPlan | null> => {
-    if (!USE_MOCKS) {
-      throw new Error('Demo mode not enabled');
-    }
+  const getDailyPlan = useCallback(
+    async (date: string): Promise<DailyPlan | null> => {
+      if (!USE_MOCKS) {
+        throw new Error('Demo mode not enabled');
+      }
 
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    return dailyPlans.find((p) => p.date === date) || null;
-  }, [dailyPlans]);
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      return dailyPlans.find((p) => p.date === date) || null;
+    },
+    [dailyPlans]
+  );
 
-  const saveDailyPlan = useCallback(async (plan: Partial<DailyPlan>): Promise<DailyPlan> => {
-    if (!USE_MOCKS) {
-      throw new Error('Demo mode not enabled');
-    }
+  const saveDailyPlan = useCallback(
+    async (plan: Partial<DailyPlan>): Promise<DailyPlan> => {
+      if (!USE_MOCKS) {
+        throw new Error('Demo mode not enabled');
+      }
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-    const newPlan: DailyPlan = {
-      id: `plan-${Date.now()}`,
-      user_id: user?.id || 'demo-user-123',
-      date: plan.date || new Date().toISOString().split('T')[0],
-      priorities: plan.priorities || [],
-      tip: plan.tip || '',
-      tip_video_url: plan.tip_video_url,
-      recipe: plan.recipe || '',
-      created_at: new Date().toISOString(),
-    };
+      const newPlan: DailyPlan = {
+        id: `plan-${Date.now()}`,
+        user_id: user?.id || 'demo-user-123',
+        date: plan.date || new Date().toISOString().split('T')[0],
+        priorities: plan.priorities || [],
+        tip: plan.tip || '',
+        tip_video_url: plan.tip_video_url,
+        recipe: plan.recipe || '',
+        created_at: new Date().toISOString(),
+      };
 
-    setDailyPlans((prev) => {
-      const filtered = prev.filter((p) => p.date !== newPlan.date);
-      return [newPlan, ...filtered];
-    });
+      setDailyPlans((prev) => {
+        const filtered = prev.filter((p) => p.date !== newPlan.date);
+        return [newPlan, ...filtered];
+      });
 
-    return newPlan;
-  }, [user]);
+      return newPlan;
+    },
+    [user]
+  );
 
   // Posts/Feed methods
   const fetchPosts = useCallback(async (): Promise<any[]> => {
@@ -281,26 +294,29 @@ export function DemoDataProvider({ children }: DemoDataProviderProps) {
     return posts;
   }, [posts]);
 
-  const createPost = useCallback(async (content: string, imageUrl?: string): Promise<any> => {
-    if (!USE_MOCKS) {
-      throw new Error('Demo mode not enabled');
-    }
+  const createPost = useCallback(
+    async (content: string, imageUrl?: string): Promise<any> => {
+      if (!USE_MOCKS) {
+        throw new Error('Demo mode not enabled');
+      }
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const newPost = {
-      id: `post-${Date.now()}`,
-      user_id: user?.id || 'demo-user-123',
-      content,
-      image_url: imageUrl || null,
-      likes_count: 0,
-      comments_count: 0,
-      created_at: new Date().toISOString(),
-    };
+      const newPost = {
+        id: `post-${Date.now()}`,
+        user_id: user?.id || 'demo-user-123',
+        content,
+        image_url: imageUrl || null,
+        likes_count: 0,
+        comments_count: 0,
+        created_at: new Date().toISOString(),
+      };
 
-    setPosts((prev) => [newPost, ...prev]);
-    return newPost;
-  }, [user]);
+      setPosts((prev) => [newPost, ...prev]);
+      return newPost;
+    },
+    [user]
+  );
 
   const value: DemoClientContextValue = {
     user,

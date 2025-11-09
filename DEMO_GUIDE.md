@@ -7,11 +7,13 @@
 Para apresentar o app sem configurar Supabase:
 
 1. **Copie o arquivo de exemplo:**
+
    ```bash
    cp .env.example .env
    ```
 
 2. **Configure o modo demo no `.env`:**
+
    ```env
    EXPO_PUBLIC_USE_MOCKS=true
    EXPO_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
@@ -19,11 +21,13 @@ Para apresentar o app sem configurar Supabase:
    ```
 
 3. **Instale dependências (se necessário):**
+
    ```bash
    pnpm install
    ```
 
 4. **Execute o app:**
+
    ```bash
    pnpm dev
    ```
@@ -35,6 +39,7 @@ Para apresentar o app sem configurar Supabase:
 ### Opção 2: Com Supabase Real
 
 1. **Configure `.env` com suas credenciais:**
+
    ```env
    EXPO_PUBLIC_USE_MOCKS=false
    EXPO_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
@@ -55,6 +60,7 @@ pnpm run validate:demo
 ```
 
 Este script verifica:
+
 - ✓ Dependências instaladas
 - ✓ Variáveis de ambiente configuradas
 - ✓ Arquivos críticos existem
@@ -96,16 +102,19 @@ Este script verifica:
 ## 🐛 Troubleshooting
 
 ### App não inicia
+
 - Verifique se `.env` existe e está configurado
 - Execute `pnpm install` novamente
 - Limpe cache: `rm -rf node_modules .expo` e reinstale
 
 ### Erro de Supabase
+
 - Se em modo demo (`USE_MOCKS=true`), ignore erros de conexão
 - Verifique se variáveis de ambiente estão corretas
 - Em modo demo, o app funciona completamente offline
 
 ### Telas em branco
+
 - Verifique console para erros
 - Certifique-se que ErrorBoundary está capturando erros
 - Em modo demo, todas as telas devem funcionar
@@ -132,6 +141,7 @@ Este script verifica:
 ## 📞 Suporte
 
 Em caso de problemas durante a demo:
+
 1. Verifique logs do console
 2. Execute `pnpm run validate:demo` para diagnóstico
 3. Consulte `docs/` para documentação detalhada

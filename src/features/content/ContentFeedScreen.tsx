@@ -169,40 +169,40 @@ function ContentFeedScreen() {
           onPress={handlePress}
           accessibilityLabel={`${item.title} - ${item.type}`}
         >
-        {item.thumbnail_url && (
-          <Image source={{ uri: item.thumbnail_url }} style={styles.thumbnail} resizeMode="cover" />
-        )}
-        <View style={styles.contentInfo}>
-          <View style={styles.headerRow}>
-            <Badge variant="info" size="sm" style={styles.typeBadge}>
-              {item.type === 'article' && '📄 Artigo'}
-              {item.type === 'video' && '🎥 Vídeo'}
-              {item.type === 'audio' && '🎧 Áudio'}
-              {item.type === 'post' && '📝 Post'}
-            </Badge>
-            <TouchableOpacity
-              onPress={() => toggleFavorite(item.id, item.is_favorite)}
-              accessible={true}
-              accessibilityLabel={item.is_favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
-              style={styles.favoriteButton}
-            >
-              <Icon
-                name={item.is_favorite ? 'heart' : 'heart-outline'}
-                size={24}
-                color={item.is_favorite ? colors.destructive : colors.mutedForeground}
-              />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.contentTitle}>{item.title}</Text>
-          {item.description && (
-            <Text style={styles.contentDescription} numberOfLines={2}>
-              {item.description}
-            </Text>
+          {item.thumbnail_url && (
+            <Image source={{ uri: item.thumbnail_url }} style={styles.thumbnail} resizeMode="cover" />
           )}
-          {item.category && <Text style={styles.contentCategory}>{item.category}</Text>}
-        </View>
-      </Card>
-    );
+          <View style={styles.contentInfo}>
+            <View style={styles.headerRow}>
+              <Badge variant="info" size="sm" style={styles.typeBadge}>
+                {item.type === 'article' && '📄 Artigo'}
+                {item.type === 'video' && '🎥 Vídeo'}
+                {item.type === 'audio' && '🎧 Áudio'}
+                {item.type === 'post' && '📝 Post'}
+              </Badge>
+              <TouchableOpacity
+                onPress={() => toggleFavorite(item.id, item.is_favorite)}
+                accessible={true}
+                accessibilityLabel={item.is_favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+                style={styles.favoriteButton}
+              >
+                <Icon
+                  name={item.is_favorite ? 'heart' : 'heart-outline'}
+                  size={24}
+                  color={item.is_favorite ? colors.destructive : colors.mutedForeground}
+                />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.contentTitle}>{item.title}</Text>
+            {item.description && (
+              <Text style={styles.contentDescription} numberOfLines={2}>
+                {item.description}
+              </Text>
+            )}
+            {item.category && <Text style={styles.contentCategory}>{item.category}</Text>}
+          </View>
+        </Card>
+      );
     },
     [navigation, toggleFavorite]
   );

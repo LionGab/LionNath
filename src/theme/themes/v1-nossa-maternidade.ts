@@ -222,11 +222,11 @@ const shadowScale: ShadowScale = {
 
 export const nossaMaternidadeDesignTokens: NossaMaternidadeDesignTokens = {
   palette: {
-    primary: '#F48FB1', // Rosa do Stitch
-    accent: '#F48FB1', // Mesma cor primária como accent
-    background: '#E0F7FA', // Background light do Stitch
-    surface: '#FFFFFF', // Superfície branca
-    text: '#37474F', // Text main do Stitch
+    primary: '#6DA9E4', // Azul suave
+    accent: '#FF8BA3', // Rosa acento
+    background: '#FFF8F3', // Bege claro
+    surface: '#DCEBFA', // Azul claro
+    text: '#6A5450', // Marrom suave
     neutrals: neutralPalette,
     feedback: {
       success: '#6EBFA2',

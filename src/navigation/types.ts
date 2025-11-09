@@ -17,10 +17,10 @@ export type RootStackParamList = {
 
 export type TabParamList = {
   Home: undefined;
-  Chat: { context?: string; initialPrompt?: string } | undefined;
-  Habits: undefined;
-  Content: undefined;
-  Profile: undefined;
+  NathIA: { context?: string; initialPrompt?: string } | undefined;
+  Circulos: undefined;
+  MundoNath: undefined;
+  Eu: undefined;
 };
 
 // Extensão para React Navigation

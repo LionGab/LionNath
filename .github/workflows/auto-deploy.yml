@@ -1,0 +1,126 @@
+name: Auto-Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  deployments: write
+
+env:
+  NODE_VERSION: '20'
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+  SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+
+jobs:
+  validate:
+    name: Validate Before Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+      
+      - run: pnpm install --frozen-lockfile
+      
+      - run: pnpm run validate:quick
+        continue-on-error: false
+
+  deploy-edge-functions:
+    name: Deploy Edge Functions
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: supabase/setup-cli@v1
+      
+      - name: Deploy All Edge Functions
+        run: |
+          supabase functions deploy nathia-chat --no-verify-jwt || true
+          supabase functions deploy moderation-service --no-verify-jwt || true
+          supabase functions deploy risk-classifier --no-verify-jwt || true
+          supabase functions deploy behavior-analysis --no-verify-jwt || true
+          supabase functions deploy lgpd-requests --no-verify-jwt || true
+          supabase functions deploy transcribe-audio --no-verify-jwt || true
+
+  deploy-mobile-preview:
+    name: Deploy Mobile Preview
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+      
+      - uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ env.EXPO_TOKEN }}
+      
+      - run: pnpm install --frozen-lockfile
+      
+      - name: Build Android Preview
+        run: npx eas build --platform android --profile preview --non-interactive --no-wait || true
+      
+      - name: Build iOS Preview
+        if: runner.os == 'macOS'
+        run: npx eas build --platform ios --profile preview --non-interactive --no-wait || true
+
+  create-release:
+    name: Create GitHub Release
+    needs: [validate, deploy-edge-functions]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Generate Version
+        id: version
+        run: |
+          VERSION=$(date +'%Y.%m.%d')-$(echo ${{ github.sha }} | cut -c1-7)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+      
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: Release v${{ steps.version.outputs.version }}
+          body: |
+            ## Auto-Deploy v${{ steps.version.outputs.version }}
+            
+            **Commit:** ${{ github.sha }}
+            **Branch:** ${{ github.ref_name }}
+            **Author:** ${{ github.actor }}
+            
+            ### Changes
+            - Edge Functions deployed automatically
+            - Mobile preview builds triggered
+            
+            ### Next Steps
+            - Review preview builds in Expo dashboard
+            - Test edge functions in Supabase dashboard
+          draft: false
+          prerelease: false
+

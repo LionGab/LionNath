@@ -1,0 +1,44 @@
+name: Auto-Merge PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  check_suite:
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: Auto-Merge on Success
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: Wait for CI to complete
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          check-name: 'quality'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+          allowed-conclusions: success,skipped
+
+      - name: Auto-merge PR
+        uses: fastify/github-action-merge-dependabot@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          target: ${{ github.event.pull_request.base.ref }}
+          merge-method: squash
+          merge-commit-message: 'chore: merge PR #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}'
+          skip-if-mergeable: false
+          skip-if-not-mergeable: true
+
+      - name: Delete branch after merge
+        if: github.event.pull_request.merged == true
+        uses: SvanBoxel/delete-merged-branch@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.event.pull_request.head.ref }}

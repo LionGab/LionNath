@@ -12,10 +12,13 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "type-check": "turbo run typecheck",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
-    "test:watch": "turbo run test -- --watch",
-    "test:coverage": "turbo run test -- --coverage",
-    "test:ui": "turbo run test -- --ui",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "test:turbo": "turbo run test",
+    "test:turbo:watch": "turbo run test -- --watch",
+    "test:turbo:coverage": "turbo run test -- --coverage",
     "test:nathia": "node scripts/test-nathia-functions.js",
     "test:nathia:chat": "node scripts/test-nathia-functions.js nathia-chat",
     "test:nathia:all": "node scripts/test-nathia-functions.js all",
@@ -38,22 +41,25 @@
     "metrics:backfill": "tsx scripts/backfill-metrics.ts",
     "metrics:weekly-report": "tsx scripts/generate-weekly-report.ts",
     "review:keep": "tsx scripts/review-keeper-agent.ts",
+    "mvp:diagnostic": "tsx scripts/mvp-diagnostic-agent.ts",
     "precommit": "lint-staged",
     "prepush": "pnpm run validate:quick"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^19.4.0",
-    "@react-native-async-storage/async-storage": "1.23.1",
-    "@react-native-community/slider": "^5.1.1",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-community/slider": "5.0.1",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/stack": "^6.3.20",
-    "@sentry/react-native": "^7.5.0",
-    "@stripe/stripe-react-native": "0.38.6",
+    "@sentry/react-native": "~7.2.0",
+    "@stripe/stripe-react-native": "0.50.3",
     "@supabase/supabase-js": "^2.48.0",
     "@types/react": "~19.1.10",
+    "@vitest/coverage-v8": "^4.0.8",
     "axios": "^1.6.2",
+    "babel-plugin-module-resolver": "^5.0.2",
     "date-fns": "^2.30.0",
     "dotenv": "^17.2.3",
     "expo-av": "~16.0.7",
@@ -69,7 +75,8 @@
     "react-native-safe-area-context": "~5.6.0",
     "tsx": "^4.7.0",
     "turbo": "^2.1.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^4.0.8"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -91,6 +98,9 @@
     "@amplitude/analytics-browser": "^2.30.1",
     "expo-constants": "~18.0.10",
     "expo-linear-gradient": "~15.0.7",
+    "pnpm": "^10.20.0",
+    "react-dom": "19.1.0",
+    "react-native-web": "^0.21.0",
     "tailwindcss-animate": "^1.0.7"
   }
 }

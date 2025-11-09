@@ -18,14 +18,19 @@ NODE_ENV=production
 EXPO_PUBLIC_ENV=production
 
 # ============================================
-# ⚠️ IMPORTANTE
+# ⚠️ IMPORTANTE - CHAVES DE IA
 # ============================================
-# As chaves de IA (GEMINI, CLAUDE, PERPLEXITY) devem ser
-# configuradas APENAS no Supabase via secrets:
+# As chaves de IA devem ser configuradas APENAS no Supabase:
 #
 # supabase secrets set GEMINI_API_KEY=xxx
-# supabase secrets set PERPLEXITY_API_KEY=xxx
 # supabase secrets set CLAUDE_API_KEY=xxx
+# supabase secrets set OPENAI_API_KEY=xxx
+# supabase secrets set PERPLEXITY_API_KEY=xxx
 #
-# NUNCA coloque essas chaves aqui no Netlify!
+# ⚠️ NUNCA coloque essas chaves no Netlify como EXPO_PUBLIC_*!
+# Elas serão expostas no código do cliente e qualquer pessoa
+# poderá ver e usar suas chaves.
+#
+# Para desenvolvimento local, você pode usar EXPO_PUBLIC_* no .env,
+# mas NUNCA faça isso em produção.
 # ============================================

@@ -128,6 +128,20 @@ pnpm ios
 
 Ver: `docs/ARCHITECTURE.md` para detalhes.
 
+### Seed Data (Desenvolvimento)
+
+Para popular o banco local com dados de teste:
+
+```bash
+# Reset completo (migrations + seed)
+supabase db reset
+
+# Ou apenas seed
+psql -h localhost -p 54322 -U postgres -d postgres -f supabase/seed.sql
+```
+
+Ver: `supabase/seed.sql` e `docs/ONBOARDING.md` para mais detalhes.
+
 ## 🧪 Testes
 
 ### Unitários (Vitest)
@@ -152,8 +166,10 @@ pnpm e2e:android
 
 ## 📖 Documentação
 
-- **[ONBOARDING.md](docs/ONBOARDING.md)**: Setup completo
+- **[ONBOARDING.md](docs/ONBOARDING.md)**: Setup completo para desenvolvedores
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Arquitetura do sistema
+- **[PRIVACY.md](docs/PRIVACY.md)**: Política de privacidade e LGPD
+- **[SECURITY.md](docs/SECURITY.md)**: Segurança e boas práticas
 - **[HABITS_GAMIFICATION.md](docs/HABITS_GAMIFICATION.md)**: Sistema de hábitos
 - **[PR_CHECKLIST.md](docs/PR_CHECKLIST.md)**: Checklist de PR
 - **[CURSOR_2.0_BEST_PRACTICES.md](docs/CURSOR_2.0_BEST_PRACTICES.md)**: Best practices
@@ -162,11 +178,13 @@ pnpm e2e:android
 
 - ✅ **RLS (Row Level Security)**: Todas as tabelas protegidas
 - ✅ **Input Validation**: Zod schema validation
-- ✅ **API Keys**: Nunca expostas no client-side
+- ✅ **API Keys**: Nunca expostas no client-side (apenas em Edge Functions)
 - ✅ **Auth**: JWT token via Supabase Auth
 - ✅ **Rate Limiting**: Proteção contra abuso (10 req/min)
+- ✅ **Secret Scanning**: Habilitado no GitHub
+- ✅ **Dependabot**: Atualizações automáticas de segurança
 
-Ver: `docs/SECURITY.md`
+Ver: `docs/SECURITY.md` e `docs/PRIVACY.md`
 
 ## 🎨 Design System
 

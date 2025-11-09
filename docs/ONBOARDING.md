@@ -57,31 +57,45 @@ pnpm install
 
 ### 3. Configurar Variáveis de Ambiente
 
-Copie `.env.example` para `.env`:
+#### Mobile App
+
+Copie `.env.example` para `.env` na pasta `apps/mobile`:
 
 ```bash
 # Windows (PowerShell)
-Copy-Item .env.example .env
+Copy-Item apps/mobile/.env.example apps/mobile/.env
 
 # macOS/Linux
-cp .env.example .env
+cp apps/mobile/.env.example apps/mobile/.env
 ```
 
-Edite `.env` e preencha as variáveis:
+Edite `apps/mobile/.env` e preencha as variáveis:
 
 ```env
 # Supabase (obrigatório)
 EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
-# Gemini AI (obrigatório para chat)
-GEMINI_API_KEY=your-gemini-api-key
-
 # Opcional
-PERPLEXITY_API_KEY=your-perplexity-key
-CLAUDE_API_KEY=your-claude-key
-SENTRY_DSN=your-sentry-dsn
+EXPO_PUBLIC_PROJECT_ID=your-expo-project-id
+EXPO_PUBLIC_SENTRY_DSN=your-sentry-dsn
 ```
+
+⚠️ **Importante**: Chaves de API de IA (Gemini, Claude, Perplexity) NÃO devem estar aqui. Elas devem estar apenas em `supabase/functions/.env` (Edge Functions).
+
+#### Edge Functions (Supabase)
+
+Para desenvolvimento local das Edge Functions:
+
+```bash
+# Copiar exemplo
+cp supabase/functions/.env.example supabase/functions/.env
+
+# Editar e preencher chaves de API
+# (Gemini, Claude, Perplexity, Service Role Key)
+```
+
+⚠️ **Segurança**: Nunca commite arquivos `.env`. Eles já estão no `.gitignore`.
 
 ### 4. Configurar Supabase
 
@@ -109,6 +123,33 @@ supabase link --project-ref YOUR_PROJECT_ID
 ```bash
 supabase db push
 ```
+
+#### Popular Banco com Dados de Teste (Seed)
+
+Para desenvolvimento local, você pode popular o banco com dados de teste:
+
+```bash
+# Opção 1: Reset completo (apaga tudo e recria com migrations + seed)
+supabase db reset
+
+# Opção 2: Apenas executar seed (se banco já existe)
+psql -h localhost -p 54322 -U postgres -d postgres -f supabase/seed.sql
+```
+
+**Dados de teste incluídos:**
+- ✅ 3 usuárias de teste (gestante, mãe estabelecida, tentante)
+- ✅ Hábitos e logs de exemplo
+- ✅ Streaks e gamificação
+- ✅ Mensagens de chat com NathIA
+- ✅ Dicas diárias
+- ✅ Posts e conteúdo curado
+
+**Credenciais de teste:**
+- `gestante@test.com` / `senha123`
+- `mae@test.com` / `senha123`
+- `tentante@test.com` / `senha123`
+
+⚠️ **Atenção**: O seed é apenas para desenvolvimento. NUNCA execute em produção!
 
 #### Verificar Schema
 
@@ -218,9 +259,11 @@ Isso executa:
 
 - **Documentação**: `docs/`
 - **Arquitetura**: `docs/ARCHITECTURE.md`
-- **Security**: `docs/SECURITY.md`
+- **Segurança**: `docs/SECURITY.md`
+- **Privacidade**: `docs/PRIVACY.md`
 - **Edge Functions**: `docs/EDGE_FUNCTIONS.md`
 - **Cursor 2.0**: `docs/CURSOR_2.0_BEST_PRACTICES.md`
+- **Seed Data**: `supabase/seed.sql` (dados de teste)
 
 ## Suporte
 

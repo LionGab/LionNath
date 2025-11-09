@@ -1,37 +1,63 @@
-name: Deploy
+name: Deploy to Stores
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to deploy'
+        required: true
+        type: choice
+        options:
+          - all
+          - android
+          - ios
 
 jobs:
   deploy-mobile:
-    name: Deploy Mobile
+    name: Deploy Mobile App
     runs-on: ubuntu-latest
     env:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: '20'
+          cache: 'pnpm'
+      
       - uses: expo/expo-github-action@v8
         with:
           expo-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
-      - run: npm ci
-      - name: Build Android
-        run: npx eas build --platform android --profile preview --non-interactive --no-wait || true
-      - name: Submit Android
-        run: npx eas submit --platform android --non-interactive || true
-      - name: Build iOS
-        run: npx eas build --platform ios --profile preview --non-interactive --no-wait || true
-        if: runner.os == 'macOS'
-      - name: Submit iOS
-        run: npx eas submit --platform ios --non-interactive || true
-        if: runner.os == 'macOS'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Validate before deploy
+        run: pnpm validate:quick
+      
+      - name: Build and submit Android
+        if: github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+        run: |
+          npx eas build --platform android --profile production --non-interactive --no-wait
+          npx eas submit --platform android --profile production --non-interactive
+      
+      - name: Build and submit iOS
+        if: (github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'all' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && runner.os == 'macOS'
+        run: |
+          npx eas build --platform ios --profile production --non-interactive --no-wait
+          npx eas submit --platform ios --profile production --non-interactive
 
   deploy-functions:
     name: Deploy Edge Functions

@@ -16,6 +16,9 @@ import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { AppNavigator } from '@/navigation/index';
 import { initSentry } from '@/services/sentry';
+import { DemoDataProvider } from '@/lib/mocks/DemoDataProvider';
+
+const USE_MOCKS = process.env.EXPO_PUBLIC_USE_MOCKS === 'true';
 
 export default function App() {
   useEffect(() => {
@@ -31,11 +34,15 @@ export default function App() {
     // Sentry capturará automaticamente se inicializado
   }, []);
 
+  const appContent = (
+    <ThemeProvider>
+      <AppNavigator />
+    </ThemeProvider>
+  );
+
   return (
     <ErrorBoundary onError={handleError}>
-      <ThemeProvider>
-        <AppNavigator />
-      </ThemeProvider>
+      {USE_MOCKS ? <DemoDataProvider>{appContent}</DemoDataProvider> : appContent}
     </ErrorBoundary>
   );
 }

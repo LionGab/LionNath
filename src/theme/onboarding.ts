@@ -100,7 +100,7 @@ export const onboardingTheme = {
   borderRadius: {
     option: radius.lg,
     button: radius.md,
-    card: radius.lg, // Usando lg ao invés de xl (que não existe)
+    card: radius.lg, // Usando lg pois xl não existe no RadiusScale
   },
 
   /**

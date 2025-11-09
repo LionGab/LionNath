@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Alert, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Card } from '@/components/Card';
 import { Badge } from '@/components/Badge';
@@ -17,6 +17,7 @@ import { supabase } from '@/services/supabase';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { SkeletonPresets } from '@/shared/components/Skeleton';
 import { useDebounce } from '@/hooks/useMemoizedCallback';
+import { RootStackParamList } from '@/navigation/types';
 
 // Blue Theme Constants
 const BLUE_THEME = {
@@ -48,7 +49,7 @@ interface ContentItem {
 const CATEGORIES = ['Bem-estar', 'Alimentação', 'Exercícios', 'Relacionamento', 'Preparação para o parto'];
 
 function ContentFeedScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [content, setContent] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -156,18 +157,18 @@ function ContentFeedScreen() {
 
   // Memoizar renderItem para evitar recriação em cada render
   const renderContentItem = useCallback(
-    ({ item }: { item: ContentItem }) => (
-      <Card
-        variant="elevated"
-        style={styles.contentCard}
-        onPress={() => {
-          // Navegação segura com verificação de tipo
-          if ('ContentDetail' in (navigation.getState().routes[0]?.params || {})) {
-            (navigation as any).navigate('ContentDetail', { contentId: item.id });
-          }
-        }}
-        accessibilityLabel={`${item.title} - ${item.type}`}
-      >
+    ({ item }: { item: ContentItem }) => {
+      const handlePress = () => {
+        (navigation as NavigationProp<RootStackParamList>).navigate('ContentDetail', { contentId: item.id });
+      };
+
+      return (
+        <Card
+          variant="elevated"
+          style={styles.contentCard}
+          onPress={handlePress}
+          accessibilityLabel={`${item.title} - ${item.type}`}
+        >
         {item.thumbnail_url && (
           <Image source={{ uri: item.thumbnail_url }} style={styles.thumbnail} resizeMode="cover" />
         )}
@@ -201,7 +202,8 @@ function ContentFeedScreen() {
           {item.category && <Text style={styles.contentCategory}>{item.category}</Text>}
         </View>
       </Card>
-    ),
+    );
+    },
     [navigation, toggleFavorite]
   );
 

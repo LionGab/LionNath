@@ -1,33 +1,37 @@
 # 🚀 Ativar 8 Agentes - Guia Completo
 
-## Método 1: Via Site do Cursor (Agentes na Nuvem)
+## Método 1: Via Site do Cursor (Agentes na Nuvem) ⭐ RECOMENDADO
 
-### Passo a Passo
+### ⚡ Início Rápido (2 minutos)
 
-1. **Acesse o site do Cursor:**
-   - Vá para: https://cursor.com/agents
-   - Faça login com sua conta do Cursor
+1. **Acesse:** https://cursor.com/agents
+2. **Faça login** com sua conta do Cursor
+3. **Conecte GitHub** e selecione seu repositório
+4. **Configure os 8 agentes** (veja instruções abaixo)
+5. **Inicie todos em paralelo**
+6. **Acompanhe** em: https://cursor.com/dashboard/agents
 
-2. **Conecte sua conta do GitHub:**
-   - Autorize o Cursor a acessar seus repositórios
-   - Isso permite que os agentes trabalhem no seu código
+**📋 Veja guia completo:** `.cursor/agents/ATIVAR_NA_NUVEM.md`  
+**📋 Veja guia rápido:** `.cursor/agents/QUICK_START_CLOUD.md`
 
-3. **Inicie os 8 agentes:**
-   - Cada agente pode ser iniciado individualmente
-   - Ou use a API de Background Agents para gerenciar programaticamente
-   - Limite: até 256 agentes ativos por chave de API
+### Instruções para Cada Agente
 
-4. **Benefícios dos Agentes na Nuvem:**
-   - ✅ 99,9% de confiabilidade
-   - ✅ Inicialização instantânea
-   - ✅ Acesso de qualquer dispositivo
-   - ✅ Interface web melhorada
-   - ✅ Execução em máquinas isoladas (Ubuntu)
-   - ✅ Acesso à internet e instalação de pacotes
+Veja as instruções completas em: `.cursor/agents/ATIVAR_NA_NUVEM.md`
+
+### Benefícios dos Agentes na Nuvem:
+- ✅ 99,9% de confiabilidade
+- ✅ Inicialização instantânea
+- ✅ Acesso de qualquer dispositivo
+- ✅ Interface web melhorada
+- ✅ Execução em máquinas isoladas (Ubuntu)
+- ✅ Acesso à internet e instalação de pacotes
+- ✅ Até 256 agentes simultâneos por chave de API
 
 ### Documentação Oficial
 - Site: https://cursor.com/agents
+- Dashboard: https://cursor.com/dashboard/agents
 - Docs: https://docs.cursor.com/pt-BR/background-agent
+- API Key: https://cursor.com/settings/api
 
 ---
 

@@ -18,7 +18,7 @@ export function useAuth() {
       session: demoClient.session,
       loading: false,
       signIn: demoClient.signIn,
-      signInWithMagicLink: async (email: string) => {
+      signInWithMagicLink: async (email: string): Promise<{ error: Error | null }> => {
         // Em modo mock, magic link simula sucesso
         await new Promise((resolve) => setTimeout(resolve, 500));
         return { error: null };

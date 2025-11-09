@@ -62,7 +62,7 @@ export function ChatMessage({ message, onActionPress, onFeedback }: ChatMessageP
       {/* Avatar/Indicator */}
       {!isUser && (
         <View style={[styles.avatar, { backgroundColor: palette.primary }]} accessible={false}>
-          <Text style={styles.avatarText}>N</Text>
+          <Text style={[styles.avatarText, { color: '#FFFFFF' }]}>N</Text>
         </View>
       )}
 
@@ -81,7 +81,7 @@ export function ChatMessage({ message, onActionPress, onFeedback }: ChatMessageP
             style={[
               styles.text,
               {
-                color: isUser ? colors.primaryForeground : palette.text,
+                color: isUser ? '#FFFFFF' : palette.text,
                 fontSize: typography.bodyMd.fontSize,
                 lineHeight: typography.bodyMd.lineHeight,
               },
@@ -129,6 +129,7 @@ export function ChatMessage({ message, onActionPress, onFeedback }: ChatMessageP
                   style={[
                     styles.actionText,
                     {
+                      color: '#FFFFFF',
                       fontSize: typography.button.fontSize,
                       fontWeight: typography.button.fontWeight,
                     },
@@ -195,7 +196,6 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   avatarText: {
-    color: colors.primaryForeground,
     fontWeight: '600',
     fontSize: 16,
   },
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   actionText: {
-    color: colors.primaryForeground,
+    // Cor aplicada dinamicamente via inline style
   },
   feedbackContainer: {
     flexDirection: 'row',

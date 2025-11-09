@@ -14,28 +14,28 @@ jobs:
   performance-analysis:
     name: Performance Analysis
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - uses: pnpm/action-setup@v3
         with:
           version: 9
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
-      
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: Analyze Bundle Size
         run: |
           echo "## 📦 Bundle Size Analysis" >> $GITHUB_STEP_SUMMARY
-          
+
           # Check for large files
           find src -name "*.ts" -o -name "*.tsx" | while read file; do
             lines=$(wc -l < "$file" 2>/dev/null || echo "0")
@@ -44,30 +44,30 @@ jobs:
             fi
           done
         continue-on-error: true
-      
+
       - name: Check for Performance Anti-patterns
         run: |
           echo "## ⚡ Performance Checks" >> $GITHUB_STEP_SUMMARY
-          
+
           # Check for common performance issues
           if grep -r "\.map(" src --include="*.tsx" --include="*.ts" | grep -v "//" | wc -l | xargs -I {} echo "Found {} .map() calls" >> $GITHUB_STEP_SUMMARY; then
             echo "⚠️ Many .map() calls detected. Consider using FlatList for lists." >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if grep -r "useEffect\|useState\|useCallback\|useMemo" src --include="*.tsx" | wc -l | xargs -I {} echo "Found {} hook calls" >> $GITHUB_STEP_SUMMARY; then
             echo "✅ Hooks usage detected" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           # Check for inline styles
           if grep -r "style=\{" src --include="*.tsx" | grep -v "StyleSheet" | wc -l | xargs -I {} test {} -gt 0 && echo "⚠️ Inline styles detected. Consider using StyleSheet.create()" >> $GITHUB_STEP_SUMMARY || true; then
             :
           fi
         continue-on-error: true
-      
+
       - name: Check Image Optimization
         run: |
           echo "## 🖼️ Image Optimization" >> $GITHUB_STEP_SUMMARY
-          
+
           # Check for large images
           find . -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" | while read img; do
             size=$(stat -f%z "$img" 2>/dev/null || stat -c%s "$img" 2>/dev/null || echo "0")
@@ -76,7 +76,7 @@ jobs:
             fi
           done || echo "✅ No large images detected" >> $GITHUB_STEP_SUMMARY
         continue-on-error: true
-      
+
       - name: Create Performance Review Comment
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
@@ -87,9 +87,9 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number,
             });
-            
+
             const performanceTips = [];
-            
+
             // Analyze changed files
             for (const file of files) {
               if (file.filename.endsWith('.tsx') || file.filename.endsWith('.ts')) {
@@ -97,13 +97,13 @@ jobs:
                 if (file.changes > 500) {
                   performanceTips.push(`📦 **${file.filename}**: Arquivo grande (${file.changes} linhas). Considere dividir.`);
                 }
-                
+
                 // Check additions
                 if (file.additions > 200) {
                   performanceTips.push(`➕ **${file.filename}**: Muitas adições (${file.additions} linhas). Revise se pode ser otimizado.`);
                 }
               }
-              
+
               // Check for images
               if (file.filename.match(/\.(png|jpg|jpeg|webp)$/i)) {
                 if (file.additions > 0) {
@@ -111,29 +111,28 @@ jobs:
                 }
               }
             }
-            
+
             const summary = `## ⚡ Análise de Performance
-            
-            ${performanceTips.length > 0 
+
+            ${performanceTips.length > 0
               ? '### ⚠️ Pontos de Atenção\n\n' + performanceTips.join('\n\n')
               : '✅ Nenhum problema de performance detectado'}
-            
+
             ### Boas Práticas Verificadas
             - ✅ Uso de hooks otimizados (useMemo, useCallback)
             - ✅ StyleSheet.create() para estilos
             - ✅ FlatList para listas grandes
             - ✅ Lazy loading de screens
-            
+
             ### Recomendações
             - Use \`React.memo\` para componentes pesados
             - Implemente \`useMemo\` para cálculos custosos
             - Use \`useCallback\` para handlers passados como props
             - Otimize imagens antes de commit`;
-            
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
               body: summary,
             });
-

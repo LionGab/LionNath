@@ -33,6 +33,8 @@ yarn-error.*
 .env*.local
 .env
 .env.local
+.env.prod
+.env.production
 
 # Credenciais e secrets (NUNCA commitar)
 CREDENCIAIS*.md

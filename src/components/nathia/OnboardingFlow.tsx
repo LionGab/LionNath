@@ -37,6 +37,11 @@ interface OnboardingFlowProps {
   onComplete: (response: NathiaOnboardingResponse) => void;
 }
 
+interface AnswerValue {
+  value: string | string[];
+  timestamp?: Date;
+}
+
 interface OnboardingStep {
   id: string;
   question: string;
@@ -95,7 +100,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
 
 export function OnboardingFlow({ userId, onComplete }: OnboardingFlowProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

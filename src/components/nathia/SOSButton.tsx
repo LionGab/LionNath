@@ -25,13 +25,14 @@ import {
   AccessibilityInfo,
   Alert,
   Platform,
+  ViewStyle,
 } from 'react-native';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
 import { logger } from '@/lib/logger';
 
 interface SOSButtonProps {
   onHumanSupportRequest?: () => void;
-  style?: any;
+  style?: ViewStyle;
 }
 
 export function SOSButton({ onHumanSupportRequest, style }: SOSButtonProps) {

@@ -22,6 +22,7 @@
 O Netlify detectará automaticamente o `netlify.toml` ✅
 
 **Configurações automáticas:**
+
 - ✅ Build command: `pnpm install --frozen-lockfile && cd apps/mobile && pnpm run build:web`
 - ✅ Publish directory: `apps/mobile/dist`
 - ✅ Base directory: `.`
@@ -67,6 +68,7 @@ netlify link
 ```
 
 Escolha:
+
 - **Create & configure a new site**
 - Escolha o time
 - Escolha o nome do site (ou deixe padrão)
@@ -147,6 +149,7 @@ supabase secrets set PERPLEXITY_API_KEY=pplx-3wb2O9eVJiDX7c5SUdyTJrdCXJz0c7mjLkX
 ## 📱 URL do Site
 
 Após deploy, o site estará em:
+
 - **Produção:** `https://nossa-maternidade.netlify.app` (ou nome escolhido)
 - **Preview:** `https://deploy-preview-XXX--nossa-maternidade.netlify.app`
 

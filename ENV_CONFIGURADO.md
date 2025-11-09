@@ -7,17 +7,20 @@
 ## 📋 Variáveis Configuradas
 
 ### ✅ Obrigatórias (Supabase)
+
 - `EXPO_PUBLIC_SUPABASE_URL` ✅
 - `EXPO_PUBLIC_SUPABASE_ANON_KEY` ✅
 - `EXPO_PUBLIC_SUPABASE_FUNCTIONS_URL` ✅
 
 ### ✅ Opcionais (IA - Desenvolvimento)
+
 - `EXPO_PUBLIC_GEMINI_API_KEY` ✅
 - `EXPO_PUBLIC_CLAUDE_API_KEY` ✅
 - `EXPO_PUBLIC_OPENAI_API_KEY` ✅
 - `EXPO_PUBLIC_PERPLEXITY_API_KEY` ✅
 
 ### ✅ Opcionais (Outros)
+
 - `EXPO_PUBLIC_SENTRY_DSN` ✅
 - `NODE_ENV` ✅
 - `EXPO_PUBLIC_ENV` ✅
@@ -31,6 +34,7 @@
 As chaves de IA estão configuradas como `EXPO_PUBLIC_*` no `.env` para **desenvolvimento local**.
 
 **Isso significa que:**
+
 - ✅ Funciona para desenvolvimento local
 - ⚠️ As chaves SERÃO expostas no código do cliente (qualquer um pode ver)
 - ❌ **NÃO é seguro para produção**
@@ -50,6 +54,7 @@ supabase secrets set PERPLEXITY_API_KEY=pplx-3wb2O9eVJiDX7c5SUdyTJrdCXJz0c7mjLkX
 ```
 
 Isso garante que:
+
 - ✅ Chaves ficam seguras no servidor
 - ✅ Nunca são expostas no código do cliente
 - ✅ Apenas Edge Functions têm acesso

@@ -95,7 +95,7 @@ Certifique-se que:
 ✅ **Chat (NathIA)** - Conversação com IA, quick actions  
 ✅ **Hábitos** - Checklist, streaks, progresso  
 ✅ **Conteúdos** - Feed com filtros e favoritos  
-✅ **Perfil** - Estatísticas e configurações  
+✅ **Perfil** - Estatísticas e configurações
 
 ---
 

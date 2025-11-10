@@ -95,6 +95,7 @@ curl -X POST http://localhost:54321/functions/v1/sentiment-analysis \
 ## 🚀 TUDO PRONTO!
 
 Se todas as etapas acima funcionarem, você tem:
+
 - ✅ Gamificação 100% funcional
 - ✅ Triagem de DPP live
 - ✅ Análise emocional live

@@ -45,6 +45,7 @@ AI Services (Claude, Gemini, Perplexity)
 ### 🔴 CRÍTICO (Implementar Primeira)
 
 #### 1. **Postpartum Depression Screening (DPP)**
+
 - **Arquivo Web**: `app/api/multi-ai/postpartum-screening/route.ts`
 - **Tecnologia**: Claude Sonnet 4 + Gemini 2.0 Flash
 - **O que faz**:
@@ -55,6 +56,7 @@ AI Services (Claude, Gemini, Perplexity)
   - Cria alertas se risco > 13 ou necessita profissional
 
 - **Implementação Mobile**:
+
   ```typescript
   // supabase/functions/postpartum-screening/index.ts
   // Similar ao route.ts, mas em Deno
@@ -70,6 +72,7 @@ AI Services (Claude, Gemini, Perplexity)
 ---
 
 #### 2. **Multi-AI Chat Strategy**
+
 - **Arquivo Web**: `app/api/multi-ai/chat/route.ts` + `components/multi-ai-chat.tsx`
 - **Tecnologia**:
   - **Modo Empático**: Claude Sonnet 4 (suporte emocional)
@@ -91,6 +94,7 @@ AI Services (Claude, Gemini, Perplexity)
 ---
 
 #### 3. **Sentiment Analysis Avançada**
+
 - **Arquivo Web**: `app/api/multi-ai/sentiment/route.ts`
 - **Tecnologia**: Claude + Gemini (análise combinada)
 - **O que faz**:
@@ -110,6 +114,7 @@ AI Services (Claude, Gemini, Perplexity)
 ### 🟡 IMPORTANTE (Implementar Segunda)
 
 #### 4. **Semantic Search + Memory Management**
+
 - **Arquivo Web**: `app/api/mcp/semantic-search/route.ts` + `lib/mcp/memory-manager.ts`
 - **O que faz**:
   - Busca semântica em histórico de conversas
@@ -121,8 +126,10 @@ AI Services (Claude, Gemini, Perplexity)
 ---
 
 #### 5. **Gamification Manager**
+
 - **Arquivo Web**: `lib/gamification/gamification-manager.ts`
 - **O que faz**:
+
   ```typescript
   // Gerencia:
   // - Pontos por atividade (check_in: 10, journal: 20, etc)
@@ -141,16 +148,19 @@ AI Services (Claude, Gemini, Perplexity)
 ### 🟢 NICE-TO-HAVE (Implementar Terceira)
 
 #### 6. **Conversational Onboarding**
+
 - **Arquivo**: `app/api/mcp/conversational-onboarding/route.ts`
 - **O que faz**: Onboarding via chat em vez de formulário
 - **Prioridade**: Verde (boa UX mas não crítico)
 
 #### 7. **Recipe Generation**
+
 - **Arquivo**: `app/api/generate-recipes/route.ts`
 - **O que faz**: Gera receitas saudáveis personalizadas
 - **Prioridade**: Verde (feature extra)
 
 #### 8. **Maternal News Curation**
+
 - **Arquivo**: `app/api/maternal-news/route.ts`
 - **O que faz**: Notícias sobre maternidade personalizadas
 - **Prioridade**: Verde (complementa MãeValente)
@@ -160,33 +170,39 @@ AI Services (Claude, Gemini, Perplexity)
 ## 🔧 PLANO DE IMPLEMENTAÇÃO
 
 ### Fase 1: Setup (2h)
+
 - [ ] Criar pasta `supabase/functions/postpartum-screening`
 - [ ] Criar pasta `supabase/functions/sentiment-analysis`
 - [ ] Setup de env vars (ANTHROPIC_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY)
 - [ ] Deploy funciona localmente com `supabase functions serve`
 
 ### Fase 2: Postpartum Screening (8h)
+
 - [ ] Migrar `postpartum-screening/route.ts` → Deno
 - [ ] Testar com dados fake
 - [ ] Integrar no mobile (novo botão em ProfileScreen)
 - [ ] Criar tabelas no Supabase (`postpartum_screenings`, `health_alerts`)
 
 ### Fase 3: Multi-AI Chat (6h)
+
 - [ ] Integrar "modo empático" existente no NathiaChat
 - [ ] Adicionar botão para trocar modo (Claude vs Gemini)
 - [ ] Testar streaming de respostas
 
 ### Fase 4: Sentiment Analysis (4h)
+
 - [ ] Migrar para Edge Function
 - [ ] Chamar após Onboarding 5 Steps
 - [ ] Visualizar análise no HomeScreen
 
 ### Fase 5: Gamification Manager (4h)
+
 - [ ] Copiar TypeScript direto (reutilizável)
 - [ ] Integrar com seu HabitsScreen
 - [ ] Testar pontos/levels/streaks
 
 ### Fase 6: Testing & Polish (4h)
+
 - [ ] Testes E2E do fluxo completo
 - [ ] Validação de segurança (RLS, input validation)
 - [ ] Performance tuning
@@ -196,6 +212,7 @@ AI Services (Claude, Gemini, Perplexity)
 ## 📊 ARQUIVO ANTES VS DEPOIS
 
 ### ❌ ANTES (Projeto Atual)
+
 ```
 NathiaChat.tsx
   ├─ Gemini 2.0 Flash + Memory
@@ -212,6 +229,7 @@ HabitsScreen.tsx
 ```
 
 ### ✅ DEPOIS (Com Integrações)
+
 ```
 NathiaChat.tsx
   ├─ 3 Modos: Empático (Claude) | Geral (GPT) | Pesquisa (Perplexity)
@@ -237,12 +255,14 @@ HabitsScreen.tsx
 ## 🔐 SEGURANÇA & COMPLIANCE
 
 ### ✅ Já Implementado
+
 - RLS em todas as tabelas
 - Input validation
 - Encryption de dados sensíveis
 - Audit logging
 
 ### ⚠️ Adicionar
+
 - [ ] LGPD compliance (dados sensíveis de saúde)
 - [ ] Consent forms para análise emocional
 - [ ] Data retention policy (histórico DPP)
@@ -252,16 +272,16 @@ HabitsScreen.tsx
 
 ## 💰 CUSTOS API (Estimado/Mês)
 
-| IA Service | Uso Est. | Custo |
-|---|---|---|
-| **Gemini** | 10k chats | $0 (free tier) |
-| **Claude Sonnet 4** | 5k DPP screenings | $80 |
-| **GPT-4** | 3k chats modo geral | $150 |
-| **Perplexity** | 2k buscas | $40 |
-| **Supabase** | Edge Func + Storage | $25 |
-| **Total** | - | **~$295/mês** |
+| IA Service          | Uso Est.            | Custo          |
+| ------------------- | ------------------- | -------------- |
+| **Gemini**          | 10k chats           | $0 (free tier) |
+| **Claude Sonnet 4** | 5k DPP screenings   | $80            |
+| **GPT-4**           | 3k chats modo geral | $150           |
+| **Perplexity**      | 2k buscas           | $40            |
+| **Supabase**        | Edge Func + Storage | $25            |
+| **Total**           | -                   | **~$295/mês**  |
 
-*Obs: Gemini é gratuito com 30k requisições/mês. Considerar usar apenas Gemini + Claude para reduzir custos.*
+_Obs: Gemini é gratuito com 30k requisições/mês. Considerar usar apenas Gemini + Claude para reduzir custos._
 
 ---
 
@@ -297,21 +317,25 @@ components/multi-ai-chat.tsx
 ## 🎯 NEXT STEPS
 
 ### Imediatamente:
+
 1. ✅ Analisar este documento
 2. ✅ Revisão de custo-benefício
 3. ✅ Priorizar features (DPP é crítica)
 
 ### Semana 1:
+
 - [ ] Setup das Edge Functions
 - [ ] Testes locais com `supabase functions serve`
 - [ ] Deploy da DPP screening (CRÍTICO)
 
 ### Semana 2:
+
 - [ ] Multi-AI Chat integration
 - [ ] Sentiment Analysis
 - [ ] Gamification Manager
 
 ### Semana 3:
+
 - [ ] Testing completo
 - [ ] Validação com psicólogos (DPP é sensível!)
 - [ ] Go live
@@ -331,4 +355,4 @@ Este projeto web tem **ouro puro** para seu app. Principalmente:
 
 ---
 
-*Documento gerado por Claude Code - 2025-11-10*
+_Documento gerado por Claude Code - 2025-11-10_

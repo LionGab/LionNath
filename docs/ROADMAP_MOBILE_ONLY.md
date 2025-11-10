@@ -9,6 +9,7 @@
 ## 📋 RESUMO: O QUE ESTÁ FUNCIONAL HOJE
 
 ### ✅ No Seu App Mobile (React Native):
+
 ```
 ✅ NathIA Chat (Gemini 2.0 Flash)
 ✅ Onboarding 5 Steps
@@ -20,6 +21,7 @@
 ```
 
 ### 🔴 O que FALTA integrar do Projeto Web:
+
 ```
 ❌ GamificationManager (classe pronta para copiar)
 ❌ MemoryManager (classe pronta para copiar)
@@ -32,6 +34,7 @@
 ## 🎯 TOP 5 FUNCIONALIDADES MAIS VALIOSAS (Prioridade)
 
 ### 1️⃣ **GamificationManager** - COPIAR DIRETO
+
 **Custo**: 2 horas
 **Valor**: Desbloqueie sistema completo de pontos/levels
 
@@ -42,18 +45,19 @@
 // 100% TypeScript puro - sem dependências web
 // Use diretamente em seu HabitsScreen
 
-import { GamificationManager } from "@/lib/gamification/gamification-manager"
+import { GamificationManager } from '@/lib/gamification/gamification-manager';
 
-const manager = new GamificationManager(supabase, userId)
+const manager = new GamificationManager(supabase, userId);
 
 // Registrar uma atividade = ganha pontos + streak + achievements
-const result = await manager.recordActivity("journal", { duration: 15 })
-console.log(`Ganhou ${result.pointsEarned} pontos!`)
-console.log(`Desbloqueou: ${result.newAchievements.map(a => a.name)}`)
-if (result.leveledUp) console.log("🎉 LEVEL UP!")
+const result = await manager.recordActivity('journal', { duration: 15 });
+console.log(`Ganhou ${result.pointsEarned} pontos!`);
+console.log(`Desbloqueou: ${result.newAchievements.map((a) => a.name)}`);
+if (result.leveledUp) console.log('🎉 LEVEL UP!');
 ```
 
 **Já Implementado no Code**:
+
 - `recordActivity()` - registra atividade
 - `updateStreak()` - atualiza sequência
 - `addPoints()` - soma pontos + level up automático
@@ -62,6 +66,7 @@ if (result.leveledUp) console.log("🎉 LEVEL UP!")
 - `getStats()` - retorna estatísticas
 
 **Banco de Dados (já existe)**:
+
 - `user_gamification` ✅
 - `daily_activities` ✅
 - `achievements_unlocked` ✅
@@ -70,6 +75,7 @@ if (result.leveledUp) console.log("🎉 LEVEL UP!")
 ---
 
 ### 2️⃣ **Postpartum Depression Screening** - EDGE FUNCTION
+
 **Custo**: 3 horas
 **Valor**: Triagem automática de DPP (CRÍTICO para saúde)
 
@@ -85,18 +91,19 @@ if (result.leveledUp) console.log("🎉 LEVEL UP!")
 // 5. Cria alerta se risco alto
 
 // Chamar do mobile assim:
-const response = await supabase.functions.invoke("postpartum-screening")
-const screening = await response.json()
+const response = await supabase.functions.invoke('postpartum-screening');
+const screening = await response.json();
 
-console.log(`Risk Score: ${screening.riskScore}`) // 0-30
-console.log(`Necessita profissional? ${screening.needsProfessionalHelp}`) // sim/não
-console.log(`Recomendações: ${screening.recommendations}`)
+console.log(`Risk Score: ${screening.riskScore}`); // 0-30
+console.log(`Necessita profissional? ${screening.needsProfessionalHelp}`); // sim/não
+console.log(`Recomendações: ${screening.recommendations}`);
 
 // Se risco > 13 → Cria alerta no banco
 // Se risco > 20 → Severidade "critical"
 ```
 
 **Componentes Necessários**:
+
 - ✅ `Supabase.functions` (edge-functions)
 - ✅ Tabela `postpartum_screenings` (precisa criar)
 - ✅ Tabela `health_alerts` (precisa criar)
@@ -104,30 +111,30 @@ console.log(`Recomendações: ${screening.recommendations}`)
 - ✅ Gemini API key
 
 **UI no Mobile**:
+
 ```tsx
 // Adicionar em ProfileScreen
-<Button
-  onPress={() => supabase.functions.invoke("postpartum-screening")}
-  title="Fazer Triagem de Saúde Mental"
-/>
+<Button onPress={() => supabase.functions.invoke('postpartum-screening')} title="Fazer Triagem de Saúde Mental" />;
 
 // Mostrar resultado
-{screening && (
-  <Card>
-    <Text>Score de Risco: {screening.riskScore}/30</Text>
-    {screening.riskScore > 13 && (
-      <Alert color="red">
-        ⚠️ Você pode estar com risco de depressão pós-parto.
-        Procure um profissional de saúde.
-      </Alert>
-    )}
-  </Card>
-)}
+{
+  screening && (
+    <Card>
+      <Text>Score de Risco: {screening.riskScore}/30</Text>
+      {screening.riskScore > 13 && (
+        <Alert color="red">
+          ⚠️ Você pode estar com risco de depressão pós-parto. Procure um profissional de saúde.
+        </Alert>
+      )}
+    </Card>
+  );
+}
 ```
 
 ---
 
 ### 3️⃣ **MemoryManager** - COPIAR COM CAUTELA
+
 **Custo**: 4 horas (requer setup de embedding)
 **Valor**: Conversas com contexto histórico (memória IA)
 
@@ -141,19 +148,20 @@ console.log(`Recomendações: ${screening.recommendations}`)
 // 3. IA nunca esquece o histórico
 
 // Chamar no NathiaChat assim:
-import { MemoryManager } from "@/lib/memory/memory-manager"
+import { MemoryManager } from '@/lib/memory/memory-manager';
 
-const memory = new MemoryManager(userId)
+const memory = new MemoryManager(userId);
 
 // Após cada mensagem do usuário, guardar
-await memory.storeMemory(userMessage, "conversation", messageId)
+await memory.storeMemory(userMessage, 'conversation', messageId);
 
 // Quando IA vai responder, buscar contexto
-const context = await memory.getComprehensiveContext(userMessage)
+const context = await memory.getComprehensiveContext(userMessage);
 // Passá-lo para o prompt do Gemini
 ```
 
 **⚠️ Dependência**: Usa `ai` SDK para embedding
+
 ```bash
 npm install ai @ai-sdk/openai
 ```
@@ -164,6 +172,7 @@ npm install ai @ai-sdk/openai
 ---
 
 ### 4️⃣ **Multi-AI Chat Modes** - INTEGRAR NO NATHIACHAT
+
 **Custo**: 2 horas
 **Valor**: Oferece 3 tipos de IA especializadas
 
@@ -207,6 +216,7 @@ const model = mode === "empathetic" ? anthropic : mode === "research" ? perplexi
 ---
 
 ### 5️⃣ **Sentiment Analysis** - EDGE FUNCTION
+
 **Custo**: 2 horas
 **Valor**: Análise emocional automática
 
@@ -220,20 +230,20 @@ const model = mode === "empathetic" ? anthropic : mode === "research" ? perplexi
 // 3. Recomenda ações de autocuidado
 
 // Chamar após Onboarding 5 Steps:
-const response = await supabase.functions.invoke("sentiment-analysis", {
+const response = await supabase.functions.invoke('sentiment-analysis', {
   body: {
     responses: {
-      como_se_sente: "Estou muito cansada",
-      principais_medos: "Não conseguir amamentar",
-      rede_apoio: "Meu marido ajuda"
-    }
-  }
-})
+      como_se_sente: 'Estou muito cansada',
+      principais_medos: 'Não conseguir amamentar',
+      rede_apoio: 'Meu marido ajuda',
+    },
+  },
+});
 
-const analysis = await response.json()
-console.log(`Emoção: ${analysis.emotion}`) // alegre, ansiosa, triste, etc
-console.log(`Nível de risco: ${analysis.riskLevel}`) // baixo/médio/alto
-console.log(`Recomendações: ${analysis.recommendations}`)
+const analysis = await response.json();
+console.log(`Emoção: ${analysis.emotion}`); // alegre, ansiosa, triste, etc
+console.log(`Nível de risco: ${analysis.riskLevel}`); // baixo/médio/alto
+console.log(`Recomendações: ${analysis.recommendations}`);
 
 // Salvar no banco para trending histórico
 ```
@@ -353,6 +363,7 @@ Responda considerando o histórico da usuária.`
 ## 📊 COMPARAÇÃO: ANTES vs DEPOIS
 
 ### ANTES (Hoje)
+
 ```
 NathiaChat.tsx
 ├─ Gemini 2.0 Flash ✅
@@ -372,6 +383,7 @@ ProfileScreen.tsx
 ```
 
 ### DEPOIS (Com Integrações)
+
 ```
 NathiaChat.tsx
 ├─ 3 Modos de IA ✅ (Empático, Geral, Pesquisa)
@@ -397,6 +409,7 @@ ProfileScreen.tsx
 ## 💻 CÓDIGO PRONTO PARA COPIAR
 
 ### 1. GamificationManager (TypeScript Puro)
+
 ```typescript
 // Copiar inteiro de: Downloads/NossaMaternidade/lib/gamification/gamification-manager.ts
 // Para: src/lib/gamification/gamification-manager.ts
@@ -422,6 +435,7 @@ export interface GamificationStats {
 ```
 
 ### 2. Postpartum Screening (Edge Function)
+
 ```deno
 // Copiar de: Downloads/NossaMaternidade/app/api/multi-ai/postpartum-screening/route.ts
 // Adaptar para Deno e colar em: supabase/functions/postpartum-screening/index.ts
@@ -437,6 +451,7 @@ import { serve } from "https://deno.land/std@0.208.0/http/server.ts"
 ```
 
 ### 3. MemoryManager (TypeScript)
+
 ```typescript
 // Copiar de: Downloads/NossaMaternidade/lib/mcp/memory-manager.ts
 // Para: src/lib/memory/memory-manager.ts
@@ -462,15 +477,15 @@ export interface MemoryEntry {
 
 ## ⏱️ CRONOGRAMA ESTIMADO
 
-| Tarefa | Horas | Prioridade | Semana |
-|--------|-------|-----------|--------|
-| **GamificationManager** | 2 | 🔴 CRÍTICA | 1 |
-| **Postpartum Screening** | 3 | 🔴 CRÍTICA | 2 |
-| **MemoryManager Setup** | 2 | 🟡 ALTA | 3 |
-| **Multi-AI Integration** | 2 | 🟡 ALTA | 3 |
-| **Sentiment Analysis** | 2 | 🟡 ALTA | 3 |
-| **Testing & Polish** | 3 | 🟡 ALTA | 4 |
-| **TOTAL** | **14 horas** | | |
+| Tarefa                   | Horas        | Prioridade | Semana |
+| ------------------------ | ------------ | ---------- | ------ |
+| **GamificationManager**  | 2            | 🔴 CRÍTICA | 1      |
+| **Postpartum Screening** | 3            | 🔴 CRÍTICA | 2      |
+| **MemoryManager Setup**  | 2            | 🟡 ALTA    | 3      |
+| **Multi-AI Integration** | 2            | 🟡 ALTA    | 3      |
+| **Sentiment Analysis**   | 2            | 🟡 ALTA    | 3      |
+| **Testing & Polish**     | 3            | 🟡 ALTA    | 4      |
+| **TOTAL**                | **14 horas** |            |        |
 
 ---
 
@@ -500,5 +515,5 @@ Quer que eu comece a implementar agora?
 
 ---
 
-*Documento: ROADMAP_MOBILE_ONLY.md*
-*Gerado em: 2025-11-10*
+_Documento: ROADMAP_MOBILE_ONLY.md_
+_Gerado em: 2025-11-10_

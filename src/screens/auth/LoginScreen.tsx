@@ -101,14 +101,7 @@ export const LoginScreen: React.FC = React.memo(function LoginScreen() {
         paddingVertical: theme.spacing.md,
       },
     ],
-    [
-      colors.border,
-      colors.card,
-      colors.foreground,
-      theme.borderRadius.lg,
-      theme.spacing.lg,
-      theme.spacing.md,
-    ]
+    [colors.border, colors.card, colors.foreground, theme.borderRadius.lg, theme.spacing.lg, theme.spacing.md]
   );
 
   const buttonStyle = useMemo(
@@ -294,4 +287,3 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
 });
-

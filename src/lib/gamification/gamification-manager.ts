@@ -1,46 +1,46 @@
-import type { SupabaseClient } from "@supabase/supabase-js"
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export interface GamificationStats {
-  totalPoints: number
-  currentLevel: number
-  pointsToNextLevel: number
-  currentStreak: number
-  longestStreak: number
-  achievements: Achievement[]
-  recentActivities: DailyActivity[]
-  activeChallenges: WeeklyChallengeProgress[]
+  totalPoints: number;
+  currentLevel: number;
+  pointsToNextLevel: number;
+  currentStreak: number;
+  longestStreak: number;
+  achievements: Achievement[];
+  recentActivities: DailyActivity[];
+  activeChallenges: WeeklyChallengeProgress[];
 }
 
 export interface Achievement {
-  id: string
-  code: string
-  name: string
-  description: string
-  category: string
-  icon: string
-  pointsReward: number
-  rarity: string
-  unlockedAt?: string
-  isNew?: boolean
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  category: string;
+  icon: string;
+  pointsReward: number;
+  rarity: string;
+  unlockedAt?: string;
+  isNew?: boolean;
 }
 
 export interface WeeklyChallengeProgress {
-  id: string
-  title: string
-  description: string
-  category: string
-  icon: string
-  pointsReward: number
-  currentProgress: number
-  goalValue: number
-  isCompleted: boolean
-  endDate: string
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  icon: string;
+  pointsReward: number;
+  currentProgress: number;
+  goalValue: number;
+  isCompleted: boolean;
+  endDate: string;
 }
 
 export interface DailyActivity {
-  activityType: string
-  pointsEarned: number
-  activityDate: string
+  activityType: string;
+  pointsEarned: number;
+  activityDate: string;
 }
 
 /**
@@ -48,12 +48,12 @@ export interface DailyActivity {
  * Pontos, levels, streaks, achievements, e desafios semanais
  */
 export class GamificationManager {
-  private supabase: SupabaseClient
-  private userId: string
+  private supabase: SupabaseClient;
+  private userId: string;
 
   constructor(supabase: SupabaseClient, userId: string) {
-    this.supabase = supabase
-    this.userId = userId
+    this.supabase = supabase;
+    this.userId = userId;
   }
 
   /**
@@ -61,7 +61,7 @@ export class GamificationManager {
    */
   async initializeUser(): Promise<void> {
     const { error } = await this.supabase
-      .from("user_gamification")
+      .from('user_gamification')
       .insert({
         user_id: this.userId,
         total_points: 0,
@@ -71,11 +71,11 @@ export class GamificationManager {
         longest_streak: 0,
       })
       .select()
-      .single()
+      .single();
 
-    if (error && error.code !== "23505") {
+    if (error && error.code !== '23505') {
       // Ignora erro de duplicata
-      throw error
+      throw error;
     }
   }
 
@@ -84,13 +84,13 @@ export class GamificationManager {
    */
   async recordActivity(
     activityType: string,
-    metadata: any = {},
+    metadata: any = {}
   ): Promise<{
-    pointsEarned: number
-    newAchievements: Achievement[]
-    leveledUp: boolean
+    pointsEarned: number;
+    newAchievements: Achievement[];
+    leveledUp: boolean;
   }> {
-    const today = new Date().toISOString().split("T")[0]
+    const today = new Date().toISOString().split('T')[0];
 
     // Calcular pontos baseado no tipo de atividade
     const pointsMap: Record<string, number> = {
@@ -98,79 +98,79 @@ export class GamificationManager {
       journal: 20,
       self_care: 15,
       community: 5,
-    }
+    };
 
-    const pointsEarned = pointsMap[activityType] || 5
+    const pointsEarned = pointsMap[activityType] || 5;
 
     // Registrar atividade
-    await this.supabase.from("daily_activities").upsert({
+    await this.supabase.from('daily_activities').upsert({
       user_id: this.userId,
       activity_date: today,
       activity_type: activityType,
       points_earned: pointsEarned,
       metadata,
-    })
+    });
 
     // Atualizar streak
-    await this.updateStreak()
+    await this.updateStreak();
 
     // Atualizar pontos e nível
-    const leveledUp = await this.addPoints(pointsEarned)
+    const leveledUp = await this.addPoints(pointsEarned);
 
     // Atualizar contadores específicos
-    await this.updateActivityCounters(activityType)
+    await this.updateActivityCounters(activityType);
 
     // Verificar novas conquistas
-    const newAchievements = await this.checkAchievements()
+    const newAchievements = await this.checkAchievements();
 
     // Atualizar progresso dos desafios
-    await this.updateChallengeProgress(activityType)
+    await this.updateChallengeProgress(activityType);
 
     return {
       pointsEarned,
       newAchievements,
       leveledUp,
-    }
+    };
   }
 
   /**
    * Atualizar streak
    */
   private async updateStreak(): Promise<void> {
-    const today = new Date().toISOString().split("T")[0]
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0]
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
 
     const { data: gamification } = await this.supabase
-      .from("user_gamification")
-      .select("*")
-      .eq("user_id", this.userId)
-      .single()
+      .from('user_gamification')
+      .select('*')
+      .eq('user_id', this.userId)
+      .single();
 
-    if (!gamification) return
+    if (!gamification) return;
 
-    const lastActivity = gamification.last_activity_date
+    const lastActivity = gamification.last_activity_date;
 
-    let newStreak = gamification.current_streak
+    let newStreak = gamification.current_streak;
 
     if (lastActivity === yesterday) {
       // Continua o streak
-      newStreak += 1
+      newStreak += 1;
     } else if (lastActivity !== today) {
       // Quebrou o streak
-      newStreak = 1
+      newStreak = 1;
     }
 
-    const longestStreak = Math.max(newStreak, gamification.longest_streak)
+    const longestStreak = Math.max(newStreak, gamification.longest_streak);
 
     await this.supabase
-      .from("user_gamification")
+      .from('user_gamification')
       .update({
         current_streak: newStreak,
         longest_streak: longestStreak,
         last_activity_date: today,
         updated_at: new Date().toISOString(),
       })
-      .eq("user_id", this.userId)
+      .eq('user_id', this.userId);
   }
 
   /**
@@ -178,36 +178,36 @@ export class GamificationManager {
    */
   private async addPoints(points: number): Promise<boolean> {
     const { data: gamification } = await this.supabase
-      .from("user_gamification")
-      .select("*")
-      .eq("user_id", this.userId)
-      .single()
+      .from('user_gamification')
+      .select('*')
+      .eq('user_id', this.userId)
+      .single();
 
-    if (!gamification) return false
+    if (!gamification) return false;
 
-    const newTotalPoints = gamification.total_points + points
-    let newLevel = gamification.current_level
-    let pointsToNextLevel = gamification.points_to_next_level
+    const newTotalPoints = gamification.total_points + points;
+    let newLevel = gamification.current_level;
+    let pointsToNextLevel = gamification.points_to_next_level;
 
     // Calcular level up (progressão exponencial suave)
     while (newTotalPoints >= this.getPointsForLevel(newLevel + 1)) {
-      newLevel += 1
+      newLevel += 1;
     }
 
-    pointsToNextLevel = this.getPointsForLevel(newLevel + 1) - newTotalPoints
-    const leveledUp = newLevel > gamification.current_level
+    pointsToNextLevel = this.getPointsForLevel(newLevel + 1) - newTotalPoints;
+    const leveledUp = newLevel > gamification.current_level;
 
     await this.supabase
-      .from("user_gamification")
+      .from('user_gamification')
       .update({
         total_points: newTotalPoints,
         current_level: newLevel,
         points_to_next_level: pointsToNextLevel,
         updated_at: new Date().toISOString(),
       })
-      .eq("user_id", this.userId)
+      .eq('user_id', this.userId);
 
-    return leveledUp
+    return leveledUp;
   }
 
   /**
@@ -215,7 +215,7 @@ export class GamificationManager {
    */
   private getPointsForLevel(level: number): number {
     // Progressão: 100, 250, 450, 700, 1000, 1350, 1750...
-    return Math.floor(100 * level + 50 * Math.pow(level - 1, 1.5))
+    return Math.floor(100 * level + 50 * Math.pow(level - 1, 1.5));
   }
 
   /**
@@ -223,30 +223,30 @@ export class GamificationManager {
    */
   private async updateActivityCounters(activityType: string): Promise<void> {
     const counterMap: Record<string, string> = {
-      check_in: "total_check_ins",
-      journal: "total_journal_entries",
-      self_care: "total_self_care_activities",
-      community: "total_community_interactions",
-    }
+      check_in: 'total_check_ins',
+      journal: 'total_journal_entries',
+      self_care: 'total_self_care_activities',
+      community: 'total_community_interactions',
+    };
 
-    const column = counterMap[activityType]
-    if (!column) return
+    const column = counterMap[activityType];
+    if (!column) return;
 
     const { data: gamification } = await this.supabase
-      .from("user_gamification")
+      .from('user_gamification')
       .select(column)
-      .eq("user_id", this.userId)
-      .single()
+      .eq('user_id', this.userId)
+      .single();
 
-    if (!gamification) return
+    if (!gamification) return;
 
     await this.supabase
-      .from("user_gamification")
+      .from('user_gamification')
       .update({
         [column]: ((gamification as unknown as Record<string, number>)[column] || 0) + 1,
         updated_at: new Date().toISOString(),
       })
-      .eq("user_id", this.userId)
+      .eq('user_id', this.userId);
   }
 
   /**
@@ -254,60 +254,60 @@ export class GamificationManager {
    */
   private async checkAchievements(): Promise<Achievement[]> {
     const { data: gamification } = await this.supabase
-      .from("user_gamification")
-      .select("*")
-      .eq("user_id", this.userId)
-      .single()
+      .from('user_gamification')
+      .select('*')
+      .eq('user_id', this.userId)
+      .single();
 
-    if (!gamification) return []
+    if (!gamification) return [];
 
     // Buscar todas as conquistas
-    const { data: allAchievements } = await this.supabase.from("achievements").select("*").eq("is_active", true)
+    const { data: allAchievements } = await this.supabase.from('achievements').select('*').eq('is_active', true);
 
-    if (!allAchievements) return []
+    if (!allAchievements) return [];
 
     // Buscar conquistas já desbloqueadas
     const { data: unlockedAchievements } = await this.supabase
-      .from("user_achievements")
-      .select("achievement_id")
-      .eq("user_id", this.userId)
+      .from('user_achievements')
+      .select('achievement_id')
+      .eq('user_id', this.userId);
 
-    const unlockedIds = new Set(unlockedAchievements?.map((a) => a.achievement_id) || [])
+    const unlockedIds = new Set(unlockedAchievements?.map((a) => a.achievement_id) || []);
 
-    const newAchievements: Achievement[] = []
+    const newAchievements: Achievement[] = [];
 
     for (const achievement of allAchievements) {
-      if (unlockedIds.has(achievement.id)) continue
+      if (unlockedIds.has(achievement.id)) continue;
 
-      let shouldUnlock = false
+      let shouldUnlock = false;
 
       // Verificar critérios
       switch (achievement.requirement_type) {
-        case "streak":
-          shouldUnlock = gamification.current_streak >= achievement.requirement_value
-          break
-        case "count":
+        case 'streak':
+          shouldUnlock = gamification.current_streak >= achievement.requirement_value;
+          break;
+        case 'count':
           const countMap: Record<string, number> = {
             self_care: gamification.total_self_care_activities,
             community: gamification.total_community_interactions,
             journal: gamification.total_journal_entries,
             check_in: gamification.total_check_ins,
-          }
-          const count = countMap[achievement.category] || 0
-          shouldUnlock = count >= achievement.requirement_value
-          break
+          };
+          const count = countMap[achievement.category] || 0;
+          shouldUnlock = count >= achievement.requirement_value;
+          break;
       }
 
       if (shouldUnlock) {
         // Desbloquear conquista
-        await this.supabase.from("user_achievements").insert({
+        await this.supabase.from('user_achievements').insert({
           user_id: this.userId,
           achievement_id: achievement.id,
           is_new: true,
-        })
+        });
 
         // Adicionar pontos da conquista
-        await this.addPoints(achievement.points_reward)
+        await this.addPoints(achievement.points_reward);
 
         newAchievements.push({
           id: achievement.id,
@@ -319,68 +319,68 @@ export class GamificationManager {
           pointsReward: achievement.points_reward,
           rarity: achievement.rarity,
           isNew: true,
-        })
+        });
       }
     }
 
-    return newAchievements
+    return newAchievements;
   }
 
   /**
    * Atualizar progresso dos desafios
    */
   private async updateChallengeProgress(activityType: string): Promise<void> {
-    const today = new Date().toISOString().split("T")[0]
+    const today = new Date().toISOString().split('T')[0];
 
     // Buscar desafios ativos
     const { data: challenges } = await this.supabase
-      .from("weekly_challenges")
-      .select("*")
-      .eq("is_active", true)
-      .lte("start_date", today)
-      .gte("end_date", today)
+      .from('weekly_challenges')
+      .select('*')
+      .eq('is_active', true)
+      .lte('start_date', today)
+      .gte('end_date', today);
 
-    if (!challenges) return
+    if (!challenges) return;
 
     for (const challenge of challenges) {
       // Verificar se o tipo de atividade corresponde ao desafio
-      if (challenge.category !== activityType) continue
+      if (challenge.category !== activityType) continue;
 
       // Buscar ou criar progresso
       const { data: progress } = await this.supabase
-        .from("user_challenge_progress")
-        .select("*")
-        .eq("user_id", this.userId)
-        .eq("challenge_id", challenge.id)
-        .single()
+        .from('user_challenge_progress')
+        .select('*')
+        .eq('user_id', this.userId)
+        .eq('challenge_id', challenge.id)
+        .single();
 
       if (progress) {
-        const newProgress = progress.current_progress + 1
-        const isCompleted = newProgress >= challenge.goal_value
+        const newProgress = progress.current_progress + 1;
+        const isCompleted = newProgress >= challenge.goal_value;
 
         await this.supabase
-          .from("user_challenge_progress")
+          .from('user_challenge_progress')
           .update({
             current_progress: newProgress,
             is_completed: isCompleted,
             completed_at: isCompleted ? new Date().toISOString() : null,
             updated_at: new Date().toISOString(),
           })
-          .eq("id", progress.id)
+          .eq('id', progress.id);
 
         // Se completou, dar pontos
         if (isCompleted && !progress.is_completed) {
-          await this.addPoints(challenge.points_reward)
+          await this.addPoints(challenge.points_reward);
         }
       } else {
         // Criar novo progresso
-        await this.supabase.from("user_challenge_progress").insert({
+        await this.supabase.from('user_challenge_progress').insert({
           user_id: this.userId,
           challenge_id: challenge.id,
           current_progress: 1,
           is_completed: 1 >= challenge.goal_value,
           completed_at: 1 >= challenge.goal_value ? new Date().toISOString() : null,
-        })
+        });
       }
     }
   }
@@ -391,25 +391,27 @@ export class GamificationManager {
   async getStats(): Promise<GamificationStats> {
     // Buscar dados de gamificação
     const { data: gamification } = await this.supabase
-      .from("user_gamification")
-      .select("*")
-      .eq("user_id", this.userId)
-      .single()
+      .from('user_gamification')
+      .select('*')
+      .eq('user_id', this.userId)
+      .single();
 
     if (!gamification) {
-      await this.initializeUser()
-      return this.getStats()
+      await this.initializeUser();
+      return this.getStats();
     }
 
     // Buscar conquistas desbloqueadas
     const { data: userAchievements } = await this.supabase
-      .from("user_achievements")
-      .select(`
+      .from('user_achievements')
+      .select(
+        `
         *,
         achievement:achievements(*)
-      `)
-      .eq("user_id", this.userId)
-      .order("unlocked_at", { ascending: false })
+      `
+      )
+      .eq('user_id', this.userId)
+      .order('unlocked_at', { ascending: false });
 
     const achievements =
       userAchievements?.map((ua) => ({
@@ -423,38 +425,40 @@ export class GamificationManager {
         rarity: ua.achievement.rarity,
         unlockedAt: ua.unlocked_at,
         isNew: ua.is_new,
-      })) || []
+      })) || [];
 
     // Buscar atividades recentes
     const { data: activities } = await this.supabase
-      .from("daily_activities")
-      .select("*")
-      .eq("user_id", this.userId)
-      .order("activity_date", { ascending: false })
-      .limit(7)
+      .from('daily_activities')
+      .select('*')
+      .eq('user_id', this.userId)
+      .order('activity_date', { ascending: false })
+      .limit(7);
 
     const recentActivities =
       activities?.map((a) => ({
         activityType: a.activity_type,
         pointsEarned: a.points_earned,
         activityDate: a.activity_date,
-      })) || []
+      })) || [];
 
     // Buscar desafios ativos
-    const today = new Date().toISOString().split("T")[0]
+    const today = new Date().toISOString().split('T')[0];
     const { data: challenges } = await this.supabase
-      .from("weekly_challenges")
-      .select(`
+      .from('weekly_challenges')
+      .select(
+        `
         *,
         progress:user_challenge_progress(*)
-      `)
-      .eq("is_active", true)
-      .lte("start_date", today)
-      .gte("end_date", today)
+      `
+      )
+      .eq('is_active', true)
+      .lte('start_date', today)
+      .gte('end_date', today);
 
     const activeChallenges =
       challenges?.map((c) => {
-        const progress = c.progress?.find((p: any) => p.user_id === this.userId)
+        const progress = c.progress?.find((p: any) => p.user_id === this.userId);
         return {
           id: c.id,
           title: c.title,
@@ -466,8 +470,8 @@ export class GamificationManager {
           goalValue: c.goal_value,
           isCompleted: progress?.is_completed || false,
           endDate: c.end_date,
-        }
-      }) || []
+        };
+      }) || [];
 
     return {
       totalPoints: gamification.total_points,
@@ -478,7 +482,7 @@ export class GamificationManager {
       achievements,
       recentActivities,
       activeChallenges,
-    }
+    };
   }
 
   /**
@@ -486,9 +490,9 @@ export class GamificationManager {
    */
   async markAchievementsAsSeen(achievementIds: string[]): Promise<void> {
     await this.supabase
-      .from("user_achievements")
+      .from('user_achievements')
       .update({ is_new: false })
-      .eq("user_id", this.userId)
-      .in("achievement_id", achievementIds)
+      .eq('user_id', this.userId)
+      .in('achievement_id', achievementIds);
   }
 }

@@ -1,12 +1,12 @@
-import type { SupabaseClient } from "@supabase/supabase-js"
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export interface MemoryEntry {
-  id: string
-  contentText: string
-  contentType: string
-  metadata: any
-  similarity: number
-  createdAt: string
+  id: string;
+  contentText: string;
+  contentType: string;
+  metadata: any;
+  similarity: number;
+  createdAt: string;
 }
 
 /**
@@ -14,12 +14,12 @@ export interface MemoryEntry {
  * Armazena e busca informações relevantes para manter contexto no chat
  */
 export class MemoryManager {
-  private supabase: SupabaseClient
-  private userId: string
+  private supabase: SupabaseClient;
+  private userId: string;
 
   constructor(supabase: SupabaseClient, userId: string) {
-    this.supabase = supabase
-    this.userId = userId
+    this.supabase = supabase;
+    this.userId = userId;
   }
 
   /**
@@ -27,9 +27,9 @@ export class MemoryManager {
    */
   async storeMemory(
     contentText: string,
-    contentType: "conversation" | "diary" | "post" | "onboarding",
+    contentType: 'conversation' | 'diary' | 'post' | 'onboarding',
     contentId?: string,
-    metadata: any = {},
+    metadata: any = {}
   ) {
     try {
       // TODO: Gerar embedding com AI SDK quando configurado
@@ -37,7 +37,7 @@ export class MemoryManager {
 
       // Armazenar no banco de dados
       const { data, error } = await this.supabase
-        .from("memory_embeddings")
+        .from('memory_embeddings')
         .insert({
           user_id: this.userId,
           content_type: contentType,
@@ -47,13 +47,13 @@ export class MemoryManager {
           created_at: new Date().toISOString(),
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
-      return data
+      if (error) throw error;
+      return data;
     } catch (error) {
-      console.error("[MemoryManager] Erro ao armazenar memória:", error)
-      throw error
+      console.error('[MemoryManager] Erro ao armazenar memória:', error);
+      throw error;
     }
   }
 
@@ -66,16 +66,14 @@ export class MemoryManager {
 
       // Por enquanto, fazer busca por Full-Text Search
       const { data, error } = await this.supabase
-        .from("memory_embeddings")
-        .select("*")
-        .eq("user_id", this.userId)
-        .or(
-          `content_text.ilike.%${query}%,metadata.ilike.%${query}%`,
-        )
-        .order("created_at", { ascending: false })
-        .limit(limit)
+        .from('memory_embeddings')
+        .select('*')
+        .eq('user_id', this.userId)
+        .or(`content_text.ilike.%${query}%,metadata.ilike.%${query}%`)
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-      if (error) throw error
+      if (error) throw error;
 
       return (
         data?.map((item) => ({
@@ -86,10 +84,10 @@ export class MemoryManager {
           similarity: 1.0, // Placeholder
           createdAt: item.created_at,
         })) || []
-      )
+      );
     } catch (error) {
-      console.error("[MemoryManager] Erro ao buscar memórias:", error)
-      return []
+      console.error('[MemoryManager] Erro ao buscar memórias:', error);
+      return [];
     }
   }
 
@@ -98,18 +96,18 @@ export class MemoryManager {
    */
   async getMemoriesFromPeriod(daysAgo: number, limit = 50): Promise<MemoryEntry[]> {
     try {
-      const startDate = new Date()
-      startDate.setDate(startDate.getDate() - daysAgo)
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - daysAgo);
 
       const { data, error } = await this.supabase
-        .from("memory_embeddings")
-        .select("*")
-        .eq("user_id", this.userId)
-        .gte("created_at", startDate.toISOString())
-        .order("created_at", { ascending: false })
-        .limit(limit)
+        .from('memory_embeddings')
+        .select('*')
+        .eq('user_id', this.userId)
+        .gte('created_at', startDate.toISOString())
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-      if (error) throw error
+      if (error) throw error;
 
       return (
         data?.map((item) => ({
@@ -120,10 +118,10 @@ export class MemoryManager {
           similarity: 1.0,
           createdAt: item.created_at,
         })) || []
-      )
+      );
     } catch (error) {
-      console.error("[MemoryManager] Erro ao buscar período:", error)
-      return []
+      console.error('[MemoryManager] Erro ao buscar período:', error);
+      return [];
     }
   }
 
@@ -134,50 +132,50 @@ export class MemoryManager {
   async getComprehensiveContext(currentQuery: string, daysBack = 90): Promise<string> {
     try {
       // Buscar memórias recentes (últimos 7 dias)
-      const recentMemories = await this.getMemoriesFromPeriod(7, 10)
+      const recentMemories = await this.getMemoriesFromPeriod(7, 10);
 
       // Buscar memórias relevantes semanticamente
-      const relevantMemories = await this.searchMemories(currentQuery, 15, 0.75)
+      const relevantMemories = await this.searchMemories(currentQuery, 15, 0.75);
 
       // Buscar resumos de contexto de períodos anteriores
       const { data: contextSummaries } = await this.supabase
-        .from("ai_memory_context")
-        .select("*")
-        .eq("user_id", this.userId)
-        .gte("start_date", new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000).toISOString())
-        .order("start_date", { ascending: false })
+        .from('ai_memory_context')
+        .select('*')
+        .eq('user_id', this.userId)
+        .gte('start_date', new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000).toISOString())
+        .order('start_date', { ascending: false });
 
       // Construir contexto abrangente
-      let context = "=== CONTEXTO HISTÓRICO DA USUÁRIA ===\n\n"
+      let context = '=== CONTEXTO HISTÓRICO DA USUÁRIA ===\n\n';
 
       if (contextSummaries && contextSummaries.length > 0) {
-        context += "## Resumos de Períodos Anteriores:\n"
+        context += '## Resumos de Períodos Anteriores:\n';
         contextSummaries.forEach((summary: any) => {
-          context += `\n### ${summary.start_date} a ${summary.end_date}:\n${summary.summary}\n`
+          context += `\n### ${summary.start_date} a ${summary.end_date}:\n${summary.summary}\n`;
           if (summary.key_events) {
-            context += `Eventos importantes: ${JSON.stringify(summary.key_events)}\n`
+            context += `Eventos importantes: ${JSON.stringify(summary.key_events)}\n`;
           }
-        })
+        });
       }
 
       if (recentMemories.length > 0) {
-        context += "\n## Memórias Recentes (últimos 7 dias):\n"
+        context += '\n## Memórias Recentes (últimos 7 dias):\n';
         recentMemories.forEach((memory) => {
-          context += `- [${memory.createdAt}] ${memory.contentText}\n`
-        })
+          context += `- [${memory.createdAt}] ${memory.contentText}\n`;
+        });
       }
 
       if (relevantMemories.length > 0) {
-        context += "\n## Memórias Relevantes ao Contexto Atual:\n"
+        context += '\n## Memórias Relevantes ao Contexto Atual:\n';
         relevantMemories.forEach((memory) => {
-          context += `- [${memory.createdAt}] (relevância: ${(memory.similarity * 100).toFixed(0)}%) ${memory.contentText}\n`
-        })
+          context += `- [${memory.createdAt}] (relevância: ${(memory.similarity * 100).toFixed(0)}%) ${memory.contentText}\n`;
+        });
       }
 
-      return context
+      return context;
     } catch (error) {
-      console.error("[MemoryManager] Erro ao obter contexto:", error)
-      return ""
+      console.error('[MemoryManager] Erro ao obter contexto:', error);
+      return '';
     }
   }
 
@@ -188,38 +186,38 @@ export class MemoryManager {
     try {
       // Buscar todas as memórias do período
       const { data: memories } = await this.supabase
-        .from("memory_embeddings")
-        .select("*")
-        .eq("user_id", this.userId)
-        .gte("created_at", startDate.toISOString())
-        .lte("created_at", endDate.toISOString())
+        .from('memory_embeddings')
+        .select('*')
+        .eq('user_id', this.userId)
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString());
 
-      if (!memories || memories.length === 0) return null
+      if (!memories || memories.length === 0) return null;
 
       // Combinar todo o conteúdo
-      const allContent = memories.map((m: any) => m.content_text).join("\n\n")
+      const allContent = memories.map((m: any) => m.content_text).join('\n\n');
 
       // TODO: Gerar resumo com IA quando configurado
-      const summary = await this.summarizeContent(allContent)
+      const summary = await this.summarizeContent(allContent);
 
       // Armazenar resumo
       const { data, error } = await this.supabase
-        .from("ai_memory_context")
+        .from('ai_memory_context')
         .insert({
           user_id: this.userId,
-          time_period: "custom",
-          start_date: startDate.toISOString().split("T")[0],
-          end_date: endDate.toISOString().split("T")[0],
+          time_period: 'custom',
+          start_date: startDate.toISOString().split('T')[0],
+          end_date: endDate.toISOString().split('T')[0],
           summary: summary,
         })
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
-      return data
+      if (error) throw error;
+      return data;
     } catch (error) {
-      console.error("[MemoryManager] Erro ao gerar resumo:", error)
-      throw error
+      console.error('[MemoryManager] Erro ao gerar resumo:', error);
+      throw error;
     }
   }
 
@@ -229,7 +227,7 @@ export class MemoryManager {
   private async summarizeContent(content: string): Promise<string> {
     // TODO: Implementar sumarização com IA (Claude ou Gemini)
     // Por enquanto, retornar os primeiros 500 caracteres
-    return content.substring(0, 500) + "..."
+    return content.substring(0, 500) + '...';
   }
 
   /**
@@ -237,18 +235,18 @@ export class MemoryManager {
    */
   async cleanOldMemories(daysOld: number = 90): Promise<void> {
     try {
-      const cutoffDate = new Date()
-      cutoffDate.setDate(cutoffDate.getDate() - daysOld)
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - daysOld);
 
       const { error } = await this.supabase
-        .from("memory_embeddings")
+        .from('memory_embeddings')
         .delete()
-        .eq("user_id", this.userId)
-        .lt("created_at", cutoffDate.toISOString())
+        .eq('user_id', this.userId)
+        .lt('created_at', cutoffDate.toISOString());
 
-      if (error) throw error
+      if (error) throw error;
     } catch (error) {
-      console.error("[MemoryManager] Erro ao limpar memórias antigas:", error)
+      console.error('[MemoryManager] Erro ao limpar memórias antigas:', error);
     }
   }
 }

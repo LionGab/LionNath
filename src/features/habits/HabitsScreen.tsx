@@ -363,9 +363,7 @@ export default function HabitsScreen() {
                     <View
                       style={{
                         width: `${Math.min(
-                          ((gamStats.totalPoints % gamStats.pointsToNextLevel) /
-                            gamStats.pointsToNextLevel) *
-                            100,
+                          ((gamStats.totalPoints % gamStats.pointsToNextLevel) / gamStats.pointsToNextLevel) * 100,
                           100
                         )}%`,
                         height: '100%',

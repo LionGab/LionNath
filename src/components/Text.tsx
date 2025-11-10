@@ -125,19 +125,11 @@ const TextComponent: React.FC<TextProps> = ({ variant = 'body', color, style, ch
   const variantStyles = useMemo(() => getVariantStyles(variant), [variant]);
 
   // Memoizar estilo final
-  const finalStyle = useMemo<TextStyle>(
-    () => {
-      const flattenedStyle = StyleSheet.flatten([
-        styles.base,
-        variantStyles,
-        color ? { color } : null,
-        style,
-      ]);
+  const finalStyle = useMemo<TextStyle>(() => {
+    const flattenedStyle = StyleSheet.flatten([styles.base, variantStyles, color ? { color } : null, style]);
 
-      return flattenedStyle ?? styles.base;
-    },
-    [variantStyles, color, style]
-  );
+    return flattenedStyle ?? styles.base;
+  }, [variantStyles, color, style]);
 
   return (
     <RNText style={finalStyle} {...props}>

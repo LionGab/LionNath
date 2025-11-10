@@ -1,12 +1,17 @@
 /**
- * Habits Screen - PROMPT 7
+ * Habits Screen - WITH GAMIFICATION
  *
  * Sistema completo de checklist de hábitos
- * 5 hábitos pré-definidos + progresso + streaks
+ * 5 hábitos pré-definidos + progresso + streaks + GAMIFICAÇÃO
+ *
+ * Integrado com: GamificationManager
+ * - Registra atividades
+ * - Calcula pontos automaticamente
+ * - Desbloqueia achievements
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -18,6 +23,7 @@ import { supabase } from '@/services/supabase';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { SkeletonPresets } from '@/shared/components/Skeleton';
 import { Loading } from '@/shared/components/Loading';
+import { GamificationManager } from '@/lib/gamification/gamification-manager';
 import {
   scheduleHabitReminder,
   cancelHabitReminder,
@@ -76,11 +82,39 @@ const DEFAULT_HABITS = [
   },
 ];
 
+interface GamificationStats {
+  totalPoints: number;
+  currentLevel: number;
+  pointsToNextLevel: number;
+  currentStreak: number;
+  longestStreak: number;
+}
+
+interface Achievement {
+  id: string;
+  name: string;
+  pointsReward: number;
+  isNew?: boolean;
+}
+
 export default function HabitsScreen() {
   const navigation = useNavigation();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
   const [todayCompleted, setTodayCompleted] = useState(0);
+
+  // Gamification state
+  const [gamStats, setGamStats] = useState<GamificationStats>({
+    totalPoints: 0,
+    currentLevel: 1,
+    pointsToNextLevel: 100,
+    currentStreak: 0,
+    longestStreak: 0,
+  });
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [lastPointsEarned, setLastPointsEarned] = useState<number>(0);
+  const [showPointsAnimation, setShowPointsAnimation] = useState(false);
+  const [gamificationManager, setGamificationManager] = useState<GamificationManager | null>(null);
 
   useEffect(() => {
     loadHabits();
@@ -92,6 +126,42 @@ export default function HabitsScreen() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return;
+
+      // Inicializar GamificationManager
+      const manager = new GamificationManager(supabase, user.id);
+      setGamificationManager(manager);
+
+      // Inicializar usuário se necessário
+      try {
+        await manager.initializeUser();
+      } catch (e) {
+        // Usuário já inicializado, é ok
+      }
+
+      // Carregar estatísticas de gamificação
+      try {
+        const stats = await manager.getStats();
+        setGamStats({
+          totalPoints: stats.totalPoints,
+          currentLevel: stats.currentLevel,
+          pointsToNextLevel: stats.pointsToNextLevel,
+          currentStreak: stats.currentStreak,
+          longestStreak: stats.longestStreak,
+        });
+        setAchievements(
+          stats.achievements
+            .filter((a) => a.isNew)
+            .map((a) => ({
+              id: a.id,
+              name: a.name,
+              pointsReward: a.pointsReward,
+              isNew: true,
+            }))
+        );
+      } catch (gamError) {
+        console.warn('Erro ao carregar gamificação:', gamError);
+        // Continuar mesmo se falhar
+      }
 
       // Buscar hábitos do usuário
       const { data: userHabits } = await supabase
@@ -186,6 +256,9 @@ export default function HabitsScreen() {
       if (!user) return;
 
       const today = new Date().toISOString().split('T')[0];
+      const habit = habits.find((h) => h.id === habitId);
+
+      if (!habit) return;
 
       if (completed) {
         // Marcar como feito
@@ -195,6 +268,36 @@ export default function HabitsScreen() {
           date: today,
           completed_at: new Date().toISOString(),
         });
+
+        // Registrar no sistema de gamificação
+        if (gamificationManager) {
+          try {
+            const result = await gamificationManager.recordActivity('self_care', {
+              habitName: habit.name,
+              habitCategory: habit.category,
+            });
+
+            // Mostrar feedback de pontos
+            setLastPointsEarned(result.pointsEarned);
+            setShowPointsAnimation(true);
+            setTimeout(() => setShowPointsAnimation(false), 2000);
+
+            // Mostrar novo achievements
+            if (result.newAchievements.length > 0) {
+              Alert.alert(
+                '🎉 Conquista Desbloqueada!',
+                result.newAchievements.map((a) => `${a.name} (+${a.pointsReward} pts)`).join('\n')
+              );
+            }
+
+            // Mostrar level up
+            if (result.leveledUp) {
+              Alert.alert('⬆️ LEVEL UP!', 'Parabéns, você subiu de nível!');
+            }
+          } catch (gamError) {
+            console.warn('Erro ao registrar gamificação:', gamError);
+          }
+        }
       } else {
         // Desmarcar
         await supabase
@@ -237,6 +340,57 @@ export default function HabitsScreen() {
         </Text>
       </View>
 
+      {/* GAMIFICATION CARD */}
+      {habits.length > 0 && (
+        <View style={styles.gamificationContainer}>
+          <LinearGradient
+            colors={['#3B82F6', '#1E40AF']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.gamificationCard}
+          >
+            <View style={styles.gamificationContent}>
+              {/* Level + Points */}
+              <View style={styles.gamLevelSection}>
+                <View style={styles.levelCircle}>
+                  <Text style={styles.levelText}>Nv</Text>
+                  <Text style={styles.levelNumber}>{gamStats.currentLevel}</Text>
+                </View>
+                <View style={styles.pointsInfo}>
+                  <Text style={styles.pointsLabel}>Pontos Totais</Text>
+                  <Text style={styles.pointsValue}>{gamStats.totalPoints}</Text>
+                  <View style={styles.progressBar}>
+                    <View
+                      style={{
+                        width: `${Math.min(
+                          ((gamStats.totalPoints % gamStats.pointsToNextLevel) /
+                            gamStats.pointsToNextLevel) *
+                            100,
+                          100
+                        )}%`,
+                        height: '100%',
+                        backgroundColor: '#FBBF24',
+                        borderRadius: 4,
+                      }}
+                    />
+                  </View>
+                  <Text style={styles.progressText}>{gamStats.pointsToNextLevel} pts até next level</Text>
+                </View>
+              </View>
+
+              {/* Streak */}
+              {gamStats.currentStreak > 0 && (
+                <View style={styles.streakSection}>
+                  <Text style={styles.streakLabel}>🔥 Sequência</Text>
+                  <Text style={styles.streakValue}>{gamStats.currentStreak} dias</Text>
+                </View>
+              )}
+            </View>
+          </LinearGradient>
+        </View>
+      )}
+
+      {/* STATS CARD */}
       {habits.length > 0 && (
         <View style={styles.stats}>
           <Card variant="outlined" padding="md">
@@ -245,6 +399,18 @@ export default function HabitsScreen() {
               {todayCompleted}/{habits.length}
             </Text>
           </Card>
+        </View>
+      )}
+
+      {/* SHOW ACHIEVEMENTS */}
+      {achievements.length > 0 && (
+        <View style={styles.achievementsContainer}>
+          <Text style={styles.achievementsTitle}>🎉 Novas Conquistas!</Text>
+          {achievements.map((ach) => (
+            <Badge key={ach.id} variant="success" style={{ marginBottom: spacing.sm }}>
+              {ach.name} +{ach.pointsReward} pts
+            </Badge>
+          ))}
         </View>
       )}
 
@@ -323,6 +489,105 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: typography.sizes.base,
     color: colors.mutedForeground,
+    fontFamily: typography.fontFamily.sans,
+  },
+  // GAMIFICATION STYLES
+  gamificationContainer: {
+    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.lg,
+  },
+  gamificationCard: {
+    borderRadius: 12,
+    padding: spacing.lg,
+    overflow: 'hidden' as any,
+  },
+  gamificationContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  gamLevelSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  levelCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.md,
+  },
+  levelText: {
+    fontSize: typography.sizes.sm,
+    color: '#FFFFFF',
+    fontWeight: '600' as any,
+    fontFamily: typography.fontFamily.sans,
+  },
+  levelNumber: {
+    fontSize: typography.sizes['2xl'],
+    color: '#FFFFFF',
+    fontWeight: 'bold' as any,
+    fontFamily: typography.fontFamily.sans,
+  },
+  pointsInfo: {
+    flex: 1,
+  },
+  pointsLabel: {
+    fontSize: typography.sizes.xs,
+    color: 'rgba(255,255,255,0.7)',
+    marginBottom: spacing.xs,
+    fontFamily: typography.fontFamily.sans,
+  },
+  pointsValue: {
+    fontSize: typography.sizes['xl'],
+    color: '#FFFFFF',
+    fontWeight: 'bold' as any,
+    marginBottom: spacing.xs,
+    fontFamily: typography.fontFamily.sans,
+  },
+  progressBar: {
+    height: 4,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 2,
+    marginBottom: spacing.xs,
+    overflow: 'hidden' as any,
+  },
+  progressText: {
+    fontSize: typography.sizes.xs,
+    color: 'rgba(255,255,255,0.7)',
+    fontFamily: typography.fontFamily.sans,
+  },
+  streakSection: {
+    alignItems: 'center',
+    marginLeft: spacing.md,
+  },
+  streakLabel: {
+    fontSize: typography.sizes.sm,
+    color: '#FFFFFF',
+    marginBottom: spacing.xs,
+    fontFamily: typography.fontFamily.sans,
+  },
+  streakValue: {
+    fontSize: typography.sizes.xl,
+    color: '#FBBF24',
+    fontWeight: 'bold' as any,
+    fontFamily: typography.fontFamily.sans,
+  },
+  achievementsContainer: {
+    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.lg,
+    paddingVertical: spacing.md,
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    borderRadius: 8,
+  },
+  achievementsTitle: {
+    fontSize: typography.sizes.base,
+    fontWeight: 'bold' as any,
+    color: colors.foreground,
+    marginBottom: spacing.md,
     fontFamily: typography.fontFamily.sans,
   },
   stats: {

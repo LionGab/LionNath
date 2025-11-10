@@ -7,7 +7,7 @@
 import { theme } from '@/constants/theme';
 import { colors, typography } from '@/theme';
 import React, { useMemo } from 'react';
-import { Text as RNText, TextProps as RNTextProps, StyleSheet, TextStyle } from 'react-native';
+import { Text as RNText, TextProps as RNTextProps, StyleProp, StyleSheet, TextStyle } from 'react-native';
 
 export type TextVariant =
   | 'h1'
@@ -28,7 +28,7 @@ export interface TextProps extends RNTextProps {
   /** Cor customizada (override) */
   color?: string;
   /** Estilo customizado */
-  style?: TextStyle;
+  style?: StyleProp<TextStyle>;
 }
 
 const getVariantStyles = (variant: TextVariant): TextStyle => {
@@ -125,8 +125,17 @@ const TextComponent: React.FC<TextProps> = ({ variant = 'body', color, style, ch
   const variantStyles = useMemo(() => getVariantStyles(variant), [variant]);
 
   // Memoizar estilo final
-  const finalStyle = useMemo(
-    () => [styles.base, variantStyles, color ? { color } : null, style].filter(Boolean) as TextStyle[],
+  const finalStyle = useMemo<TextStyle>(
+    () => {
+      const flattenedStyle = StyleSheet.flatten([
+        styles.base,
+        variantStyles,
+        color ? { color } : null,
+        style,
+      ]);
+
+      return flattenedStyle ?? styles.base;
+    },
     [variantStyles, color, style]
   );
 

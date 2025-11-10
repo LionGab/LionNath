@@ -20,6 +20,12 @@ export interface UseAuthReturn {
   session: Session | null;
   /** Estado de carregamento inicial */
   loading: boolean;
+  /** Estado de autenticação de ações ativas (ex: login) */
+  isLoading: boolean;
+  /** Erro apresentado em ações de autenticação */
+  error: string | null;
+  /** Resetar estado de erro */
+  resetError: () => void;
   /** Função de login com email e senha */
   signIn: (email: string, password: string) => Promise<{ user: User | null; error: Error | null }>;
   /** Função de login com magic link */
@@ -37,6 +43,12 @@ export function useAuth(): UseAuthReturn {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const resetError = useCallback(() => {
+    setAuthError(null);
+  }, []);
 
   // Verificar sessão inicial
   useEffect(() => {
@@ -87,11 +99,18 @@ export function useAuth(): UseAuthReturn {
   const signIn = useCallback(
     async (email: string, password: string): Promise<{ user: User | null; error: Error | null }> => {
       try {
+        setAuthLoading(true);
+        setAuthError(null);
+
         const data = await signInWithEmail(email, password);
         return { user: data.user, error: null };
       } catch (error) {
         console.error('Erro ao fazer login:', error);
-        return { user: null, error: error as Error };
+        const normalizedError = error instanceof Error ? error : new Error('Erro ao fazer login');
+        setAuthError(normalizedError.message);
+        return { user: null, error: normalizedError };
+      } finally {
+        setAuthLoading(false);
       }
     },
     []
@@ -124,6 +143,9 @@ export function useAuth(): UseAuthReturn {
     user,
     session,
     loading,
+    isLoading: authLoading,
+    error: authError,
+    resetError,
     signIn,
     signInWithMagicLink,
     signOut,

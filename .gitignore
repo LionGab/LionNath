@@ -35,6 +35,7 @@ yarn-error.*
 .env.local
 .env.prod
 .env.production
+supabase/functions/.env
 
 # Credenciais e secrets (NUNCA commitar)
 CREDENCIAIS*.md
@@ -97,10 +98,6 @@ nul
 /VALIDACAO*.md
 /IMPLEMENTACAO*.md
 /STATUS*.md
-/SETUP*.md
-/GUIA*.md
-/COMO*.md
-/CONSOLIDACAO*.md
 
 # Temporary files in root
 /*.txt
@@ -118,4 +115,3 @@ nul
 # Demo and test directories
 /demo/
 /MIGRACAO_ARQUIVOS/
-

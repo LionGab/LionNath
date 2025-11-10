@@ -11,11 +11,11 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Slider,
   Switch,
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import Slider from '@react-native-community/slider';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { nossaMaternidadeDesignTokens } from '@/theme/themes/v1-nossa-maternidade';
@@ -70,6 +70,13 @@ export default function OnboardingScreen() {
   });
   const [loading, setLoading] = useState(false);
   const startTime = useRef(Date.now());
+  const handleEmocaoChange = useCallback((value: number) => {
+    // Arredonda para manter o slider alinhado com escala discreta 0-10 e evita stale closures
+    setData((prev) => ({
+      ...prev,
+      emocao: Math.round(value),
+    }));
+  }, []);
 
   const handleNext = useCallback(() => {
     if (step < 5) {
@@ -187,7 +194,7 @@ export default function OnboardingScreen() {
           maximumValue={10}
           step={1}
           value={data.emocao}
-          onValueChange={(value) => setData({ ...data, emocao: Math.round(value) })}
+          onValueChange={handleEmocaoChange}
           minimumTrackTintColor={palette.primary}
           maximumTrackTintColor={palette.neutrals[300]}
           thumbTintColor={palette.accent}

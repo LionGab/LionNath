@@ -183,7 +183,6 @@ export function useChatOptimized() {
           ? {
               stage: userContext.type,
               pregnancyWeek: userContext.pregnancy_week,
-              mood: undefined, // Pode ser extraído do histórico se necessário
               concerns: userContext.preferences || [],
             }
           : undefined;

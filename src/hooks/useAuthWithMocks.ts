@@ -17,6 +17,9 @@ export function useAuth() {
       user: demoClient.user,
       session: demoClient.session,
       loading: false,
+      isLoading: false,
+      error: null as string | null,
+      resetError: (): void => undefined,
       signIn: demoClient.signIn,
       signInWithMagicLink: async (email: string): Promise<{ error: Error | null }> => {
         // Em modo mock, magic link simula sucesso
